@@ -9,15 +9,20 @@ package jp.hopkotan.app
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
-import android.net.Uri
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
+import android.view.View
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.BeerFilter
 import jp.hopkotan.core.BeerQuery
@@ -46,10 +51,23 @@ class BeersPanel(
     private var styleChoices = emptyList<String>()
     private var yearChoices = emptyList<String>()
 
-    private val search =
-        EditText(
+    private val searchLayout =
+        TextInputLayout(
             activity,
-        ).apply { hint = activity.getString(R.string.search_hint) }
+            null,
+            com.google.android.material.R.attr.textInputOutlinedStyle,
+        ).apply {
+            hint = activity.getString(R.string.search_hint)
+        }
+    private val search = TextInputEditText(searchLayout.context).also { searchLayout.addView(it) }
+    private val toggle =
+        MaterialButton(
+            activity,
+            null,
+            com.google.android.material.R.attr.materialButtonOutlinedStyle,
+        ).apply {
+            setText(R.string.filter_toggle)
+        }
     private val sort = activity.spinner(sortLabels()) { refresh() }
     private val order =
         activity.spinner(
@@ -72,17 +90,11 @@ class BeersPanel(
     private val count = TextView(activity)
     private val list = ListView(activity)
 
-    /** タブの内容. */
-    val view: LinearLayout =
+    /** 絞り込みの部品 (「絞り込み」のボタンで, 開閉する). */
+    private val filterBox =
         LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
-            addView(search)
-            addView(
-                activity.row(
-                    activity.labeled(R.string.label_sort, sort),
-                    activity.labeled(R.string.label_order, order),
-                ),
-            )
+            visibility = View.GONE
             addView(
                 activity.row(
                     activity.labeled(R.string.filter_style, style),
@@ -97,6 +109,26 @@ class BeersPanel(
                 ),
             )
             addView(tapOnly)
+        }
+
+    /** タブの内容. */
+    val view: LinearLayout =
+        LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(
+                LinearLayout(activity).apply {
+                    gravity = Gravity.CENTER_VERTICAL
+                    addView(searchLayout, LinearLayout.LayoutParams(0, WRAP, 1f))
+                    addView(toggle)
+                },
+            )
+            addView(
+                activity.row(
+                    activity.labeled(R.string.label_sort, sort),
+                    activity.labeled(R.string.label_order, order),
+                ),
+            )
+            addView(filterBox)
             addView(count)
             addView(list, LinearLayout.LayoutParams(MATCH, MATCH))
         }
@@ -122,6 +154,7 @@ class BeersPanel(
             },
         )
         tapOnly.setOnCheckedChangeListener { _, _ -> refresh() }
+        toggle.setOnClickListener { filterBox.isVisible = !filterBox.isVisible }
     }
 
     /**
@@ -193,20 +226,32 @@ class BeersPanel(
                 descending = order.selectedItemPosition == 0,
             )
         count.text = activity.getString(R.string.count, sorted.size)
-        list.adapter = twoLineAdapter(activity, sorted, { title(it) }, { describe(it) })
+        list.adapter = rowAdapter(activity, sorted, actions.images, { describe(it) })
         list.setOnItemClickListener { _, _, position, _ -> showDetail(sorted[position]) }
     }
 
-    private fun title(beer: Beer): String =
-        if (beer.id in
-            onTapIds
-        ) {
-            "${beer.name}  (${activity.getString(R.string.on_tap)})"
-        } else {
-            beer.name
-        }
+    private fun describe(beer: Beer): RowModel {
+        val tags =
+            listOfNotNull(
+                beer.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
+                if (beer.id in onTapIds) activity.getString(R.string.on_tap) else null,
+            )
 
-    private fun describe(beer: Beer): String {
+        return RowModel(
+            title = beer.name,
+            subtitle =
+                activity.getString(
+                    R.string.row_style_released,
+                    beer.style,
+                    beer.released ?: beer.series.name,
+                ),
+            extra = tags.joinToString(" / ").ifEmpty { null },
+            badge = beer.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
+            imageUrl = beer.imageUrl,
+        )
+    }
+
+    private fun detailText(beer: Beer): String {
         val unknown = activity.getString(R.string.unknown)
 
         return activity.getString(
@@ -222,7 +267,7 @@ class BeersPanel(
         AlertDialog
             .Builder(activity)
             .setTitle(beer.name)
-            .setMessage(describe(beer))
+            .setMessage(detailText(beer))
             .setPositiveButton(R.string.drink) { _, _ ->
                 val tap = Tap(beer.name, beer.style, beer.id, beer.url, beer.imageUrl)
                 activity.showSizeDialog(
@@ -230,13 +275,14 @@ class BeersPanel(
                     actions.sizes(),
                 ) { actions.onRecord(tap, it, beer.abv) }
             }.setNeutralButton(R.string.open_site) { _, _ ->
-                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(beer.url)))
+                activity.startActivity(Intent(Intent.ACTION_VIEW, beer.url.toUri()))
             }.setNegativeButton(R.string.close, null)
             .show()
     }
 
     private companion object {
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
+        const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
         const val SERIES_ORIGINALS = "ORIGINALS"
         const val SERIES_FREEDOMS = "FREEDOMS"
     }

@@ -6,13 +6,16 @@
 
 package jp.hopkotan.app
 
-import android.app.Activity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.button.MaterialButton
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.PriceSize
@@ -32,7 +35,7 @@ private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420,
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
  */
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var store: DataStore
     private lateinit var status: TextView
     private lateinit var today: TodayPanel
@@ -44,10 +47,12 @@ class MainActivity : Activity() {
     private var taplist: TapList? = null
     private var drinks = DrinkLog()
     private val executor = Executors.newSingleThreadExecutor()
+    private lateinit var images: ImageLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         store = DataStore(this)
+        images = ImageLoader(this)
         beers = store.loadBeers()
         taplist = store.loadTaplist()
         drinks = store.loadDrinks()
@@ -58,43 +63,61 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         executor.shutdown()
+        images.shutdown()
         super.onDestroy()
     }
 
     private fun buildScreen(): View {
         val actions =
-            PanelActions(::record, ::delete) {
-                taplist?.sizes?.ifEmpty { null }
-                    ?: DEFAULT_SIZES
-            }
+            PanelActions(
+                ::record,
+                ::delete,
+                { taplist?.sizes?.ifEmpty { null } ?: DEFAULT_SIZES },
+                images,
+                { id -> beers.firstOrNull { it.id == id }?.imageUrl },
+            )
         today = TodayPanel(this, actions)
         beersPanel = BeersPanel(this, actions)
         drinksPanel = DrinksPanel(this, actions)
         panels = listOf(today.view, beersPanel.view, drinksPanel.view)
-        status = TextView(this)
+        status =
+            TextView(this).apply {
+                setTextAppearance(
+                    com.google.android.material.R.style.TextAppearance_Material3_BodySmall,
+                )
+            }
 
-        val tabs =
+        val statusRow =
             LinearLayout(this).apply {
-                orientation = LinearLayout.HORIZONTAL
-                listOf(R.string.tab_today, R.string.tab_beers, R.string.tab_drinks).forEachIndexed {
-                    index,
-                    label,
-                    ->
-                    addView(button(label) { show(index) }, LinearLayout.LayoutParams(0, WRAP, 1f))
-                }
+                gravity = Gravity.CENTER_VERTICAL
+                addView(status, LinearLayout.LayoutParams(0, WRAP, 1f))
                 addView(
-                    button(R.string.refresh) { refresh() },
-                    LinearLayout.LayoutParams(0, WRAP, 1f),
+                    MaterialButton(
+                        context,
+                        null,
+                        android.R.attr.borderlessButtonStyle,
+                    ).apply {
+                        setText(R.string.refresh)
+                        setOnClickListener { refresh() }
+                    },
                 )
             }
         val content = FrameLayout(this).apply { panels.forEach { addView(it) } }
+        val nav =
+            BottomNavigationView(this).apply {
+                inflateMenu(R.menu.bottom_nav)
+                setOnItemSelectedListener {
+                    show(listOf(R.id.nav_today, R.id.nav_beers, R.id.nav_drinks).indexOf(it.itemId))
+                    true
+                }
+            }
         show(0)
 
         return LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            addView(tabs)
-            addView(status)
-            addView(content, LinearLayout.LayoutParams(MATCH, MATCH))
+            addView(statusRow)
+            addView(content, LinearLayout.LayoutParams(MATCH, 0, 1f))
+            addView(nav)
             applyInsets(this)
         }
     }

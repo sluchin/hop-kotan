@@ -1,5 +1,7 @@
 [versions]
 agp = "9.4.1"
+material = "1.14.0"
+appcompat = "1.7.1"
 kotlin = "2.4.21"
 ktlintPlugin = "14.2.0"
 detekt = "1.23.8"
@@ -10,6 +12,8 @@ jsoup = "1.23.2"
 serialization = "1.11.0"
 
 [libraries]
+material = { module = "com.google.android.material:material", version.ref = "material" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }

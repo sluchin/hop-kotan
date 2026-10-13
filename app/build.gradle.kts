@@ -155,6 +155,8 @@ androidComponents {
 
 dependencies {
     implementation(project(":core"))
+    implementation(libs.material)
+    implementation(libs.androidx.appcompat)
 }
 
 detekt {

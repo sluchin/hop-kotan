@@ -46,8 +46,13 @@ class DrinksPanel(
     private val activity: Activity,
     private val actions: PanelActions,
 ) {
-    private val total = TextView(activity)
-    private val list = ListView(activity)
+    private val total =
+        TextView(activity).apply {
+            setTextAppearance(
+                com.google.android.material.R.style.TextAppearance_Material3_BodyMedium,
+            )
+        }
+    private val list = ListView(activity).apply { divider = null }
 
     /** タブの内容. */
     val view: LinearLayout =
@@ -80,39 +85,39 @@ class DrinksPanel(
                 )
             }
         list.adapter =
-            twoLineAdapter(activity, rows, { first(it) }, { second(it) }, { it is DrinkRow.Item })
+            rowAdapter(activity, rows, actions.images, { describe(it) }, { it is DrinkRow.Item })
         list.setOnItemLongClickListener { _, _, position, _ ->
             (rows[position] as? DrinkRow.Item)?.let { confirmDelete(it.record) } != null
         }
     }
 
-    private fun first(row: DrinkRow): String =
-        when (row) {
-            is DrinkRow.Day -> activity.getString(R.string.day_header, row.summary.date)
-            is DrinkRow.Item ->
-                activity.getString(
-                    R.string.record_line,
-                    row.record.beerName,
-                    row.record.sizeLabel,
-                    row.record.ml,
-                )
-        }
-
-    private fun second(row: DrinkRow): String =
+    private fun describe(row: DrinkRow): RowModel =
         when (row) {
             is DrinkRow.Day ->
-                activity.getString(
-                    R.string.day_summary,
-                    row.summary.count,
-                    row.summary.ml,
-                    formatYen(row.summary.yen),
-                    formatDecimal(row.summary.alcoholG),
+                RowModel(
+                    title = row.summary.date,
+                    subtitle =
+                        activity.getString(
+                            R.string.day_summary,
+                            row.summary.count,
+                            row.summary.ml,
+                            formatYen(row.summary.yen),
+                            formatDecimal(row.summary.alcoholG),
+                        ),
+                    showImage = false,
                 )
             is DrinkRow.Item ->
-                activity.getString(
-                    R.string.record_detail,
-                    row.record.style,
-                    formatYen(row.record.yen),
+                RowModel(
+                    title = row.record.beerName,
+                    subtitle =
+                        activity.getString(
+                            R.string.record_size,
+                            row.record.style,
+                            row.record.sizeLabel,
+                            row.record.ml,
+                        ),
+                    badge = activity.getString(R.string.yen_badge, formatYen(row.record.yen)),
+                    imageUrl = actions.imageOf(row.record.beerId),
                 )
         }
 

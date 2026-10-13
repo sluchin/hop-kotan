@@ -9,12 +9,13 @@ package jp.hopkotan.app
 import android.app.AlertDialog
 import android.content.Context
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowInsets
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -25,20 +26,21 @@ import java.util.Locale
 /** 画面の端と, 内容の間の余白 (dp). */
 const val CONTENT_PADDING_DP = 12
 
-/** 項目の 2 行目の, 文字の大きさ (sp). */
-private const val SECOND_LINE_SP = 13f
-
 /**
  * パネルが, アプリに頼む操作.
  *
  * @property onRecord 飲んだビールを記録する (名前などを持つビール, 量, ABV を受け取る)
  * @property onDelete 記録を消す (記録の ID を受け取る)
  * @property sizes 選べる量と価格
+ * @property images 写真の読み込み
+ * @property imageOf ビールの ID から, 写真の URL を探す (なければ null)
  */
 class PanelActions(
     val onRecord: (jp.hopkotan.core.Tap, PriceSize, Double?) -> Unit,
     val onDelete: (String) -> Unit,
     val sizes: () -> List<PriceSize>,
+    val images: ImageLoader,
+    val imageOf: (String?) -> String?,
 )
 
 /**
@@ -58,46 +60,70 @@ fun formatYen(yen: Int): String = NumberFormat.getIntegerInstance(Locale.JAPAN).
 fun formatDecimal(value: Double): String = String.format(Locale.JAPAN, "%.1f", value)
 
 /**
- * 2 行の項目 (1 行目は太字, 2 行目は小さい字) を並べる, 一覧のアダプタを作る.
+ * 一覧の 1 行の内容.
+ *
+ * @property title 1 行目 (名前)
+ * @property subtitle 2 行目 (スタイルなど)
+ * @property extra 3 行目 (小さな字. なければ null)
+ * @property badge 右端の印 (ABV や価格. なければ null)
+ * @property imageUrl 写真の URL (なければ, 代わりの絵)
+ * @property showImage 写真の場所を出すか (日の見出しは, 出さない)
+ */
+data class RowModel(
+    val title: String,
+    val subtitle: String,
+    val extra: String? = null,
+    val badge: String? = null,
+    val imageUrl: String? = null,
+    val showImage: Boolean = true,
+)
+
+/**
+ * 写真つきの行 (名前, スタイル, 小さな字, 右端の印) を並べる, 一覧のアダプタを作る.
  *
  * @param context コンテキスト
  * @param items 項目
- * @param first 1 行目の文字
- * @param second 2 行目の文字
+ * @param images 写真の読み込み
+ * @param model 項目から, 行の内容を作る
  * @param enabled 項目を選べるか (見出しは選べない)
  * @return アダプタ
  */
-fun <T> twoLineAdapter(
+fun <T> rowAdapter(
     context: Context,
     items: List<T>,
-    first: (T) -> CharSequence,
-    second: (T) -> CharSequence,
+    images: ImageLoader,
+    model: (T) -> RowModel,
     enabled: (T) -> Boolean = { true },
 ): ArrayAdapter<T> =
-    object : ArrayAdapter<T>(
-        context,
-        android.R.layout.simple_list_item_2,
-        android.R.id.text1,
-        items,
-    ) {
+    object : ArrayAdapter<T>(context, R.layout.item_row, items) {
         override fun getView(
             position: Int,
             convertView: View?,
             parent: ViewGroup,
         ): View {
-            val row = super.getView(position, convertView, parent)
-            val item = items[position]
-            row.findViewById<TextView>(android.R.id.text1).text = first(item)
-            row.findViewById<TextView>(android.R.id.text2).apply {
-                text = second(item)
-                textSize = SECOND_LINE_SP
-            }
+            val row =
+                convertView
+                    ?: LayoutInflater.from(context).inflate(R.layout.item_row, parent, false)
+            val content = model(items[position])
+            row.findViewById<TextView>(R.id.title).text = content.title
+            row.findViewById<TextView>(R.id.subtitle).text = content.subtitle
+            row.findViewById<TextView>(R.id.extra).bind(content.extra)
+            row.findViewById<TextView>(R.id.badge).bind(content.badge)
+            val thumb = row.findViewById<ImageView>(R.id.thumb)
+            thumb.visibility = if (content.showImage) View.VISIBLE else View.GONE
+            images.load(thumb, content.imageUrl)
 
             return row
         }
 
         override fun isEnabled(position: Int): Boolean = enabled(items[position])
     }
+
+/** 文字があれば表示して, なければ隠す. */
+private fun TextView.bind(text: String?) {
+    this.text = text
+    visibility = if (text == null) View.GONE else View.VISIBLE
+}
 
 /**
  * 選択肢のスピナーを作る.
@@ -149,23 +175,6 @@ fun Context.showSizeDialog(
 }
 
 /**
- * ボタンを作る.
- *
- * @receiver コンテキスト
- * @param label 文字の資源
- * @param onClick 押したときの処理
- * @return ボタン
- */
-fun Context.button(
-    label: Int,
-    onClick: () -> Unit,
-): Button =
-    Button(this).apply {
-        setText(label)
-        setOnClickListener { onClick() }
-    }
-
-/**
  * 部品に, 小さな見出しを付ける.
  *
  * @receiver コンテキスト
@@ -199,7 +208,7 @@ fun Context.row(vararg views: View): LinearLayout =
     }
 
 /**
- * システムバーとアクションバーの下に, 内容が隠れないよう, 余白を入れる.
+ * システムバーとアクションバーの下に, 内容が隠れないよう, 余白を入れる (下は, 入れない).
  *
  * @receiver コンテキスト
  * @param root 画面の一番外側の部品
@@ -222,3 +231,21 @@ fun Context.applyInsets(root: View) {
         insets
     }
 }
+
+/**
+ * 本文の文字の見た目 (Material 3) の, 文字の部品を作る.
+ *
+ * @receiver コンテキスト
+ * @param small 小さい字にするか
+ * @return 文字の部品
+ */
+fun Context.bodyText(small: Boolean = false): TextView =
+    TextView(this).apply {
+        setTextAppearance(
+            if (small) {
+                com.google.android.material.R.style.TextAppearance_Material3_BodySmall
+            } else {
+                com.google.android.material.R.style.TextAppearance_Material3_BodyMedium
+            },
+        )
+    }

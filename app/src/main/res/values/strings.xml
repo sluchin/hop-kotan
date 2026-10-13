@@ -13,7 +13,12 @@
     <string name="today_summary">今日: %1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g</string>
     <string name="today_none">今日のタップリストがありません。</string>
     <string name="beer_detail">%1$s  %2$s  ABV %3$s  IBU %4$s</string>
-    <string name="tap_detail">%1$s  ABV %2$s  IBU %3$s</string>
+    <string name="abv_badge">%1$s%%</string>
+    <string name="ibu_label">IBU %1$s</string>
+    <string name="row_style_released">%1$s · %2$s</string>
+    <string name="record_size">%1$s · %2$s %3$d ml</string>
+    <string name="yen_badge">%1$s 円</string>
+    <string name="filter_toggle">絞り込み</string>
     <string name="unknown">-</string>
     <string name="on_tap">タップ中</string>
     <string name="count">%1$d 件</string>
@@ -43,10 +48,8 @@
     <string name="recorded">記録しました: %1$s</string>
     <string name="drinks_total">合計: %1$d 日 / %2$d 杯 / %3$s 円</string>
     <string name="drinks_none">記録がありません。「今日」か「ビール」のタブで、ビールをタップして記録します。</string>
-    <string name="day_header">%1$s</string>
     <string name="day_summary">%1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g</string>
     <string name="record_line">%1$s (%2$s %3$d ml)</string>
-    <string name="record_detail">%1$s  %2$s 円</string>
     <string name="delete_title">この記録を消しますか</string>
     <string name="delete">消す</string>
     <string name="cancel">キャンセル</string>

@@ -23,16 +23,38 @@ class TodayPanel(
     private val activity: Activity,
     private val actions: PanelActions,
 ) {
-    private val header = TextView(activity)
-    private val summary = TextView(activity)
-    private val list = ListView(activity)
+    private val header =
+        TextView(activity).apply {
+            setTextAppearance(
+                com.google.android.material.R.style.TextAppearance_Material3_BodyMedium,
+            )
+        }
+    private val summary =
+        TextView(activity).apply {
+            setTextAppearance(
+                com.google.android.material.R.style.TextAppearance_Material3_LabelLarge,
+            )
+            setBackgroundResource(R.drawable.badge_background)
+            setPadding(
+                activity.dp(CARD_PADDING_DP),
+                activity.dp(CARD_PADDING_DP),
+                activity.dp(CARD_PADDING_DP),
+                activity.dp(CARD_PADDING_DP),
+            )
+        }
+    private val list = ListView(activity).apply { divider = null }
 
     /** タブの内容. */
     val view: LinearLayout =
         LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
             addView(header)
-            addView(summary)
+            addView(
+                summary,
+                LinearLayout.LayoutParams(MATCH, WRAP).apply {
+                    setMargins(0, activity.dp(CARD_PADDING_DP), 0, activity.dp(CARD_PADDING_DP))
+                },
+            )
             addView(list, LinearLayout.LayoutParams(MATCH, MATCH))
         }
 
@@ -64,8 +86,7 @@ class TodayPanel(
                 formatYen(today.yen),
                 formatDecimal(today.alcoholG),
             )
-        list.adapter =
-            twoLineAdapter(activity, entries, { it.tap.name }, { describe(it) })
+        list.adapter = rowAdapter(activity, entries, actions.images, { describe(it) })
         list.setOnItemClickListener { _, _, position, _ ->
             val entry = entries[position]
             activity.showSizeDialog(entry.tap.name, actions.sizes()) {
@@ -74,15 +95,21 @@ class TodayPanel(
         }
     }
 
-    private fun describe(entry: TapEntry): String {
-        val unknown = activity.getString(R.string.unknown)
-        val abv = entry.beer?.abv?.let { formatDecimal(it) } ?: unknown
-        val ibu = entry.beer?.ibu?.toString() ?: unknown
+    private fun describe(entry: TapEntry): RowModel {
+        val beer = entry.beer
 
-        return activity.getString(R.string.tap_detail, entry.tap.style, abv, ibu)
+        return RowModel(
+            title = entry.tap.name,
+            subtitle = entry.tap.style,
+            extra = beer?.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
+            badge = beer?.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
+            imageUrl = entry.tap.imageUrl ?: beer?.imageUrl,
+        )
     }
 
     private companion object {
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
+        const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
+        const val CARD_PADDING_DP = 10
     }
 }

@@ -58,6 +58,7 @@ CI (GitHub Actions) は、サブモジュールを取り込まない。マーク
 |:---|:---|
 | JDK | 17 (Docker のイメージ) |
 | Android Gradle Plugin / compileSdk / minSdk | 9.4.1 / 37 / 33 |
+| Material Components / AppCompat | 1.14.0 / 1.7.1 |
 | Gradle | 9.8.1 (ラッパー) |
 | Kotlin | 2.4.21 |
 | jsoup | 1.23.2 |

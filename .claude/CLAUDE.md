@@ -13,7 +13,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - `core`: データの型 (`Beer` `TapList` `DrinkRecord`)、HTML の解析 (jsoup)、取得 (`Scraper` `JdkHtmlFetcher`)、JSON (`CatalogJson`)、飲んだ記録の集計 (`DrinkLog`)。Kotlin の JVM。カバレッジ 100%。
 - `scraper`: コマンドの入口 (`taplist <dir>` と `beers <dir>`)。薄く保つ。
-- `app`: Android アプリ (Kotlin。Android の標準の View だけで作る。追加のライブラリなし)。3 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**ビール** (全ビール。並べ方、スタイル、シリーズ、発売年、ABV と IBU の下限、今日のタップのみ、文字の検索。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は、端末の `drinks.json` にだけ保存する (どこにも送らない)。画面の部品は、薄く保つ (ソートと絞り込みは、`core` の `BeerQuery`)。
+- `app`: Android アプリ (Kotlin。Material Components の View。Compose は使わない)。画面の下のナビゲーションで切り替える 3 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**ビール** (全ビール。並べ方、スタイル、シリーズ、発売年、ABV と IBU の下限、今日のタップのみ、文字の検索。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は、端末の `drinks.json` にだけ保存する (どこにも送らない)。一覧の行には、写真 (`ImageLoader`)、スタイル、ABV の印を出す。画面の部品は、薄く保つ (ソートと絞り込みは、`core` の `BeerQuery`)。
 
 **Android Studio は使わない。** ビルド、テスト、整形、静的解析、ドキュメントの生成は、全て、コマンドラインで、Docker の中で実行する。
 
@@ -22,6 +22,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 - `robots.txt` は、`/wp-admin/` だけを禁止している (2026-10-13 に確認)。それ以外のページを、取得してよい。利用規約は、確認していない。**個人で使う範囲にする。**
 - **サイトに負荷をかけない**: 取得の間隔は 2 秒以上 (`JdkHtmlFetcher`)。取得済みのビールは取り直さない (`known`)。名前を名乗る User-Agent (`hop-kotan/0.1 (+https://github.com/sluchin/hop-kotan)`) を付ける。
 - **サイトの画像と文章を、リポジトリに置かない**: 保存するのは、名前、スタイル、ABV、IBU、発売月、価格、元ページの URL、画像の URL だけ。画像は、元の URL を参照する。説明文は、保存しない。
+- **写真は、実行のときに、サイトの URL から取得する** (`ImageLoader`)。リポジトリにも、アプリにも、含めない。一覧には、サイトの小さい画像 (240px) を使う。同時に取得するのは 2 つまで。取得した画像は、端末のキャッシュに残して、2 回目からは、通信しない。**写真つきの APK を、公開しない** (権利は、忽布古丹醸造にある。公開するなら、許可を得る)。
 - サイトの作りが変わって、1 件も読めなくなったら、`ScrapeException` で失敗にする (Actions が失敗して、気づける)。
 
 ## アイコンの素材 (忽布古丹醸造のマーク)
@@ -72,6 +73,7 @@ ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う�
 ## Android アプリの落とし穴
 
 - `minSdk` 33、`compileSdk` と `targetSdk` は 37、`buildToolsVersion` は `37.0.0` (Docker のイメージの SDK は、読み取り専用)。足りない SDK のコンポーネントは、`Dockerfile` に足して、イメージを作り直す。
+- 配色は、`res/values/colors.xml` と `res/values-night/colors.xml` (琥珀色。ライトとダーク)。Material の部品は、`Theme.HopKotan` (`Theme.Material3.DayNight`) で使う。
 - 画面 (`app`) には、システムバーの余白 (edge-to-edge) を入れる (`applyInsets`)。画面は、実機で確認する (エミュレータは、置いていない)。
 - 文字は、全て `res/values/strings.xml` に置く (Lint が、`UnusedResources` と `SetTextI18n` を、エラーにする)。使わない文字列は、残さない。
 - 数の表や、選択肢の表 (`val`) は、detekt の `MagicNumber` から外してある (`config/detekt/detekt.yml`)。
