@@ -47,6 +47,10 @@ docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、
 
 そのほかのコマンドは、[SETUP.md](SETUP.md) と [.claude/CLAUDE.md](.claude/CLAUDE.md) にあります。
 
+## アイコン
+
+オリジナルのアイコン (ビールのグラスとホップ) を使います。作者の端末のビルドだけは、private のサブモジュール `private/` の、忽布古丹醸造のマークを使います (権利は、忽布古丹醸造にあります。このリポジトリには、含みません。配布もしません)。
+
 ## ライセンス
 
 [GPL-3.0-or-later](LICENSE)

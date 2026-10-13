@@ -24,6 +24,15 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 - **サイトの画像と文章を、リポジトリに置かない**: 保存するのは、名前、スタイル、ABV、IBU、発売月、価格、元ページの URL、画像の URL だけ。画像は、元の URL を参照する。説明文は、保存しない。
 - サイトの作りが変わって、1 件も読めなくなったら、`ScrapeException` で失敗にする (Actions が失敗して、気づける)。
 
+## アイコンの素材 (忽布古丹醸造のマーク)
+
+アイコンは、2 つある。`private/` (サブモジュール。private のリポジトリ `hop-kotan-assets`) があれば、公式のマーク (`private/kotan-mark.svg` など) から作る。なければ、このリポジトリのオリジナルのアイコン (ビールのグラスとホップ) を使う (別のプライベートリポジトリを、サブモジュールとして置く方式は、esp32-thermo-system の `app/thermo-node/private` と同じ)。
+
+- **公式のマークを、このリポジトリ (公開) に、コミットしない。** 履歴にも残さない。マークの権利は、忽布古丹醸造にあり、許可は得ていない。`private/` の中身は、`hop-kotan-assets` に置く。
+- **マークを入れてビルドした APK を、公開しない** (CI の成果物、リリース、配布)。CI は、サブモジュールを取り込まない (`actions/checkout` の `submodules` を指定しない)。
+- マークがなくても、ビルドできること。`private/` があるかどうかは、ビルドのときに、`file("private/kotan-mark.svg").exists()` で決める (これから作る `app`)。
+- スクリーンショットや、READMEの画像に、公式のマークを写さない。
+
 ## コマンド
 
 > **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは、thermo-term の `.claude/CLAUDE.md` と同じ。

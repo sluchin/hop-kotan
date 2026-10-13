@@ -23,6 +23,17 @@
    | `docker compose run --rm clean` | 生成物を消す |
    | `docker compose run --rm dev` | 開発シェル |
 
+## アイコンの素材 (private のサブモジュール)
+
+公式のマークから作るアイコンを使うときは、private のリポジトリ `hop-kotan-assets` (自分だけが、読める) を、サブモジュール `private/` として取り込む。取り込まなくても、オリジナルのアイコンで、ビルドできる。
+
+```bash
+git submodule update --init private      # 取り込む (SSH で private のリポジトリを読める鍵が要る)
+git submodule update --remote private    # 最新にする
+```
+
+CI (GitHub Actions) は、サブモジュールを取り込まない。マークを入れたビルドは、手元だけで使い、配布しない。
+
 ## GitHub Actions
 
 | ワークフロー | 内容 |
