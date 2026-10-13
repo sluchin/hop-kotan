@@ -1,0 +1,75 @@
+name: Update the data
+
+# サイトからデータを取得して, data/*.json を更新する.
+#   taplist: 毎日 (タップルームの, 今日のタップリスト)
+#   beers  : 毎週月曜 (ORIGINALS と FREEDOMS. 取得済みのビールは, 取り直さない)
+# 変わったときだけ, GitHub の Contents API でコミットする (scripts/publish-data.sh. Verified になる).
+# サイトの作りが変わって, 1 件も読めなくなったら, 失敗する.
+
+on:
+  schedule:
+    - cron: "30 2 * * *"   # 毎日 11:30 (JST). 開店のあとに取る
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "更新するデータ"
+        type: choice
+        options: [ taplist, beers, both ]
+        default: both
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Decide what to update
+        id: plan
+        run: |
+          target="${{ github.event.inputs.target }}"
+          day="$(date -u +%u)"
+          if [ -z "$target" ] || [ "$target" = "both" ]; then
+            echo "taplist=true" >> "$GITHUB_OUTPUT"
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$day" = "1" ]; then
+              echo "beers=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "beers=false" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            echo "taplist=$([ "$target" = taplist ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+            echo "beers=$([ "$target" = beers ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build the development image
+        uses: ./.github/actions/docker-image
+
+      - name: Cache the Gradle home
+        uses: ./.github/actions/gradle-cache
+
+      - name: Get the tap list
+        if: steps.plan.outputs.taplist == 'true'
+        run: env UID="$(id -u)" GID="$(id -g)" docker compose run --rm scrape-taplist
+
+      - name: Get the beers
+        if: steps.plan.outputs.beers == 'true'
+        run: env UID="$(id -u)" GID="$(id -g)" docker compose run --rm scrape-beers
+
+      - name: Commit the changed files
+        run: |
+          day="$(date -u +%Y-%m-%d)"
+          if [ "${{ steps.plan.outputs.taplist }}" = "true" ]; then
+            MESSAGE="chore(data): Update the tap list of ${day}" scripts/publish-data.sh data/taplist.json
+          fi
+          if [ "${{ steps.plan.outputs.beers }}" = "true" ]; then
+            MESSAGE="chore(data): Update the beers" scripts/publish-data.sh data/beers.json
+          fi

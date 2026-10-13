@@ -1,0 +1,78 @@
+# 共通の設定. コンテナは, ホストのユーザーで実行する (生成物が, root 所有にならないように).
+# UID と GID は, シェルでエクスポートしておく (SETUP.md)
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+    target: dev
+  image: hop-kotan-dev:latest
+  volumes:
+    - .:/workspace
+    # Gradle のキャッシュ. 既定は, ボリューム gradle-cache. CI は, GRADLE_HOME_DIR に, キャッシュするディレクトリ
+    # (絶対パス) を指定して, ボリュームの代わりに, そのディレクトリを使う (.github/actions/gradle-cache)
+    - ${GRADLE_HOME_DIR:-gradle-cache}:/gradle-home
+  working_dir: /workspace
+  user: "${UID:-0}:${GID:-0}"
+  environment:
+    - HOME=/tmp
+
+services:
+  # 開発シェル
+  dev:
+    <<: *common
+    stdin_open: true
+    tty: true
+    command: /bin/bash
+
+  # 全てのモジュールをビルドする. Kotlin の警告が出たら失敗する
+  build:
+    <<: *common
+    command: ./gradlew --no-daemon :core:assemble :scraper:assemble
+
+  # 単体テストを実行する
+  test:
+    <<: *common
+    command: ./gradlew --no-daemon :core:test
+
+  # core の行と分岐のカバレッジが 100% でなければ失敗する
+  coverage:
+    <<: *common
+    command: ./gradlew --no-daemon :core:test :core:jacocoTestCoverageVerification
+
+  # 整形の確認 (整形が必要なら失敗する)
+  format:
+    <<: *common
+    command: ./gradlew --no-daemon --continue :core:ktlintCheck :scraper:ktlintCheck
+
+  # 整形して, ファイルを書き換える (format が失敗したときに実行する)
+  format-fix:
+    <<: *common
+    command: ./gradlew --no-daemon --continue :core:ktlintFormat :scraper:ktlintFormat
+
+  # 静的解析 (detekt). 指摘があれば失敗する
+  analyze:
+    <<: *common
+    command: ./gradlew --no-daemon --continue :core:detekt :scraper:detekt
+
+  # ドキュメント (HTML) を生成する (core/build/dokka/html/index.html). 警告があれば失敗する
+  docs:
+    <<: *common
+    command: ./gradlew --no-daemon :core:dokkaGenerate
+
+  # タップルームのタップリストを取得して, data/taplist.json に書く (毎日)
+  scrape-taplist:
+    <<: *common
+    command: ./gradlew --no-daemon -q :scraper:run --args="taplist data"
+
+  # ORIGINALS と FREEDOMS のビールを取得して, data/beers.json に書く. 書いてあるものは, 取り直さない
+  scrape-beers:
+    <<: *common
+    command: ./gradlew --no-daemon -q :scraper:run --args="beers data"
+
+  # 生成物 (build/ と .gradle/ と .kotlin/) を消す. Gradle のキャッシュ (ボリューム) は, 消さない
+  clean:
+    <<: *common
+    command: sh -c "rm -rf build core/build scraper/build .gradle .kotlin && echo 'Removed the build outputs'"
+
+volumes:
+  gradle-cache:

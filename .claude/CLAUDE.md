@@ -1,0 +1,92 @@
+# プロジェクト設定
+
+忽布古丹醸造 (HOP KOTAN BREWING) のサイトから、ビールのデータを取得して、ソートやフィルタをして見る Android アプリ。毎日の「今日のタップリスト」から、その日に飲んだビールを記録できる。
+
+```
+GitHub Actions (毎日) ──取得──> hopkotan.com   (/taproom/ 毎日, /originals/ と /freedoms/ は新しい分だけ)
+       │
+       └─ 解析して data/taplist.json と data/beers.json を更新 (GitHub の Contents API でコミット)
+                     │
+Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubusercontent.com)。端末で、ソートとフィルタ
+       └─ 飲んだビールの記録は、端末に保存 (DrinkLog)
+```
+
+- `core`: データの型 (`Beer` `TapList` `DrinkRecord`)、HTML の解析 (jsoup)、取得 (`Scraper` `JdkHtmlFetcher`)、JSON (`CatalogJson`)、飲んだ記録の集計 (`DrinkLog`)。Kotlin の JVM。カバレッジ 100%。
+- `scraper`: コマンドの入口 (`taplist <dir>` と `beers <dir>`)。薄く保つ。
+- `app`: Android アプリ (これから作る)。
+
+**Android Studio は使わない。** ビルド、テスト、整形、静的解析、ドキュメントの生成は、全て、コマンドラインで、Docker の中で実行する。
+
+## サイトの扱い (守ること)
+
+- `robots.txt` は、`/wp-admin/` だけを禁止している (2026-10-13 に確認)。それ以外のページを、取得してよい。利用規約は、確認していない。**個人で使う範囲にする。**
+- **サイトに負荷をかけない**: 取得の間隔は 2 秒以上 (`JdkHtmlFetcher`)。取得済みのビールは取り直さない (`known`)。名前を名乗る User-Agent (`hop-kotan/0.1 (+https://github.com/sluchin/hop-kotan)`) を付ける。
+- **サイトの画像と文章を、リポジトリに置かない**: 保存するのは、名前、スタイル、ABV、IBU、発売月、価格、元ページの URL、画像の URL だけ。画像は、元の URL を参照する。説明文は、保存しない。
+- サイトの作りが変わって、1 件も読めなくなったら、`ScrapeException` で失敗にする (Actions が失敗して、気づける)。
+
+## コマンド
+
+> **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは、thermo-term の `.claude/CLAUDE.md` と同じ。
+
+- `docker compose run` には、必ず `--rm` を付ける (終わったコンテナを、残さないため)。`UID` と `GID` を、シェルでエクスポートしておく。
+- ビルド: `docker compose run --rm build`
+- 単体テスト: `docker compose run --rm test`
+- カバレッジ (`core` の行と分岐が 100%): `docker compose run --rm coverage`
+- 整形の確認: `docker compose run --rm format` / 整形して書き換える: `docker compose run --rm format-fix`
+- 静的解析 (detekt): `docker compose run --rm analyze`
+- ドキュメント (Dokka): `docker compose run --rm docs` (`core/build/dokka/html/index.html`)
+- データの取得: `docker compose run --rm scrape-taplist` (`data/taplist.json`) / `docker compose run --rm scrape-beers` (`data/beers.json`。初回は、詳細のページを 1 件ずつ取るので、時間がかかる)
+- クリーン: `docker compose run --rm clean` / 開発シェル: `docker compose run --rm dev`
+
+## コーディング規約
+
+ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う。迷ったら、ツールが正しい。
+
+- **インデントは、空白 4 つ。1 行は、100 桁まで** (`.editorconfig`)。整形は、`format-fix` が行う (手で、整形しない)。
+- **ファイルの先頭に、著作権とライセンスを書く**:
+
+  ```kotlin
+  /*
+   * Copyright (c) 2026 Tetsuya Higashi
+   *
+   * SPDX-License-Identifier: GPL-3.0-or-later
+   */
+  ```
+- **コメントと KDoc は、日本語。** 句読点は、「, 」(カンマと空白) と「.」(ピリオド) にする (「、」と「。」は使わない)。読点は、読みやすさのために、必要なところだけに打つ (「は」「が」「を」「も」の直後には、基本的に打たない)。ログのメッセージ、例外のメッセージ、識別子は、英語。
+- **公開 (public) の宣言には、KDoc を付ける** (`docs` が、`Undocumented` の警告で失敗する)。`@param`、`@return`、`@throws` を、書く。`private` にも、意味と単位が、分かる説明を付ける。
+- **KDoc の中で、`[s]` や `[%]` のように、角括弧で単位を書かない** (リンクとして解釈される)。`(s)` や `(%)` と書く。
+- **マジックナンバーを使わない** (detekt の `MagicNumber`)。`private const val` で、名前を付ける。
+- **警告をゼロにする。** Kotlin の警告は、エラーになる (`allWarningsAsErrors`)。警告を抑える (`@Suppress`) ときは、理由を、コメントに書く。
+- 変更しない値は、`val` にする。`!!` は、テスト以外で、使わない。汎用の例外を、握りつぶさない。
+
+## 開発フロー
+
+1. 機能開発は、`ccr-*` ブランチで行う。
+2. Push 時に GitHub Actions (`.github/workflows/build.yml`) が、開発用の Docker イメージで、`build` / `test` / `coverage` / `format` / `analyze` / `docs` を実行する。ログは、アーティファクト (`<サービス名>_log`) に保存する。3 日より前の実行は、削除する (`cleanup`)。
+3. データの更新 (`.github/workflows/update-data.yml`): 毎日、タップリストを取得する。毎週、ビール (ORIGINALS と FREEDOMS) を取得する。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名するので、Verified になる)。
+
+### コード修正時のルール
+
+コードを修正したら、次の順に、全て成功することを確認する。**どれも、警告を出さない。**
+
+1. `format-fix` (整形) → 2. `format` (確認) → 3. `analyze` → 4. `test` → 5. `coverage` (100%) → 6. `build` → 7. `docs` (KDoc を変えたときは、必ず)
+
+- ビルドやテストを実行できなかったときは、そのことを報告する (成功したとは書かない)。
+- **例外**: 変更が、文書だけの場合は、ビルドしない。
+- ユーザーに依頼されない限り、`git commit` / `git push` は行わない。
+
+## テスト
+
+JVM 上で実行する (JUnit 5 と `kotlin-test`)。サイトには、アクセスしない。ページは、作り物の HTML (`Fixtures`) と、偽の取得 (`HtmlFetcher`) で返す。サイトの文章は、テストにも置かない。`JdkHtmlFetcher` は、手元の HTTP サーバ (`com.sun.net.httpserver`) で確認する。
+
+- 配置: `core/src/test/kotlin/` (同じパッケージ)。クラス名は `<対象>Test`。
+- カバレッジ: `core` の行と分岐は、100%。ソースを足したら、テストを足す (正常系と、失敗)。
+- **実サイトでの確認は、別に必要**: サイトの HTML が変わると、解析が合わなくなる。`scrape-taplist` と `scrape-beers` を実行して、件数を確認する。
+
+## コミットガイドライン
+
+- コミットメッセージは英語で記述
+- **件名は、Conventional Commits の形式で書く**: `type(scope): description` (type: `feat` `fix` `docs` `style` `refactor` `test` `build` `ci` `chore`。scope は、`core` / `scraper` / `app` / `docker` / `gradle` / `data`)。description は、英語で、命令形。
+- 件名のあとに空行を 1 行入れて、本文を書く。本文はダッシュ/ハイフンで始まる箇条書き
+- コミットメッセージに `Co-Authored-By` または Claude 帰属行を含めない
+- **rebase したあとの push は、`git push --force-with-lease --force-if-includes origin <ブランチ名>` で行う** (`--force` は使わない)。ユーザーに依頼されたときだけ、push する。
