@@ -13,7 +13,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - `core`: データの型 (`Beer` `TapList` `DrinkRecord`)、HTML の解析 (jsoup)、取得 (`Scraper` `JdkHtmlFetcher`)、JSON (`CatalogJson`)、飲んだ記録の集計 (`DrinkLog`)。Kotlin の JVM。カバレッジ 100%。
 - `scraper`: コマンドの入口 (`taplist <dir>` と `beers <dir>`)。薄く保つ。
-- `app`: Android アプリ (これから作る)。
+- `app`: Android アプリ (Kotlin。Android の標準の View だけで作る。追加のライブラリなし)。3 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**ビール** (全ビール。並べ方、スタイル、シリーズ、発売年、ABV と IBU の下限、今日のタップのみ、文字の検索。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は、端末の `drinks.json` にだけ保存する (どこにも送らない)。画面の部品は、薄く保つ (ソートと絞り込みは、`core` の `BeerQuery`)。
 
 **Android Studio は使わない。** ビルド、テスト、整形、静的解析、ドキュメントの生成は、全て、コマンドラインで、Docker の中で実行する。
 
@@ -30,7 +30,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - **公式のマークを、このリポジトリ (公開) に、コミットしない。** 履歴にも残さない。マークの権利は、忽布古丹醸造にあり、許可は得ていない。`private/` の中身は、`hop-kotan-assets` に置く。
 - **マークを入れてビルドした APK を、公開しない** (CI の成果物、リリース、配布)。CI は、サブモジュールを取り込まない (`actions/checkout` の `submodules` を指定しない)。
-- マークがなくても、ビルドできること。`private/` があるかどうかは、ビルドのときに、`file("private/kotan-mark.svg").exists()` で決める (これから作る `app`)。
+- マークがなくても、ビルドできること。`private/kotan-mark.svg` があれば、`app/build.gradle.kts` が、プロダクトフレーバー `marked` を足す (マークの SVG から、アイコンの絵を作る `GenerateMarkIcon`)。なければ、`plain` (オリジナルのアイコン。`app/src/plain/res/`) だけ。
 - スクリーンショットや、READMEの画像に、公式のマークを写さない。
 
 ## コマンド
@@ -38,11 +38,12 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 > **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは、thermo-term の `.claude/CLAUDE.md` と同じ。
 
 - `docker compose run` には、必ず `--rm` を付ける (終わったコンテナを、残さないため)。`UID` と `GID` を、シェルでエクスポートしておく。
-- ビルド: `docker compose run --rm build`
+- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`)
+- マークのアイコンの APK (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`)
 - 単体テスト: `docker compose run --rm test`
 - カバレッジ (`core` の行と分岐が 100%): `docker compose run --rm coverage`
 - 整形の確認: `docker compose run --rm format` / 整形して書き換える: `docker compose run --rm format-fix`
-- 静的解析 (detekt): `docker compose run --rm analyze`
+- 静的解析 (detekt と Android Lint): `docker compose run --rm analyze`
 - ドキュメント (Dokka): `docker compose run --rm docs` (`core/build/dokka/html/index.html`)
 - データの取得: `docker compose run --rm scrape-taplist` (`data/taplist.json`) / `docker compose run --rm scrape-beers` (`data/beers.json`。初回は、詳細のページを 1 件ずつ取るので、時間がかかる)
 - クリーン: `docker compose run --rm clean` / 開発シェル: `docker compose run --rm dev`
@@ -67,6 +68,15 @@ ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う�
 - **マジックナンバーを使わない** (detekt の `MagicNumber`)。`private const val` で、名前を付ける。
 - **警告をゼロにする。** Kotlin の警告は、エラーになる (`allWarningsAsErrors`)。警告を抑える (`@Suppress`) ときは、理由を、コメントに書く。
 - 変更しない値は、`val` にする。`!!` は、テスト以外で、使わない。汎用の例外を、握りつぶさない。
+
+## Android アプリの落とし穴
+
+- `minSdk` 33、`compileSdk` と `targetSdk` は 37、`buildToolsVersion` は `37.0.0` (Docker のイメージの SDK は、読み取り専用)。足りない SDK のコンポーネントは、`Dockerfile` に足して、イメージを作り直す。
+- 画面 (`app`) には、システムバーの余白 (edge-to-edge) を入れる (`applyInsets`)。画面は、実機で確認する (エミュレータは、置いていない)。
+- 文字は、全て `res/values/strings.xml` に置く (Lint が、`UnusedResources` と `SetTextI18n` を、エラーにする)。使わない文字列は、残さない。
+- 数の表や、選択肢の表 (`val`) は、detekt の `MagicNumber` から外してある (`config/detekt/detekt.yml`)。
+- `app` には、テストを置かない (薄い層)。`core` の行と分岐は、100%。
+- 実機で未確認: 画面の見た目、GitHub からのダウンロード、記録の保存。
 
 ## 開発フロー
 

@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-# JDK 17 (ホストの JDK は使わない)
+# JDK 17 (Android Gradle Plugin は 17 以上が必要. ホストの JDK は使わない)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     openjdk-17-jdk-headless \
     unzip \
@@ -15,6 +15,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     && rm -rf /var/lib/apt/lists/*
+
+# Android SDK (コマンドラインツール)
+ENV ANDROID_HOME=/opt/android-sdk
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ARG CMDLINE_TOOLS=16111833
+RUN mkdir -p ${ANDROID_HOME}/cmdline-tools && \
+    curl -fL -o /tmp/cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS}_latest.zip && \
+    unzip -q /tmp/cmdtools.zip -d ${ANDROID_HOME}/cmdline-tools && \
+    mv ${ANDROID_HOME}/cmdline-tools/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest && \
+    rm /tmp/cmdtools.zip
+ENV PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}
+
+# SDK のコンポーネント. コンテナは一般ユーザーで動き, SDK は読み取り専用になる.
+# 足りないコンポーネントは, Gradle が, 実行時に, インストールできない. 必要になったら, ここに足す.
+# build-tools は, app/build.gradle.kts で固定する.
+RUN yes | sdkmanager --licenses > /dev/null && \
+    sdkmanager "platform-tools" "platforms;android-37.0" "build-tools;37.0.0" && \
+    chmod -R a+rX ${ANDROID_HOME}
 
 # Gradle のキャッシュ. 名前付きボリュームを mount する (空のボリュームは, この権限を引き継ぐ)
 ENV GRADLE_USER_HOME=/gradle-home

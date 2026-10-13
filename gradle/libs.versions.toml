@@ -1,4 +1,5 @@
 [versions]
+agp = "9.4.1"
 kotlin = "2.4.21"
 ktlintPlugin = "14.2.0"
 detekt = "1.23.8"
@@ -16,6 +17,7 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher", versio
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintPlugin" }

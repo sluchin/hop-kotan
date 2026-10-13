@@ -12,16 +12,25 @@
 
    | コマンド | 内容 |
    |:---|:---|
-   | `docker compose run --rm build` | 全てのモジュールのビルド |
+   | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`) |
+   | `docker compose run --rm build-marked` | 忽布古丹醸造のマークのアイコンの APK (`private/` が要る。配布しない) |
    | `docker compose run --rm test` | 単体テスト |
    | `docker compose run --rm coverage` | `core` の行と分岐が 100% か |
    | `docker compose run --rm format` / `format-fix` | 整形の確認 / 整形して書き換える |
-   | `docker compose run --rm analyze` | 静的解析 (detekt) |
+   | `docker compose run --rm analyze` | 静的解析 (detekt と Android Lint) |
    | `docker compose run --rm docs` | ドキュメント (`core/build/dokka/html/index.html`) |
    | `docker compose run --rm scrape-taplist` | `data/taplist.json` を更新 |
    | `docker compose run --rm scrape-beers` | `data/beers.json` を更新 |
    | `docker compose run --rm clean` | 生成物を消す |
    | `docker compose run --rm dev` | 開発シェル |
+
+## 実機へのインストール (ホストの adb)
+
+```bash
+adb install -r app/build/outputs/apk/plain/debug/app-plain-debug.apk
+```
+
+ホストに `adb` を入れて、スマートフォンの「USB デバッグ」を有効にして、USB でつなぐ。
 
 ## アイコンの素材 (private のサブモジュール)
 
@@ -48,6 +57,7 @@ CI (GitHub Actions) は、サブモジュールを取り込まない。マーク
 | 項目 | 版 |
 |:---|:---|
 | JDK | 17 (Docker のイメージ) |
+| Android Gradle Plugin / compileSdk / minSdk | 9.4.1 / 37 / 33 |
 | Gradle | 9.8.1 (ラッパー) |
 | Kotlin | 2.4.21 |
 | jsoup | 1.23.2 |

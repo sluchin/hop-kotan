@@ -32,7 +32,17 @@ Android アプリ ◀── JSON をダウンロード (raw.githubusercontent.co
 |:---|:---|
 | `core` | データの型、HTML の解析 (jsoup)、取得、JSON、飲んだ記録の集計 (Kotlin の JVM。カバレッジ 100%) |
 | `scraper` | データを取得する、コマンドの入口 |
-| `app` | Android アプリ (これから作る) |
+| `app` | Android アプリ (3 つのタブ: 今日、ビール、記録) |
+
+## アプリ
+
+| タブ | 内容 |
+|:---|:---|
+| 今日 | 今日のタップリスト (ABV と IBU つき)。ビールをタップして、量 (M か L) を選ぶと、飲んだビールを記録します。今日の杯数、量、金額、純アルコール量も出ます |
+| ビール | 全てのビール。並べ方 (発売月、名前、ABV、IBU、スタイル。昇順と降順)、絞り込み (スタイル、シリーズ、発売年、ABV と IBU の下限、今日のタップのみ、名前とスタイルの検索)。タップすると、詳細と「飲んだ」「サイトを開く」 |
+| 記録 | 飲んだ記録を、日ごとに表示します (杯数、量、金額、純アルコール量)。長く押すと、消せます |
+
+起動のときに、データ (JSON) を GitHub から取得して、端末に保存します。飲んだ記録は、端末の中だけに保存します (どこにも送りません)。Android 13 以上が要ります。
 
 ## 使い方 (開発)
 
@@ -40,6 +50,7 @@ Docker があれば、動きます (Android Studio も、JDK も、要りませ�
 
 ```bash
 export UID GID=$(id -g)
+docker compose run --rm build          # APK (app/build/outputs/apk/plain/debug/app-plain-debug.apk)
 docker compose run --rm test           # 単体テスト
 docker compose run --rm scrape-taplist # data/taplist.json を更新
 docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、時間がかかる)

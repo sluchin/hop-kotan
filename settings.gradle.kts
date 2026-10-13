@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "hop-kotan"
-include(":core", ":scraper")
+include(":core", ":scraper", ":app")

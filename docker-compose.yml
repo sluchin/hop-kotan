@@ -15,6 +15,8 @@ x-common: &common
   user: "${UID:-0}:${GID:-0}"
   environment:
     - HOME=/tmp
+    # デバッグ用の署名の鍵 (debug.keystore) を, ボリュームに残す (残さないと, 署名が変わり, 上書きでインストールできない)
+    - ANDROID_USER_HOME=/gradle-home/android
 
 services:
   # 開発シェル
@@ -24,10 +26,15 @@ services:
     tty: true
     command: /bin/bash
 
-  # 全てのモジュールをビルドする. Kotlin の警告が出たら失敗する
+  # 全てのモジュールをビルドする (APK は app/build/outputs/apk/plain/debug/app-plain-debug.apk). Kotlin の警告が出たら失敗する
   build:
     <<: *common
-    command: ./gradlew --no-daemon :core:assemble :scraper:assemble
+    command: ./gradlew --no-daemon :core:assemble :scraper:assemble :app:assemblePlainDebug
+
+  # 忽布古丹醸造のマーク (private/ のサブモジュール) を使う APK をビルドする (配布しない. SETUP.md)
+  build-marked:
+    <<: *common
+    command: ./gradlew --no-daemon :app:assembleMarkedDebug
 
   # 単体テストを実行する
   test:
@@ -42,17 +49,17 @@ services:
   # 整形の確認 (整形が必要なら失敗する)
   format:
     <<: *common
-    command: ./gradlew --no-daemon --continue :core:ktlintCheck :scraper:ktlintCheck
+    command: ./gradlew --no-daemon --continue :core:ktlintCheck :scraper:ktlintCheck :app:ktlintCheck
 
   # 整形して, ファイルを書き換える (format が失敗したときに実行する)
   format-fix:
     <<: *common
-    command: ./gradlew --no-daemon --continue :core:ktlintFormat :scraper:ktlintFormat
+    command: ./gradlew --no-daemon --continue :core:ktlintFormat :scraper:ktlintFormat :app:ktlintFormat
 
-  # 静的解析 (detekt). 指摘があれば失敗する
+  # 静的解析 (detekt と Android Lint). 指摘があれば失敗する
   analyze:
     <<: *common
-    command: ./gradlew --no-daemon --continue :core:detekt :scraper:detekt
+    command: ./gradlew --no-daemon --continue :core:detekt :scraper:detekt :app:detekt :app:lintPlainDebug
 
   # ドキュメント (HTML) を生成する (core/build/dokka/html/index.html). 警告があれば失敗する
   docs:
@@ -72,7 +79,7 @@ services:
   # 生成物 (build/ と .gradle/ と .kotlin/) を消す. Gradle のキャッシュ (ボリューム) は, 消さない
   clean:
     <<: *common
-    command: sh -c "rm -rf build core/build scraper/build .gradle .kotlin && echo 'Removed the build outputs'"
+    command: sh -c "rm -rf build core/build scraper/build app/build .gradle .kotlin && echo 'Removed the build outputs'"
 
 volumes:
   gradle-cache:

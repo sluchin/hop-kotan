@@ -1,4 +1,9 @@
 # detekt の設定. 既定の規則 (buildUponDefaultConfig = true) に, 上書きするものだけを書く.
+style:
+  MagicNumber:
+    # 選択肢の表 (val の定義) の数は, 名前を付けない
+    ignorePropertyDeclaration: true
+
 build:
   # 指摘が 1 つでもあれば, 失敗する
   maxIssues: 0
