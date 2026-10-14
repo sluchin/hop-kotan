@@ -22,11 +22,17 @@ class CatalogJob(
     /**
      * タップリストを取得して, `taplist.json` に書く.
      *
+     * 履歴として, 同じ内容を `taplist/<日付>.json` にも書き, 目次 `taplist/index.json` (新しい日が先)
+     * に日付を足す. 同じ日に何度も取得したら, その日のファイルを書き直す (最後の内容が残る).
+     *
      * @return タップの数
      */
     fun updateTaplist(): Int {
         val list = scraper.scrapeTaplist()
-        write(TAPLIST_FILE, CatalogJson.encodeTaplist(list))
+        val text = CatalogJson.encodeTaplist(list)
+        write(TAPLIST_FILE, text)
+        write("$HISTORY_DIR/${list.date}.json", text)
+        write("$HISTORY_DIR/$INDEX_FILE", CatalogJson.encodeDates(addDate(list.date)))
 
         return list.taps.size
     }
@@ -52,18 +58,34 @@ class CatalogJob(
         return beers.size
     }
 
+    /** 目次に日付を足して, 新しい日が先の並びにする. */
+    private fun addDate(date: String): List<String> {
+        val file = dir.resolve("$HISTORY_DIR/$INDEX_FILE")
+        val known =
+            if (Files.exists(file)) CatalogJson.decodeDates(Files.readString(file)) else emptyList()
+
+        return (known + date).distinct().sortedDescending()
+    }
+
     private fun write(
         name: String,
         text: String,
     ) {
-        Files.createDirectories(dir)
-        Files.writeString(dir.resolve(name), text)
+        val file = dir.resolve(name)
+        Files.createDirectories(file.parent)
+        Files.writeString(file, text)
     }
 
     /** 書き出すファイルの名前. */
     companion object {
         /** タップリストのファイル. */
         const val TAPLIST_FILE = "taplist.json"
+
+        /** 日ごとのタップリスト (履歴) のディレクトリ. */
+        const val HISTORY_DIR = "taplist"
+
+        /** 履歴の目次のファイル (日付の一覧. HISTORY_DIR の中). */
+        const val INDEX_FILE = "index.json"
 
         /** ビールのファイル. */
         const val BEERS_FILE = "beers.json"

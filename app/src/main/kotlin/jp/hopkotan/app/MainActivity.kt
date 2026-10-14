@@ -19,6 +19,7 @@ import com.google.android.material.button.MaterialButton
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.PriceSize
+import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Tap
 import jp.hopkotan.core.TapEntries
 import jp.hopkotan.core.TapList
@@ -30,7 +31,7 @@ import java.util.concurrent.Executors
 private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420, 900))
 
 /**
- * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (3 つのタブ: 今日, ビール, 記録).
+ * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (4 つのタブ: 今日, 最近, ビール, 記録).
  *
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
@@ -39,13 +40,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var store: DataStore
     private lateinit var status: TextView
     private lateinit var today: TodayPanel
+    private lateinit var historyPanel: HistoryPanel
     private lateinit var beersPanel: BeersPanel
     private lateinit var drinksPanel: DrinksPanel
     private lateinit var panels: List<View>
 
     private var beers = emptyList<Beer>()
     private var taplist: TapList? = null
+    private var history = emptyList<TapList>()
     private var drinks = DrinkLog()
+    private var ratings = Ratings()
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var images: ImageLoader
 
@@ -55,7 +59,9 @@ class MainActivity : AppCompatActivity() {
         images = ImageLoader(this)
         beers = store.loadBeers()
         taplist = store.loadTaplist()
+        history = store.loadHistory()
         drinks = store.loadDrinks()
+        ratings = store.loadRatings()
         setContentView(buildScreen())
         render(null)
         refresh()
@@ -75,11 +81,13 @@ class MainActivity : AppCompatActivity() {
                 { taplist?.sizes?.ifEmpty { null } ?: DEFAULT_SIZES },
                 images,
                 { id -> beers.firstOrNull { it.id == id }?.imageUrl },
+                RatingActions({ ratings.of(it) }, { ratings }, ::rate),
             )
         today = TodayPanel(this, actions)
+        historyPanel = HistoryPanel(this, actions)
         beersPanel = BeersPanel(this, actions)
         drinksPanel = DrinksPanel(this, actions)
-        panels = listOf(today.view, beersPanel.view, drinksPanel.view)
+        panels = listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view)
         status =
             TextView(this).apply {
                 setTextAppearance(
@@ -107,7 +115,7 @@ class MainActivity : AppCompatActivity() {
             BottomNavigationView(this).apply {
                 inflateMenu(R.menu.bottom_nav)
                 setOnItemSelectedListener {
-                    show(listOf(R.id.nav_today, R.id.nav_beers, R.id.nav_drinks).indexOf(it.itemId))
+                    show(NAV_IDS.indexOf(it.itemId))
                     true
                 }
             }
@@ -133,11 +141,17 @@ class MainActivity : AppCompatActivity() {
         status.setText(R.string.status_loading)
         executor.execute {
             val result = runCatching { store.download() }
+            // 履歴は, 取得できなくても, 端末にあるものを表示する
+            val newHistory =
+                runCatching {
+                    store.downloadHistory()
+                }.getOrElse { store.loadHistory() }
             runOnUiThread {
                 result
                     .onSuccess { (newBeers, newTaplist) ->
                         beers = newBeers
                         taplist = newTaplist
+                        history = newHistory
                         render(null)
                     }.onFailure { render(it.message ?: it.javaClass.simpleName) }
             }
@@ -149,6 +163,7 @@ class MainActivity : AppCompatActivity() {
         val list = taplist
         val entries = list?.let { TapEntries.of(it, beers) }.orEmpty()
         today.update(entries, list?.date, drinks.summary(LocalDate.now().toString()))
+        historyPanel.update(history, beers)
         beersPanel.update(beers, entries.mapNotNull { it.beer?.id }.toSet())
         drinksPanel.update(drinks)
         status.text =
@@ -178,6 +193,17 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, getString(R.string.recorded, tap.name), Toast.LENGTH_SHORT).show()
     }
 
+    /** 星の評価を変えて, 保存する (書き込みは, 別のスレッドで行う). */
+    private fun rate(
+        key: String,
+        value: Int,
+    ) {
+        ratings = ratings.set(key, value)
+        val snapshot = ratings
+        executor.execute { store.saveRatings(snapshot) }
+        render(null)
+    }
+
     private fun delete(id: String) {
         drinks = drinks.remove(id)
         save()
@@ -191,6 +217,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
+        val NAV_IDS = listOf(R.id.nav_today, R.id.nav_recent, R.id.nav_beers, R.id.nav_drinks)
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
     }

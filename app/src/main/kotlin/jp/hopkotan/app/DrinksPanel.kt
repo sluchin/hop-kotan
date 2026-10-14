@@ -14,6 +14,7 @@ import android.widget.TextView
 import jp.hopkotan.core.DaySummary
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.DrinkRecord
+import jp.hopkotan.core.Ratings
 
 /** 記録の一覧の 1 行 (日の見出しか, 1 件の記録). */
 private sealed interface DrinkRow {
@@ -84,8 +85,17 @@ class DrinksPanel(
                     formatYen(log.records.sumOf { it.yen }),
                 )
             }
-        list.adapter =
-            rowAdapter(activity, rows, actions.images, { describe(it) }, { it is DrinkRow.Item })
+        list.replaceAdapter(
+            rowAdapter(activity, rows, actions.images, { describe(it) }, { it is DrinkRow.Item }),
+        )
+        list.setOnItemClickListener { _, _, position, _ ->
+            (rows[position] as? DrinkRow.Item)?.let { item ->
+                val key = Ratings.key(item.record.beerId, item.record.beerName)
+                activity.showRatingDialog(item.record.beerName, actions.ratings.of(key)) {
+                    actions.ratings.set(key, it)
+                }
+            }
+        }
         list.setOnItemLongClickListener { _, _, position, _ ->
             (rows[position] as? DrinkRow.Item)?.let { confirmDelete(it.record) } != null
         }
@@ -115,6 +125,14 @@ class DrinksPanel(
                             row.record.style,
                             row.record.sizeLabel,
                             row.record.ml,
+                        ),
+                    extra =
+                        joinExtra(
+                            Ratings.text(
+                                actions.ratings.of(
+                                    Ratings.key(row.record.beerId, row.record.beerName),
+                                ),
+                            ),
                         ),
                     badge = activity.getString(R.string.yen_badge, formatYen(row.record.yen)),
                     imageUrl = actions.imageOf(row.record.beerId),

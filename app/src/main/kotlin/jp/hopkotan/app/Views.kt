@@ -34,6 +34,7 @@ const val CONTENT_PADDING_DP = 12
  * @property sizes 選べる量と価格
  * @property images 写真の読み込み
  * @property imageOf ビールの ID から, 写真の URL を探す (なければ null)
+ * @property ratings 星の評価
  */
 class PanelActions(
     val onRecord: (jp.hopkotan.core.Tap, PriceSize, Double?) -> Unit,
@@ -41,6 +42,7 @@ class PanelActions(
     val sizes: () -> List<PriceSize>,
     val images: ImageLoader,
     val imageOf: (String?) -> String?,
+    val ratings: RatingActions,
 )
 
 /**
@@ -66,6 +68,7 @@ fun formatDecimal(value: Double): String = String.format(Locale.JAPAN, "%.1f", v
  * @property subtitle 2 行目 (スタイルなど)
  * @property extra 3 行目 (小さな字. なければ null)
  * @property badge 右端の印 (ABV や価格. なければ null)
+ * @property badgeLead 右端の印の左の印 (IBU. 同じ形. なければ null)
  * @property imageUrl 写真の URL (なければ, 代わりの絵)
  * @property showImage 写真の場所を出すか (日の見出しは, 出さない)
  */
@@ -74,6 +77,7 @@ data class RowModel(
     val subtitle: String,
     val extra: String? = null,
     val badge: String? = null,
+    val badgeLead: String? = null,
     val imageUrl: String? = null,
     val showImage: Boolean = true,
 )
@@ -108,6 +112,7 @@ fun <T> rowAdapter(
             row.findViewById<TextView>(R.id.title).text = content.title
             row.findViewById<TextView>(R.id.subtitle).text = content.subtitle
             row.findViewById<TextView>(R.id.extra).bind(content.extra)
+            row.findViewById<TextView>(R.id.badge_lead).bind(content.badgeLead)
             row.findViewById<TextView>(R.id.badge).bind(content.badge)
             val thumb = row.findViewById<ImageView>(R.id.thumb)
             thumb.visibility = if (content.showImage) View.VISIBLE else View.GONE

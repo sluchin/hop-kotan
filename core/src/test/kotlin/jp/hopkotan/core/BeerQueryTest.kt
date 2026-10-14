@@ -105,6 +105,38 @@ class BeerQueryTest {
         )
     }
 
+    /** 星: 評価の高い順 (評価していないものは最後. 昇順でも最後). 下限に満たないものと, 評価していないものは除く. */
+    @Test
+    fun sortAndFilterByRating() {
+        val ratings =
+            Ratings()
+                .set(Ratings.key(a.id, a.name), 3)
+                .set(Ratings.key(b.id, b.name), 5)
+                .set(Ratings.key(c.id, c.name), 4)
+
+        assertEquals(
+            listOf("beta", "Gamma", "Alpha", "delta"),
+            names(BeerQuery.apply(all, sort = SortKey.RATING, ratings = ratings)),
+        )
+        assertEquals(
+            listOf("Alpha", "Gamma", "beta", "delta"),
+            names(
+                BeerQuery.apply(all, sort = SortKey.RATING, descending = false, ratings = ratings),
+            ),
+        )
+        assertEquals(
+            listOf("beta", "Gamma"),
+            names(
+                BeerQuery.apply(
+                    all,
+                    BeerFilter(minStars = 4),
+                    SortKey.RATING,
+                    ratings = ratings,
+                ),
+            ),
+        )
+    }
+
     /** 条件は, 全て満たすものだけ残す. 何もなければ, 空. */
     @Test
     fun filterCombined() {

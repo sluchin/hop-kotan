@@ -11,6 +11,7 @@ import jp.hopkotan.core.Beer
 import jp.hopkotan.core.CatalogJob
 import jp.hopkotan.core.CatalogJson
 import jp.hopkotan.core.DrinkLog
+import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.TapList
 import java.io.File
 import java.io.IOException
@@ -19,6 +20,12 @@ import java.net.URL
 
 /** 接続と読み込みの待ち時間 (ミリ秒). */
 private const val TIMEOUT_MS = 15_000
+
+/** 履歴を取得する日数 (最近の何日分か). */
+private const val RECENT_DAYS = 14
+
+/** 星の評価のファイルの名前. */
+private const val RATINGS_FILE = "ratings.json"
 
 /** 飲んだ記録のファイルの名前. */
 private const val DRINKS_FILE = "drinks.json"
@@ -40,7 +47,8 @@ class DataStore(
      * @return ビール (なければ, 空)
      */
     fun loadBeers(): List<Beer> =
-        read(CatalogJob.BEERS_FILE)
+        context
+            .readLocal(CatalogJob.BEERS_FILE)
             ?.let {
                 runCatching { CatalogJson.decodeBeers(it) }.getOrNull()
             }.orEmpty()
@@ -51,9 +59,22 @@ class DataStore(
      * @return タップリスト (なければ null)
      */
     fun loadTaplist(): TapList? =
-        read(CatalogJob.TAPLIST_FILE)?.let {
+        context.readLocal(CatalogJob.TAPLIST_FILE)?.let {
             runCatching { CatalogJson.decodeTaplist(it) }.getOrNull()
         }
+
+    /**
+     * 端末に残してある, 日ごとのタップリスト (履歴) を読む.
+     *
+     * @return タップリスト (新しい日が先)
+     */
+    fun loadHistory(): List<TapList> =
+        File(context.filesDir, CatalogJob.HISTORY_DIR)
+            .listFiles { file -> file.name != CatalogJob.INDEX_FILE && file.extension == "json" }
+            .orEmpty()
+            .mapNotNull { file ->
+                runCatching { CatalogJson.decodeTaplist(file.readText(Charsets.UTF_8)) }.getOrNull()
+            }.sortedByDescending { it.date }
 
     /**
      * 飲んだ記録を読む.
@@ -61,7 +82,10 @@ class DataStore(
      * @return 記録 (なければ, 空)
      */
     fun loadDrinks(): DrinkLog =
-        read(DRINKS_FILE)?.let { runCatching { CatalogJson.decodeDrinks(it) }.getOrNull() }
+        context
+            .readLocal(
+                DRINKS_FILE,
+            )?.let { runCatching { CatalogJson.decodeDrinks(it) }.getOrNull() }
             ?: DrinkLog()
 
     /**
@@ -69,7 +93,27 @@ class DataStore(
      *
      * @param log 記録
      */
-    fun saveDrinks(log: DrinkLog) = write(DRINKS_FILE, CatalogJson.encodeDrinks(log))
+    fun saveDrinks(log: DrinkLog) = context.writeLocal(DRINKS_FILE, CatalogJson.encodeDrinks(log))
+
+    /**
+     * 星の評価を読む.
+     *
+     * @return 評価 (なければ, 空)
+     */
+    fun loadRatings(): Ratings =
+        context
+            .readLocal(
+                RATINGS_FILE,
+            )?.let { runCatching { CatalogJson.decodeRatings(it) }.getOrNull() }
+            ?: Ratings()
+
+    /**
+     * 星の評価を保存する.
+     *
+     * @param ratings 評価
+     */
+    fun saveRatings(ratings: Ratings) =
+        context.writeLocal(RATINGS_FILE, CatalogJson.encodeRatings(ratings))
 
     /**
      * 最新のデータをダウンロードして, 端末に保存する.
@@ -83,10 +127,34 @@ class DataStore(
         val taplistText = fetch(CatalogJob.TAPLIST_FILE)
         val beers = CatalogJson.decodeBeers(beersText)
         val taplist = CatalogJson.decodeTaplist(taplistText)
-        write(CatalogJob.BEERS_FILE, beersText)
-        write(CatalogJob.TAPLIST_FILE, taplistText)
+        context.writeLocal(CatalogJob.BEERS_FILE, beersText)
+        context.writeLocal(CatalogJob.TAPLIST_FILE, taplistText)
 
         return beers to taplist
+    }
+
+    /**
+     * 最近の日のタップリスト (履歴) をダウンロードして, 端末に保存する.
+     *
+     * 過去の日は変わらないので, 端末にある日は取り直さない (最新の日だけ, 毎回取り直す).
+     *
+     * @return 端末にある履歴 (新しい日が先)
+     * @throws IOException 目次が取得できなかったとき
+     */
+    fun downloadHistory(): List<TapList> {
+        val dir = CatalogJob.HISTORY_DIR
+        val dates =
+            CatalogJson.decodeDates(fetch("$dir/${CatalogJob.INDEX_FILE}")).take(RECENT_DAYS)
+        dates.forEachIndexed { index, date ->
+            val name = "$dir/$date.json"
+            if (index == 0 || !File(context.filesDir, name).exists()) {
+                val text = fetch(name)
+                CatalogJson.decodeTaplist(text)
+                context.writeLocal(name, text)
+            }
+        }
+
+        return loadHistory()
     }
 
     private fun fetch(name: String): String {
@@ -101,24 +169,6 @@ class DataStore(
             connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
         } finally {
             connection.disconnect()
-        }
-    }
-
-    private fun read(name: String): String? =
-        File(context.filesDir, name)
-            .takeIf {
-                it.exists()
-            }?.readText(Charsets.UTF_8)
-
-    private fun write(
-        name: String,
-        text: String,
-    ) {
-        val file = File(context.filesDir, name)
-        val temp = File(context.filesDir, "$name.tmp")
-        temp.writeText(text, Charsets.UTF_8)
-        if (!temp.renameTo(file)) {
-            throw IOException("Failed to replace $name")
         }
     }
 }

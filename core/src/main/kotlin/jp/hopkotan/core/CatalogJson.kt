@@ -50,6 +50,22 @@ object CatalogJson {
     fun decodeTaplist(text: String): TapList = json.decodeFromString(text)
 
     /**
+     * 日付の一覧 (履歴の目次) を JSON にする.
+     *
+     * @param dates 日付 (`2026-10-13`)
+     * @return JSON (末尾に改行)
+     */
+    fun encodeDates(dates: List<String>): String = json.encodeToString(dates) + "\n"
+
+    /**
+     * JSON から日付の一覧を読む.
+     *
+     * @param text JSON
+     * @return 日付
+     */
+    fun decodeDates(text: String): List<String> = json.decodeFromString(text)
+
+    /**
      * 飲んだビールの記録を JSON にする.
      *
      * @param log 記録
@@ -64,4 +80,20 @@ object CatalogJson {
      * @return 記録
      */
     fun decodeDrinks(text: String): DrinkLog = DrinkLog(json.decodeFromString(text))
+
+    /**
+     * 星の評価を JSON にする.
+     *
+     * @param ratings 評価
+     * @return JSON (末尾に改行)
+     */
+    fun encodeRatings(ratings: Ratings): String = json.encodeToString(ratings.stars) + "\n"
+
+    /**
+     * JSON から星の評価を読む.
+     *
+     * @param text JSON
+     * @return 評価
+     */
+    fun decodeRatings(text: String): Ratings = Ratings(json.decodeFromString(text))
 }

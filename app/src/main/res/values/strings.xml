@@ -2,6 +2,10 @@
 <resources>
     <string name="app_name">hop-kotan</string>
     <string name="tab_today">今日</string>
+    <string name="tab_recent">最近</string>
+    <string name="recent_none">履歴がありません。「更新」を押してください。</string>
+    <string name="recent_total">最近 %1$d 日分のタップリスト</string>
+    <string name="rating_clear">評価を消す</string>
     <string name="tab_beers">ビール</string>
     <string name="tab_drinks">記録</string>
     <string name="refresh">更新</string>
@@ -29,6 +33,8 @@
     <string name="sort_name">名前</string>
     <string name="sort_abv">ABV</string>
     <string name="sort_ibu">IBU</string>
+    <string name="sort_rating">評価</string>
+    <string name="filter_stars">評価</string>
     <string name="sort_style">スタイル</string>
     <string name="order_desc">降順</string>
     <string name="order_asc">昇順</string>

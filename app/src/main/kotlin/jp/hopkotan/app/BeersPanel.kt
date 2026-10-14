@@ -12,20 +12,21 @@ import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
-import android.view.View
+import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.ListView
+import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.core.net.toUri
-import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.BeerFilter
 import jp.hopkotan.core.BeerQuery
+import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Series
 import jp.hopkotan.core.SortKey
 import jp.hopkotan.core.Tap
@@ -51,6 +52,7 @@ class BeersPanel(
     private var styleChoices = emptyList<String>()
     private var yearChoices = emptyList<String>()
 
+    private val allLabel = activity.getString(R.string.filter_all)
     private val searchLayout =
         TextInputLayout(
             activity,
@@ -75,17 +77,21 @@ class BeersPanel(
                 activity.getString(it)
             },
         ) { refresh() }
-    private val style = activity.spinner(listOf(all())) { refresh() }
+    private val style = activity.spinner(listOf(allLabel)) { refresh() }
     private val series =
-        activity.spinner(listOf(all(), SERIES_ORIGINALS, SERIES_FREEDOMS)) {
+        activity.spinner(listOf(allLabel, SERIES_ORIGINALS, SERIES_FREEDOMS)) {
             refresh()
         }
-    private val year = activity.spinner(listOf(all())) { refresh() }
+    private val year = activity.spinner(listOf(allLabel)) { refresh() }
     private val abv =
         activity.spinner(
             choices(ABV_CHOICES.map { it.toInt().toString() }),
         ) { refresh() }
     private val ibu = activity.spinner(choices(IBU_CHOICES.map { it.toString() })) { refresh() }
+    private val stars =
+        activity.spinner(
+            choices((1..Ratings.MAX).map { it.toString() }),
+        ) { refresh() }
     private val tapOnly = CheckBox(activity).apply { setText(R.string.filter_on_tap) }
     private val count = TextView(activity)
     private val list = ListView(activity)
@@ -94,7 +100,6 @@ class BeersPanel(
     private val filterBox =
         LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
-            visibility = View.GONE
             addView(
                 activity.row(
                     activity.labeled(R.string.filter_style, style),
@@ -108,6 +113,7 @@ class BeersPanel(
                     activity.labeled(R.string.filter_ibu, ibu),
                 ),
             )
+            addView(activity.row(activity.labeled(R.string.filter_stars, stars)))
             addView(tapOnly)
         }
 
@@ -128,7 +134,6 @@ class BeersPanel(
                     activity.labeled(R.string.label_order, order),
                 ),
             )
-            addView(filterBox)
             addView(count)
             addView(list, LinearLayout.LayoutParams(MATCH, MATCH))
         }
@@ -154,7 +159,7 @@ class BeersPanel(
             },
         )
         tapOnly.setOnCheckedChangeListener { _, _ -> refresh() }
-        toggle.setOnClickListener { filterBox.isVisible = !filterBox.isVisible }
+        toggle.setOnClickListener { showFilters() }
     }
 
     /**
@@ -171,12 +176,10 @@ class BeersPanel(
         onTapIds = newOnTapIds
         styleChoices = BeerQuery.styles(newBeers)
         yearChoices = BeerQuery.years(newBeers)
-        reset(style, listOf(all()) + styleChoices)
-        reset(year, listOf(all()) + yearChoices)
+        reset(style, listOf(allLabel) + styleChoices)
+        reset(year, listOf(allLabel) + yearChoices)
         refresh()
     }
-
-    private fun all(): String = activity.getString(R.string.filter_all)
 
     private fun sortLabels(): List<String> =
         listOf(
@@ -185,6 +188,7 @@ class BeersPanel(
             R.string.sort_abv,
             R.string.sort_ibu,
             R.string.sort_style,
+            R.string.sort_rating,
         ).map { activity.getString(it) }
 
     private fun choices(values: List<String>): List<String> =
@@ -214,8 +218,20 @@ class BeersPanel(
             minAbv = ABV_CHOICES.getOrNull(abv.selectedItemPosition - 1),
             minIbu = IBU_CHOICES.getOrNull(ibu.selectedItemPosition - 1),
             year = yearChoices.getOrNull(year.selectedItemPosition - 1),
+            minStars = (1..Ratings.MAX).toList().getOrNull(stars.selectedItemPosition - 1),
             onTapIds = if (tapOnly.isChecked) onTapIds else null,
         )
+
+    /** 絞り込みの部品を, ポップアップに出す (選ぶとすぐ, 一覧に反映する). */
+    private fun showFilters() {
+        AlertDialog
+            .Builder(activity)
+            .setTitle(R.string.filter_toggle)
+            .setView(ScrollView(activity).apply { addView(filterBox) })
+            .setPositiveButton(R.string.close, null)
+            .setOnDismissListener { (filterBox.parent as? ViewGroup)?.removeView(filterBox) }
+            .show()
+    }
 
     private fun refresh() {
         val sorted =
@@ -224,16 +240,17 @@ class BeersPanel(
                 filter(),
                 SortKey.entries[sort.selectedItemPosition],
                 descending = order.selectedItemPosition == 0,
+                ratings = actions.ratings.all(),
             )
         count.text = activity.getString(R.string.count, sorted.size)
-        list.adapter = rowAdapter(activity, sorted, actions.images, { describe(it) })
+        list.replaceAdapter(rowAdapter(activity, sorted, actions.images, { describe(it) }))
         list.setOnItemClickListener { _, _, position, _ -> showDetail(sorted[position]) }
     }
 
     private fun describe(beer: Beer): RowModel {
-        val tags =
-            listOfNotNull(
-                beer.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
+        val extra =
+            joinExtra(
+                Ratings.text(actions.ratings.of(Ratings.key(beer.id, beer.name))),
                 if (beer.id in onTapIds) activity.getString(R.string.on_tap) else null,
             )
 
@@ -245,7 +262,8 @@ class BeersPanel(
                     beer.style,
                     beer.released ?: beer.series.name,
                 ),
-            extra = tags.joinToString(" / ").ifEmpty { null },
+            extra = extra,
+            badgeLead = beer.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
             badge = beer.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
             imageUrl = beer.imageUrl,
         )
@@ -268,7 +286,11 @@ class BeersPanel(
             .Builder(activity)
             .setTitle(beer.name)
             .setMessage(detailText(beer))
-            .setPositiveButton(R.string.drink) { _, _ ->
+            .setView(
+                activity.ratingBar(actions.ratings.of(Ratings.key(beer.id, beer.name))) {
+                    actions.ratings.set(Ratings.key(beer.id, beer.name), it)
+                },
+            ).setPositiveButton(R.string.drink) { _, _ ->
                 val tap = Tap(beer.name, beer.style, beer.id, beer.url, beer.imageUrl)
                 activity.showSizeDialog(
                     beer.name,

@@ -19,7 +19,7 @@
    | `docker compose run --rm format` / `format-fix` | 整形の確認 / 整形して書き換える |
    | `docker compose run --rm analyze` | 静的解析 (detekt と Android Lint) |
    | `docker compose run --rm docs` | ドキュメント (`core/build/dokka/html/index.html`) |
-   | `docker compose run --rm scrape-taplist` | `data/taplist.json` を更新 |
+   | `docker compose run --rm scrape-taplist` | `data/taplist.json` と、履歴 `data/taplist/<日付>.json` と `data/taplist/index.json` を更新 |
    | `docker compose run --rm scrape-beers` | `data/beers.json` を更新 |
    | `docker compose run --rm clean` | 生成物を消す |
    | `docker compose run --rm dev` | 開発シェル |
@@ -48,7 +48,7 @@ CI (GitHub Actions) は、サブモジュールを取り込まない。マーク
 | ワークフロー | 内容 |
 |:---|:---|
 | `build.yml` (CI) | push と PR で、`build` `test` `coverage` `format` `analyze` `docs` を実行する |
-| `update-data.yml` | 毎日、タップリストを取得する。毎週月曜に、ビールも取得する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名する) |
+| `update-data.yml` | 毎日 12:30 と 17:30 (JST) に、タップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。17:30 の回に、ビール (ORIGINALS と FREEDOMS) の新しいものを探して、あれば保存する。タップリストとビールは、別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名する) |
 
 `update-data.yml` は、`permissions: contents: write` を宣言しているので、`data/*.json` をコミットできる。コミットできないときは、リポジトリ (または組織) の Settings > Actions > General > Workflow permissions が、書き込みを禁止していないか確認する。
 

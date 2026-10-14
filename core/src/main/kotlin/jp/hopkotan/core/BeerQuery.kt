@@ -22,6 +22,9 @@ enum class SortKey {
 
     /** ビアスタイル. */
     STYLE,
+
+    /** 星の評価. */
+    RATING,
 }
 
 /**
@@ -33,6 +36,7 @@ enum class SortKey {
  * @property minAbv ABV の下限 (%. 分からないビールは, 除く. null なら, 絞らない)
  * @property minIbu IBU の下限 (分からないビールは, 除く. null なら, 絞らない)
  * @property year 発売年 (`2026`. 発売月が分からないビールは, 除く. null なら, 絞らない)
+ * @property minStars 星の下限 (評価していないビールは, 除く. null なら, 絞らない)
  * @property onTapIds 残すビールの ID (今日のタップにあるものだけ見るとき. null なら, 絞らない)
  */
 data class BeerFilter(
@@ -42,6 +46,7 @@ data class BeerFilter(
     val minAbv: Double? = null,
     val minIbu: Int? = null,
     val year: String? = null,
+    val minStars: Int? = null,
     val onTapIds: Set<String>? = null,
 )
 
@@ -56,6 +61,7 @@ object BeerQuery {
      * @param filter 絞り込み
      * @param sort 並べ方
      * @param descending 降順にするか
+     * @param ratings 星の評価 (絞り込みと, 並べ方 [SortKey.RATING] に使う)
      * @return 絞り込んで並べたビール
      */
     fun apply(
@@ -63,7 +69,11 @@ object BeerQuery {
         filter: BeerFilter = BeerFilter(),
         sort: SortKey = SortKey.RELEASED,
         descending: Boolean = true,
-    ): List<Beer> = beers.filter { matches(it, filter) }.sortedWith(comparator(sort, descending))
+        ratings: Ratings = Ratings(),
+    ): List<Beer> =
+        beers
+            .filter { matches(it, filter, ratings) }
+            .sortedWith(comparator(sort, descending, ratings))
 
     /**
      * ビアスタイルの一覧を返す (大文字と小文字の違いは, 同じものとする).
@@ -90,8 +100,11 @@ object BeerQuery {
     private fun matches(
         beer: Beer,
         filter: BeerFilter,
+        ratings: Ratings,
     ): Boolean =
-        matchesLabel(beer, filter) && matchesNumbers(beer, filter) && matchesTap(beer, filter)
+        matchesLabel(beer, filter) &&
+            matchesNumbers(beer, filter, ratings) &&
+            matchesTap(beer, filter)
 
     /** 文字, スタイル, シリーズ. */
     private fun matchesLabel(
@@ -105,16 +118,19 @@ object BeerQuery {
             (filter.series == null || beer.series == filter.series)
     }
 
-    /** ABV, IBU, 発売年. */
+    /** ABV, IBU, 発売年, 星. */
     private fun matchesNumbers(
         beer: Beer,
         filter: BeerFilter,
+        ratings: Ratings,
     ): Boolean {
         val abv = filter.minAbv
         val ibu = filter.minIbu
+        val stars = filter.minStars
 
         return (abv == null || (beer.abv ?: -1.0) >= abv) &&
             (ibu == null || (beer.ibu ?: -1) >= ibu) &&
+            (stars == null || ratings.of(Ratings.key(beer.id, beer.name)) >= stars) &&
             (filter.year == null || beer.released?.startsWith(filter.year) == true)
     }
 
@@ -133,6 +149,7 @@ object BeerQuery {
     private fun comparator(
         sort: SortKey,
         descending: Boolean,
+        ratings: Ratings,
     ): Comparator<Beer> {
         val main =
             when (sort) {
@@ -141,6 +158,8 @@ object BeerQuery {
                 SortKey.ABV -> by(descending) { it.abv }
                 SortKey.IBU -> by(descending) { it.ibu }
                 SortKey.STYLE -> by(descending) { it.style.lowercase() }
+                SortKey.RATING ->
+                    by(descending) { ratings.of(Ratings.key(it.id, it.name)).takeIf { s -> s > 0 } }
             }
 
         return main.thenBy { it.name.lowercase() }

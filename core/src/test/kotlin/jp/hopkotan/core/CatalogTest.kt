@@ -63,6 +63,28 @@ class CatalogTest {
         )
     }
 
+    /** タップリストは, 日ごとの履歴にも書く. 目次は, 新しい日が先で, 同じ日は 1 つにする. */
+    @Test
+    fun updateTaplistKeepsHistory() {
+        val dir = Files.createTempDirectory("hop")
+        val old = "${CatalogJob.HISTORY_DIR}/${CatalogJob.INDEX_FILE}"
+        Files.createDirectories(dir.resolve(CatalogJob.HISTORY_DIR))
+        Files.writeString(dir.resolve(old), CatalogJson.encodeDates(listOf("2026-10-01")))
+        val job = CatalogJob(Scraper { Fixtures.taproom() }, dir)
+
+        job.updateTaplist()
+        job.updateTaplist()
+
+        assertEquals(
+            listOf("2026-10-13", "2026-10-01"),
+            CatalogJson.decodeDates(Files.readString(dir.resolve(old))),
+        )
+        assertEquals(
+            Files.readString(dir.resolve(CatalogJob.TAPLIST_FILE)),
+            Files.readString(dir.resolve("${CatalogJob.HISTORY_DIR}/2026-10-13.json")),
+        )
+    }
+
     /** ビールを書く. 書いてあるビールは, 次の実行で取り直さない. */
     @Test
     fun updateBeers() {

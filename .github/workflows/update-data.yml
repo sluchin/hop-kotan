@@ -1,14 +1,17 @@
 name: Update the data
 
 # サイトからデータを取得して, data/*.json を更新する.
-#   taplist: 毎日 (タップルームの, 今日のタップリスト)
-#   beers  : 毎週月曜 (ORIGINALS と FREEDOMS. 取得済みのビールは, 取り直さない)
+#   taplist: 毎日 2 回 (タップルームの, 今日のタップリスト. 土日祝日は 12 時, 平日は 17 時から開くので, そのあとの 12:30 と 17:30)
+#   beers  : 毎日 1 回 (17:30 の回. ORIGINALS と FREEDOMS の, 新しいビールを探す. 取得済みのビールは, 取り直さない)
+# タップリスト (taplist.json) とビール (beers.json) は, 別のファイルに保存する.
+# タップリストは, 日ごとの履歴 (taplist/<日付>.json) と, その目次 (taplist/index.json) にも保存する.
 # 変わったときだけ, GitHub の Contents API でコミットする (scripts/publish-data.sh. Verified になる).
 # サイトの作りが変わって, 1 件も読めなくなったら, 失敗する.
 
 on:
   schedule:
-    - cron: "30 2 * * *"   # 毎日 11:30 (JST). 開店のあとに取る
+    - cron: "30 3 * * *"   # 毎日 12:30 (JST). 土日祝日の開店のあとに取る
+    - cron: "30 8 * * *"   # 毎日 17:30 (JST). 平日の開店のあとに取る
   workflow_dispatch:
     inputs:
       target:
@@ -37,10 +40,10 @@ jobs:
         id: plan
         run: |
           target="${{ github.event.inputs.target }}"
-          day="$(date -u +%u)"
+          hour="$(date -u +%H)"
           if [ -z "$target" ] || [ "$target" = "both" ]; then
             echo "taplist=true" >> "$GITHUB_OUTPUT"
-            if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$day" = "1" ]; then
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$hour" = "08" ]; then
               echo "beers=true" >> "$GITHUB_OUTPUT"
             else
               echo "beers=false" >> "$GITHUB_OUTPUT"
@@ -66,9 +69,10 @@ jobs:
 
       - name: Commit the changed files
         run: |
-          day="$(date -u +%Y-%m-%d)"
           if [ "${{ steps.plan.outputs.taplist }}" = "true" ]; then
-            MESSAGE="chore(data): Update the tap list of ${day}" scripts/publish-data.sh data/taplist.json
+            date="$(jq -r .date data/taplist.json)"
+            MESSAGE="chore(data): Update the tap list of ${date}" \
+              scripts/publish-data.sh data/taplist.json "data/taplist/${date}.json" data/taplist/index.json
           fi
           if [ "${{ steps.plan.outputs.beers }}" = "true" ]; then
             MESSAGE="chore(data): Update the beers" scripts/publish-data.sh data/beers.json

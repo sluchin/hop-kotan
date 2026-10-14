@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
 import jp.hopkotan.core.DaySummary
+import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.TapEntry
 
 /**
@@ -86,7 +87,15 @@ class TodayPanel(
                 formatYen(today.yen),
                 formatDecimal(today.alcoholG),
             )
-        list.adapter = rowAdapter(activity, entries, actions.images, { describe(it) })
+        list.replaceAdapter(rowAdapter(activity, entries, actions.images, { describe(it) }))
+        list.setOnItemLongClickListener { _, _, position, _ ->
+            val tap = entries[position].tap
+            val key = Ratings.key(tap.beerId, tap.name)
+            activity.showRatingDialog(tap.name, actions.ratings.of(key)) {
+                actions.ratings.set(key, it)
+            }
+            true
+        }
         list.setOnItemClickListener { _, _, position, _ ->
             val entry = entries[position]
             activity.showSizeDialog(entry.tap.name, actions.sizes()) {
@@ -101,7 +110,11 @@ class TodayPanel(
         return RowModel(
             title = entry.tap.name,
             subtitle = entry.tap.style,
-            extra = beer?.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
+            extra =
+                joinExtra(
+                    Ratings.text(actions.ratings.of(Ratings.key(entry.tap.beerId, entry.tap.name))),
+                ),
+            badgeLead = beer?.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
             badge = beer?.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
             imageUrl = entry.tap.imageUrl ?: beer?.imageUrl,
         )

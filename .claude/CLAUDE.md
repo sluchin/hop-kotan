@@ -3,9 +3,9 @@
 忽布古丹醸造 (HOP KOTAN BREWING) のサイトから、ビールのデータを取得して、ソートやフィルタをして見る Android アプリ。毎日の「今日のタップリスト」から、その日に飲んだビールを記録できる。
 
 ```
-GitHub Actions (毎日) ──取得──> hopkotan.com   (/taproom/ 毎日, /originals/ と /freedoms/ は新しい分だけ)
+GitHub Actions (毎日) ──取得──> hopkotan.com   (/taproom/ 毎日 2 回, /originals/ と /freedoms/ は新しい分だけ)
        │
-       └─ 解析して data/taplist.json と data/beers.json を更新 (GitHub の Contents API でコミット)
+       └─ 解析して data/taplist.json (と履歴 data/taplist/<日付>.json) と data/beers.json を更新 (GitHub の Contents API でコミット)
                      │
 Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubusercontent.com)。端末で、ソートとフィルタ
        └─ 飲んだビールの記録は、端末に保存 (DrinkLog)
@@ -13,7 +13,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - `core`: データの型 (`Beer` `TapList` `DrinkRecord`)、HTML の解析 (jsoup)、取得 (`Scraper` `JdkHtmlFetcher`)、JSON (`CatalogJson`)、飲んだ記録の集計 (`DrinkLog`)。Kotlin の JVM。カバレッジ 100%。
 - `scraper`: コマンドの入口 (`taplist <dir>` と `beers <dir>`)。薄く保つ。
-- `app`: Android アプリ (Kotlin。Material Components の View。Compose は使わない)。画面の下のナビゲーションで切り替える 3 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**ビール** (全ビール。並べ方、スタイル、シリーズ、発売年、ABV と IBU の下限、今日のタップのみ、文字の検索。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は、端末の `drinks.json` にだけ保存する (どこにも送らない)。一覧の行には、写真 (`ImageLoader`)、スタイル、ABV の印を出す。画面の部品は、薄く保つ (ソートと絞り込みは、`core` の `BeerQuery`)。
+- `app`: Android アプリ (Kotlin。Material Components の View。Compose は使わない)。画面の下のナビゲーションで切り替える 4 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**最近** (最近 14 日分のタップリストを、日ごとに表示。履歴は `data/taplist/<日付>.json` と目次 `index.json`。過去の日は変わらないので、端末にあれば取り直さない)、**ビール** (全ビール。並べ方 (評価を含む)、文字の検索、「絞り込み」のポップアップ (スタイル、シリーズ、発売年、ABV と IBU の下限、評価の下限、今日のタップのみ)。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は、端末の `drinks.json` にだけ保存する (どこにも送らない)。星 (5 つ) の評価は、ビールごとに、端末の `ratings.json` にだけ保存する (キーは、ビールの ID か、`name:<名前>`。`core` の `Ratings`)。一覧の行には、写真 (`ImageLoader`)、スタイル、ABV の印を出す。画面の部品は、薄く保つ (ソートと絞り込みは、`core` の `BeerQuery`)。
 
 **Android Studio は使わない。** ビルド、テスト、整形、静的解析、ドキュメントの生成は、全て、コマンドラインで、Docker の中で実行する。
 
@@ -84,7 +84,7 @@ ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う�
 
 1. 機能開発は、`ccr-*` ブランチで行う。
 2. Push 時に GitHub Actions (`.github/workflows/build.yml`) が、開発用の Docker イメージで、`build` / `test` / `coverage` / `format` / `analyze` / `docs` を実行する。ログは、アーティファクト (`<サービス名>_log`) に保存する。3 日より前の実行は、削除する (`cleanup`)。
-3. データの更新 (`.github/workflows/update-data.yml`): 毎日、タップリストを取得する。毎週、ビール (ORIGINALS と FREEDOMS) を取得する。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名するので、Verified になる)。
+3. データの更新 (`.github/workflows/update-data.yml`): 毎日 12:30 と 17:30 (JST) に、タップリストを取得する。17:30 の回に、ビール (ORIGINALS と FREEDOMS) の新しいものを探す。タップリストとビールは、別のファイルに保存する。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名するので、Verified になる)。
 
 ### コード修正時のルール
 
