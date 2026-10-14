@@ -25,7 +25,9 @@ import com.google.android.material.button.MaterialButton
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+import jp.hopkotan.core.Beer
 import jp.hopkotan.core.MenuUrl
+import jp.hopkotan.core.Tap
 
 /**
  * 店の QR コードを読み込んで, メニューのページをアプリの中 (WebView) に表示するタブ.
@@ -34,10 +36,18 @@ import jp.hopkotan.core.MenuUrl
  * 表示するのは, `https` のページだけ. QR コードのホスト (とそのサブドメイン) の外へ移るときは,
  * ブラウザで開く. テーブルや注文の情報は, 保存しない (画面を離れたら, Cookie と保存したデータを消す).
  *
+ * 下に, 飲んだビールを記録する帯 ([MenuBar]) を出す.
+ *
  * @property activity 画面
+ * @property actions アプリに頼む操作
+ * @property taps 今日のタップ
+ * @property beers ORIGINALS と FREEDOMS のビール
  */
 class MenuPanel(
     private val activity: Activity,
+    actions: PanelActions,
+    taps: () -> List<Tap>,
+    beers: () -> List<Beer>,
 ) {
     private var base: String? = null
     private val hint =
@@ -53,6 +63,7 @@ class MenuPanel(
             setOnClickListener { web.reload() }
         }
     private val web = createWebView()
+    private val bar = MenuBar(activity, actions, taps, beers, web).apply { view.isVisible = false }
 
     /** タブの内容. */
     val view: LinearLayout =
@@ -72,7 +83,8 @@ class MenuPanel(
                 },
             )
             addView(hint)
-            addView(web, LinearLayout.LayoutParams(MATCH, MATCH))
+            addView(web, LinearLayout.LayoutParams(MATCH, 0, 1f))
+            addView(bar.view)
         }
 
     /**
@@ -113,6 +125,11 @@ class MenuPanel(
 
                         return !inside
                     }
+
+                    override fun onPageFinished(
+                        view: WebView,
+                        url: String,
+                    ) = bar.find()
                 }
         }
 
@@ -147,6 +164,7 @@ class MenuPanel(
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
+        bar.view.isVisible = true
         web.isVisible = true
         web.loadUrl(url)
     }

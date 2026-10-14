@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         historyPanel = HistoryPanel(this, actions)
         beersPanel = BeersPanel(this, actions)
         drinksPanel = DrinksPanel(this, actions)
-        menuPanel = MenuPanel(this)
+        menuPanel = MenuPanel(this, actions, { taplist?.taps.orEmpty() }, { beers })
         panels =
             listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view, menuPanel.view)
         status =
