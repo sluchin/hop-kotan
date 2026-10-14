@@ -157,6 +157,7 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
+    implementation(libs.play.code.scanner)
 }
 
 detekt {

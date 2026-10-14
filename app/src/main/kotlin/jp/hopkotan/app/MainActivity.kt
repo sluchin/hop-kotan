@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
@@ -31,7 +32,7 @@ import java.util.concurrent.Executors
 private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420, 900))
 
 /**
- * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (4 つのタブ: 今日, 最近, ビール, 記録).
+ * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (5 つのタブ: 今日, 最近, ビール, 記録, メニュー).
  *
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
@@ -43,6 +44,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var historyPanel: HistoryPanel
     private lateinit var beersPanel: BeersPanel
     private lateinit var drinksPanel: DrinksPanel
+    private lateinit var menuPanel: MenuPanel
+    private var current = 0
     private lateinit var panels: List<View>
 
     private var beers = emptyList<Beer>()
@@ -65,9 +68,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(buildScreen())
         render(null)
         refresh()
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (current == MENU_INDEX && menuPanel.canGoBack()) {
+                        menuPanel.goBack()
+                    } else {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                    }
+                }
+            },
+        )
     }
 
     override fun onDestroy() {
+        menuPanel.destroy()
         executor.shutdown()
         images.shutdown()
         super.onDestroy()
@@ -87,7 +104,9 @@ class MainActivity : AppCompatActivity() {
         historyPanel = HistoryPanel(this, actions)
         beersPanel = BeersPanel(this, actions)
         drinksPanel = DrinksPanel(this, actions)
-        panels = listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view)
+        menuPanel = MenuPanel(this)
+        panels =
+            listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view, menuPanel.view)
         status =
             TextView(this).apply {
                 setTextAppearance(
@@ -130,11 +149,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun show(index: Int) =
+    private fun show(index: Int) {
+        current = index
         panels.forEachIndexed { i, panel ->
             panel.visibility =
                 if (i == index) View.VISIBLE else View.GONE
         }
+    }
 
     /** データを取得して, 画面を更新する (通信は, 別のスレッドで行う). */
     private fun refresh() {
@@ -217,7 +238,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
-        val NAV_IDS = listOf(R.id.nav_today, R.id.nav_recent, R.id.nav_beers, R.id.nav_drinks)
+        const val MENU_INDEX = 4
+        val NAV_IDS =
+            listOf(R.id.nav_today, R.id.nav_recent, R.id.nav_beers, R.id.nav_drinks, R.id.nav_menu)
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
     }

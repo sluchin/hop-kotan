@@ -16,4 +16,8 @@
         android:id="@+id/nav_drinks"
         android:icon="@drawable/ic_history"
         android:title="@string/tab_drinks" />
+    <item
+        android:id="@+id/nav_menu"
+        android:icon="@drawable/ic_menu_book"
+        android:title="@string/tab_menu" />
 </menu>
