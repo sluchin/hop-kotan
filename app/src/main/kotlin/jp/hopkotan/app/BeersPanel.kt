@@ -96,10 +96,17 @@ class BeersPanel(
     private val count = TextView(activity)
     private val list = ListView(activity)
 
-    /** 絞り込みの部品 (「絞り込み」のボタンで, 開閉する). */
+    /** 検索, 並べ方, 絞り込みの部品 (「絞り込み」のボタンで, ポップアップに出す). */
     private val filterBox =
         LinearLayout(activity).apply {
             orientation = LinearLayout.VERTICAL
+            addView(searchLayout)
+            addView(
+                activity.row(
+                    activity.labeled(R.string.label_sort, sort),
+                    activity.labeled(R.string.label_order, order),
+                ),
+            )
             addView(
                 activity.row(
                     activity.labeled(R.string.filter_style, style),
@@ -124,17 +131,10 @@ class BeersPanel(
             addView(
                 LinearLayout(activity).apply {
                     gravity = Gravity.CENTER_VERTICAL
-                    addView(searchLayout, LinearLayout.LayoutParams(0, WRAP, 1f))
+                    addView(count, LinearLayout.LayoutParams(0, WRAP, 1f))
                     addView(toggle)
                 },
             )
-            addView(
-                activity.row(
-                    activity.labeled(R.string.label_sort, sort),
-                    activity.labeled(R.string.label_order, order),
-                ),
-            )
-            addView(count)
             addView(list, LinearLayout.LayoutParams(MATCH, MATCH))
         }
 
