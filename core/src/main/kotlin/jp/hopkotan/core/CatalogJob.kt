@@ -38,9 +38,10 @@ class CatalogJob(
     }
 
     /**
-     * ORIGINALS と FREEDOMS を取得して, `beers.json` に書く.
+     * ORIGINALS と FREEDOMS と, タップに出ている ORIGINALS plus と HARVEST BREW を取得して, `beers.json` に書く.
      *
-     * すでに書いてあるビールは, 詳細のページを取り直さない. ORIGINALS は, 1 ページなので, 毎回取る.
+     * すでに書いてあるビールは, 詳細のページを取り直さない (ORIGINALS plus と HARVEST BREW は, 前にタップに出た
+     * ものも残す). ORIGINALS は, 1 ページなので, 毎回取る.
      *
      * @return ビールの数
      */
@@ -52,7 +53,11 @@ class CatalogJob(
             } else {
                 emptyMap()
             }
-        val beers = scraper.scrapeOriginals() + scraper.scrapeFreedoms(known)
+        val tapBeers = scraper.scrapeTapBeers(scraper.scrapeTaplist().taps, known)
+        val kept = known.values.filter { it.series.fromTap }
+        val beers =
+            scraper.scrapeOriginals() + scraper.scrapeFreedoms(known) +
+                (tapBeers + kept).distinctBy { it.id }
         write(BEERS_FILE, CatalogJson.encodeBeers(beers))
 
         return beers.size

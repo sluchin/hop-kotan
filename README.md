@@ -9,7 +9,7 @@
 ```
 GitHub Actions (毎日) ──取得──> hopkotan.com
        │
-       └─ data/taplist.json (今日のタップリスト) と data/beers.json (ORIGINALS と FREEDOMS) を更新
+       └─ data/taplist.json (今日のタップリスト) と data/beers.json (ORIGINALS と FREEDOMS と、タップに出たビール) を更新
                      │
 Android アプリ ◀── JSON をダウンロード (raw.githubusercontent.com)。端末で、ソートとフィルタ
        └─ 飲んだビールの記録は、端末に保存
@@ -23,7 +23,7 @@ Android アプリ ◀── JSON をダウンロード (raw.githubusercontent.co
 |:---|:---|:---|
 | [data/taplist.json](data/taplist.json) | 今日のタップリスト (更新日、量と価格、ビール名、スタイル) | 毎日 2 回 |
 | [data/taplist/](data/taplist) | 日ごとのタップリストの履歴 (`YYYY-MM-DD.json`) と、その日付の目次 (`index.json`) | 毎日 2 回 |
-| [data/beers.json](data/beers.json) | ORIGINALS と FREEDOMS のビール (名前、スタイル、発売月、ABV、IBU、元のページの URL) | 毎日 (新しいものがあれば) |
+| [data/beers.json](data/beers.json) | ORIGINALS と FREEDOMS のビールと、タップに出た ORIGINALS plus と HARVEST BREW (名前、スタイル、発売月、ABV、IBU、元のページの URL) | 毎日 (新しいものがあれば) |
 
 画像と説明文は保存しません (画像はサイトの URL を参照します)。
 

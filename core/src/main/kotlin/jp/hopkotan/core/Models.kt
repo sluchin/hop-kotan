@@ -8,20 +8,32 @@ package jp.hopkotan.core
 
 import kotlinx.serialization.Serializable
 
-/** ビールのシリーズ. */
+/**
+ * ビールのシリーズ.
+ *
+ * @property fromTap タップに出たものだけを取り込むシリーズか (一覧のページはたどらない)
+ */
 @Serializable
-enum class Series {
+enum class Series(
+    val fromTap: Boolean = false,
+) {
     /** 定番のビール (ORIGINALS). */
     ORIGINALS,
 
     /** 一期一会のビール (FREEDOMS). */
     FREEDOMS,
+
+    /** 定番に加わるビール (ORIGINALS plus. タップに出たものだけを取り込む). */
+    ORIGINALS_PLUS(fromTap = true),
+
+    /** 収穫の季節のビール (HARVEST BREW. タップに出たものだけを取り込む). */
+    HARVEST_BREW(fromTap = true),
 }
 
 /**
  * 1 つのビール.
  *
- * @property id 一意の ID (`freedoms/<スラッグ>` か `originals/<名前>`)
+ * @property id 一意の ID (`freedoms/<スラッグ>`, `originals/<名前>`, `originalsplus/<スラッグ>`, `harvest_brew/<スラッグ>`)
  * @property series シリーズ
  * @property name 名前
  * @property style ビアスタイル

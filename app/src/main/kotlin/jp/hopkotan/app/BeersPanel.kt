@@ -79,7 +79,15 @@ class BeersPanel(
         ) { refresh() }
     private val style = activity.spinner(listOf(allLabel)) { refresh() }
     private val series =
-        activity.spinner(listOf(allLabel, SERIES_ORIGINALS, SERIES_FREEDOMS)) {
+        activity.spinner(
+            listOf(
+                allLabel,
+                SERIES_ORIGINALS,
+                SERIES_FREEDOMS,
+                SERIES_ORIGINALS_PLUS,
+                SERIES_HARVEST_BREW,
+            ),
+        ) {
             refresh()
         }
     private val year = activity.spinner(listOf(allLabel)) { refresh() }
@@ -214,7 +222,7 @@ class BeersPanel(
         BeerFilter(
             text = search.text.toString(),
             style = styleChoices.getOrNull(style.selectedItemPosition - 1),
-            series = listOf(null, Series.ORIGINALS, Series.FREEDOMS)[series.selectedItemPosition],
+            series = SERIES_CHOICES.getOrNull(series.selectedItemPosition - 1),
             minAbv = ABV_CHOICES.getOrNull(abv.selectedItemPosition - 1),
             minIbu = IBU_CHOICES.getOrNull(ibu.selectedItemPosition - 1),
             year = yearChoices.getOrNull(year.selectedItemPosition - 1),
@@ -307,5 +315,9 @@ class BeersPanel(
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
         const val SERIES_ORIGINALS = "ORIGINALS"
         const val SERIES_FREEDOMS = "FREEDOMS"
+        const val SERIES_ORIGINALS_PLUS = "ORIGINALS plus"
+        const val SERIES_HARVEST_BREW = "HARVEST BREW"
+        val SERIES_CHOICES =
+            listOf(Series.ORIGINALS, Series.FREEDOMS, Series.ORIGINALS_PLUS, Series.HARVEST_BREW)
     }
 }

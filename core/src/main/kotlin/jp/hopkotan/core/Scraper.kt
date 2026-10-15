@@ -68,6 +68,58 @@ class Scraper(
         )
     }
 
+    /**
+     * タップに出ている, ORIGINALS plus と HARVEST BREW のビールを取得する.
+     *
+     * 一覧のページはたどらず, タップのビールの詳細のページから ABV と IBU を読む (取得済みのビールは, 取り直さない).
+     *
+     * @param taps 今日のタップ
+     * @param known 取得済みのビール (ID が鍵)
+     * @return ビール (タップの並び)
+     */
+    fun scrapeTapBeers(
+        taps: List<Tap>,
+        known: Map<String, Beer> = emptyMap(),
+    ): List<Beer> =
+        taps
+            .mapNotNull(::tapBeerSource)
+            .distinctBy { it.id }
+            .map { known[it.id] ?: toTapBeer(it) }
+
+    private class TapBeerSource(
+        val tap: Tap,
+        val id: String,
+        val url: String,
+        val series: Series,
+    )
+
+    private fun tapBeerSource(tap: Tap): TapBeerSource? {
+        val id = tap.beerId
+        val url = tap.url
+        val series = id?.let(BeerIds::seriesOf)?.takeIf { it.fromTap }
+
+        return if (id != null && url != null && series != null) {
+            TapBeerSource(tap, id, url, series)
+        } else {
+            null
+        }
+    }
+
+    private fun toTapBeer(source: TapBeerSource): Beer {
+        val spec = DetailParser.parse(fetcher.fetch(source.url))
+
+        return Beer(
+            id = source.id,
+            series = source.series,
+            name = source.tap.name,
+            style = source.tap.style,
+            url = source.url,
+            imageUrl = source.tap.imageUrl,
+            abv = spec.abv,
+            ibu = spec.ibu,
+        )
+    }
+
     /** 一覧の全てのページをたどって, 項目を集める. */
     private fun collectItems(): List<FreedomsItem> {
         val items = mutableListOf<FreedomsItem>()

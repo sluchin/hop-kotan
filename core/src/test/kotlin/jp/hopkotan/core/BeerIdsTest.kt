@@ -37,6 +37,24 @@ class BeerIdsTest {
         assertEquals("originals/alpha", BeerIds.fromUrl("https://hopkotan.com/originals/#alpha "))
     }
 
+    /** ORIGINALS plus と HARVEST BREW の URL から ID を作り, ID からシリーズを返す. */
+    @Test
+    fun otherSeries() {
+        assertEquals(
+            "originalsplus/ikor",
+            BeerIds.fromUrl("https://hopkotan.com/originalsplus/ikor/"),
+        )
+        assertEquals(
+            "harvest_brew/pilsner-2026",
+            BeerIds.fromUrl("https://hopkotan.com/harvest_brew/pilsner-2026/"),
+        )
+        assertEquals(Series.ORIGINALS, BeerIds.seriesOf("originals/a"))
+        assertEquals(Series.FREEDOMS, BeerIds.seriesOf("freedoms/a"))
+        assertEquals(Series.ORIGINALS_PLUS, BeerIds.seriesOf("originalsplus/a"))
+        assertEquals(Series.HARVEST_BREW, BeerIds.seriesOf("harvest_brew/a"))
+        assertNull(BeerIds.seriesOf("name:a"))
+    }
+
     /** ビールの URL でないとき, スラッグがないとき, URL として読めないときは, null. */
     @Test
     fun notBeerUrls() {

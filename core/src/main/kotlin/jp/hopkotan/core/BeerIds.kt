@@ -12,6 +12,8 @@ import java.net.URI
 object BeerIds {
     private const val FREEDOMS = "freedoms"
     private const val ORIGINALS = "originals"
+    private const val ORIGINALS_PLUS = "originalsplus"
+    private const val HARVEST_BREW = "harvest_brew"
 
     /**
      * URL から ID を作る.
@@ -33,11 +35,26 @@ object BeerIds {
         val series = segments.firstOrNull()
         val slug =
             when (series) {
-                FREEDOMS -> segments.getOrNull(1)
+                FREEDOMS, ORIGINALS_PLUS, HARVEST_BREW -> segments.getOrNull(1)
                 ORIGINALS -> segments.getOrNull(1) ?: uri.fragment
                 else -> null
             }
 
         return slug?.takeIf { it.isNotEmpty() }?.let { "$series/$it" }
     }
+
+    /**
+     * ID から, シリーズを返す.
+     *
+     * @param id [Beer.id]
+     * @return シリーズ (知らないシリーズなら null)
+     */
+    fun seriesOf(id: String): Series? =
+        when (id.substringBefore('/')) {
+            ORIGINALS -> Series.ORIGINALS
+            FREEDOMS -> Series.FREEDOMS
+            ORIGINALS_PLUS -> Series.ORIGINALS_PLUS
+            HARVEST_BREW -> Series.HARVEST_BREW
+            else -> null
+        }
 }

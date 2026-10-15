@@ -85,15 +85,25 @@ class CatalogTest {
         )
     }
 
-    /** ビールを書く. 書いてあるビールは, 次の実行で取り直さない. */
+    /** ビールを書く. 書いてあるビールは, 次の実行で取り直さない. タップに出た ORIGINALS plus は, 外れても残す. */
     @Test
     fun updateBeers() {
         val dir = Files.createTempDirectory("hop")
         val fetched = mutableListOf<String>()
+        var withPlus = true
+        val plusTap =
+            """<div class="taproom-taplist__item"><div class="taproom-taplist__thum">
+            <a href="/originalsplus/ikor/"><img src="/img/ikor.jpg"></a></div>
+            <div class="taproom-taplist__name">ikor</div><div class="taproom-taplist__style">Hazy</div></div>"""
+        val marker = "<div class=\"taproom-taplist\">"
         val scraper =
             Scraper { url ->
                 fetched += url
                 when {
+                    url == "$base/taproom/" ->
+                        Fixtures.taproom().let {
+                            if (withPlus) it.replace(marker, marker + plusTap) else it
+                        }
                     url == "$base/originals/" -> Fixtures.originals
                     url == "$base/freedoms/" -> Fixtures.freedoms(listOf(Triple("A", "S", "a")))
                     else -> Fixtures.detail("5.0", "20")
@@ -101,15 +111,16 @@ class CatalogTest {
             }
         val job = CatalogJob(scraper, dir)
 
-        assertEquals(4, job.updateBeers())
+        assertEquals(5, job.updateBeers())
         val first = fetched.count { it == "$base/freedoms/a/" }
-        assertEquals(4, job.updateBeers())
+        withPlus = false
+        assertEquals(5, job.updateBeers())
 
         assertEquals(1, first)
         assertEquals(1, fetched.count { it == "$base/freedoms/a/" })
-        assertEquals(
-            4,
-            CatalogJson.decodeBeers(Files.readString(dir.resolve(CatalogJob.BEERS_FILE))).size,
-        )
+        assertEquals(1, fetched.count { it == "$base/originalsplus/ikor/" })
+        val saved = CatalogJson.decodeBeers(Files.readString(dir.resolve(CatalogJob.BEERS_FILE)))
+        assertEquals(5, saved.size)
+        assertEquals(Series.ORIGINALS_PLUS, saved.last().series)
     }
 }
