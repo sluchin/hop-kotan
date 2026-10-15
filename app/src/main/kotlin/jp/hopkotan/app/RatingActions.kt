@@ -8,6 +8,8 @@ package jp.hopkotan.app
 
 import android.app.AlertDialog
 import android.content.Context
+import android.view.Gravity
+import android.widget.LinearLayout
 import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.RatingBar
@@ -29,23 +31,39 @@ class RatingActions(
 /**
  * 星 (5 つ) を選ぶ部品を作る.
  *
+ * 星の部品 (RatingBar) を幅いっぱいに広げると, 星が 5 つより多く並んで, 半分の星 (1.5 など) しか選べなく
+ * なる. 幅を中身に合わせて, 中央に置く.
+ *
  * @receiver コンテキスト
  * @param current 今の星の数
  * @param onChange 星を選んだときの処理 (星の数を受け取る)
- * @return 星の部品
+ * @return 星の部品を入れた枠
  */
 fun Context.ratingBar(
     current: Int,
     onChange: (Int) -> Unit,
-): RatingBar =
-    RatingBar(this).apply {
-        numStars = Ratings.MAX
-        stepSize = 1f
-        rating = current.toFloat()
-        setOnRatingBarChangeListener { _, value, fromUser ->
-            if (fromUser) onChange(value.toInt())
+): LinearLayout {
+    val bar =
+        RatingBar(this).apply {
+            numStars = Ratings.MAX
+            stepSize = 1f
+            rating = current.toFloat()
+            setOnRatingBarChangeListener { _, value, fromUser ->
+                if (fromUser) onChange(value.toInt())
+            }
         }
+
+    return LinearLayout(this).apply {
+        gravity = Gravity.CENTER_HORIZONTAL
+        addView(
+            bar,
+            LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            ),
+        )
     }
+}
 
 /**
  * 星の評価を選ぶ画面を出す (星をタップすると, すぐに保存する. 同じ星をもう一度タップしても消えないので,
