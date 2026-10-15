@@ -6,6 +6,7 @@
 
 package jp.hopkotan.app
 
+import android.Manifest
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
@@ -69,6 +71,10 @@ class MainActivity : AppCompatActivity() {
         drinks = store.loadDrinks()
         ratings = store.loadRatings()
         setContentView(buildScreen())
+        // 新しいビールの通知: 権限を求めて (許可されなくても動く), 定期の確認を予約する
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
+            .launch(Manifest.permission.POST_NOTIFICATIONS)
+        NewBeerWorker.schedule(this)
         render(null)
         refresh()
         onBackPressedDispatcher.addCallback(

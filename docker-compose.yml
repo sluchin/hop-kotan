@@ -27,11 +27,18 @@ services:
     command: /bin/bash
 
   # 全てのモジュールをビルドする (APK は app/build/outputs/apk/plain/debug/app-plain-debug.apk). Kotlin の警告が出たら失敗する
+  # private/kotan-mark.svg (サブモジュール) があれば, マークの APK (marked. 配布しない) も作る. なければ plain だけ (CI)
   build:
     <<: *common
-    command: ./gradlew --no-daemon :core:assemble :scraper:assemble :app:assemblePlainDebug
+    command:
+      - sh
+      - -c
+      - |
+        tasks=":core:assemble :scraper:assemble :app:assemblePlainDebug"
+        if [ -f private/kotan-mark.svg ]; then tasks="$$tasks :app:assembleMarkedDebug"; fi
+        exec ./gradlew --no-daemon $$tasks
 
-  # 忽布古丹醸造のマーク (private/ のサブモジュール) を使う APK をビルドする (配布しない. SETUP.md)
+  # 忽布古丹醸造のマーク (private/ のサブモジュール) を使う APK だけをビルドする (配布しない. SETUP.md)
   build-marked:
     <<: *common
     command: ./gradlew --no-daemon :app:assembleMarkedDebug

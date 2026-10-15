@@ -12,8 +12,8 @@
 
    | コマンド | 内容 |
    |:---|:---|
-   | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`) |
-   | `docker compose run --rm build-marked` | 忽布古丹醸造のマークのアイコンの APK (`private/` が要る。配布しない) |
+   | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`)。`private/kotan-mark.svg` (サブモジュール) があれば、マークの APK (`marked`。配布しない) も作る |
+   | `docker compose run --rm build-marked` | 忽布古丹醸造のマークのアイコンの APK だけ (`private/` が要る) |
    | `docker compose run --rm test` | 単体テスト |
    | `docker compose run --rm coverage` | `core` の行と分岐が 100% か |
    | `docker compose run --rm format` / `format-fix` | 整形の確認 / 整形して書き換える |

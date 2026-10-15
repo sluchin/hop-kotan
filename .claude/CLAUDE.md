@@ -13,7 +13,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - `core`: データの型 (`Beer` `TapList` `DrinkRecord`)、HTML の解析 (jsoup)、取得 (`Scraper` `JdkHtmlFetcher`)、JSON (`CatalogJson`)、飲んだ記録の集計 (`DrinkLog`)。Kotlin の JVM。カバレッジ 100%。
 - `scraper`: コマンドの入口 (`taplist <dir>` と `beers <dir>`)。薄く保つ。
-- `app`: Android アプリ (Kotlin。Material Components の View。Compose は使わない)。画面の下のナビゲーションで切り替える 5 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**最近** (最近 14 日分のタップリストを日ごとに表示。履歴は `data/taplist/<日付>.json` と目次 `index.json`。過去の日は変わらないので、端末にあれば取り直さない)、**ビール** (全ビール。画面には件数と「絞り込み」のボタンだけ。ポップアップに文字の検索、並べ方 (評価を含む。昇順と降順)、スタイル、シリーズ、発売年、ABV と IBU の下限、評価の下限、今日のタップのみ。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)、**メニュー** (店の QR コードを Google のコードスキャナ (`play-services-code-scanner`。カメラの権限は不要) で読んで、WebView に表示する。`MenuPanel`。表示するのは https だけ。ホストの判定は `core` の `MenuUrl`。ホストの外はブラウザで開く。注文は代行しない。下の帯 (`MenuBar`) にページの文字 (`evaluateJavascript`) から、`core` の `MenuMatcher` で見つけたビールを並べ、タップで飲んだ記録に入れる (文字は保存しない。手で選ぶ「ほかを記録」もある)。テーブルや注文の情報は保存せず、Cookie とキャッシュを消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は端末の `drinks.json` にだけ保存する (どこにも送らない)。星 (5 つ) の評価はビールごとに、端末の `ratings.json` にだけ保存する (キーはビールの ID か、`name:<名前>`。`core` の `Ratings`)。一覧の行には写真 (`ImageLoader`)、スタイル、ABV の印を出す。画面の部品は薄く保つ (ソートと絞り込みは `core` の `BeerQuery`)。
+- `app`: Android アプリ (Kotlin。Material Components の View。Compose は使わない)。画面の下のナビゲーションで切り替える 5 つのタブ: **今日** (タップリスト。タップして、量 (M か L) を選ぶと、飲んだビールを記録)、**最近** (最近 14 日分のタップリストを日ごとに表示。履歴は `data/taplist/<日付>.json` と目次 `index.json`。過去の日は変わらないので、端末にあれば取り直さない)、**ビール** (全ビール。画面には件数と「絞り込み」のボタンだけ。ポップアップに文字の検索、並べ方 (評価を含む。昇順と降順)、スタイル、シリーズ、発売年、ABV と IBU の下限、評価の下限、今日のタップのみ。タップすると詳細。「飲んだ」で記録、「サイトを開く」)、**記録** (日ごとの一覧と集計。長く押すと消す)、**メニュー** (店の QR コードを Google のコードスキャナ (`play-services-code-scanner`。カメラの権限は不要) で読んで、WebView に表示する。`MenuPanel`。表示するのは https だけ。ホストの判定は `core` の `MenuUrl`。ホストの外はブラウザで開く。注文は代行しない。下の帯 (`MenuBar`) にページの文字 (`evaluateJavascript`) から、`core` の `MenuMatcher` で見つけたビールを並べ、タップで飲んだ記録に入れる (文字は保存しない。手で選ぶ「ほかを記録」もある)。テーブルや注文の情報は保存せず、Cookie とキャッシュを消す)。起動のときに、`data/*.json` をダウンロードして、端末に保存する (オフラインでは、保存したデータを表示する)。飲んだ記録は端末の `drinks.json` にだけ保存する (どこにも送らない)。星 (5 つ) の評価はビールごとに、端末の `ratings.json` にだけ保存する (キーはビールの ID か、`name:<名前>`。`core` の `Ratings`)。一覧の行には写真 (`ImageLoader`)、スタイル、ABV の印を出す。新しいビールの通知: WorkManager (`NewBeerWorker`。3 時間ごと) が、最新のタップリストと履歴を取得して、前の日のタップリストと比べ (`core` の `NewTaps`)、前の日になかったビールがあれば通知する (`NewBeerNotifier`。同じ日に 1 回。通知の権限がなければ、しない)。画面の部品は薄く保つ (ソートと絞り込みは `core` の `BeerQuery`)。
 
 **Android Studio は使わない。** ビルド、テスト、整形、静的解析、ドキュメントの生成は全てコマンドラインで、Docker の中で実行する。
 
@@ -39,8 +39,8 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 > **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは thermo-term の `.claude/CLAUDE.md` と同じ。
 
 - `docker compose run` には必ず `--rm` を付ける (終わったコンテナを残さないため)。`UID` と `GID` をシェルでエクスポートしておく。
-- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`)
-- マークのアイコンの APK (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`)
+- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`。`private/kotan-mark.svg` があれば、マークの APK (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`。配布しない) も作る。なければ plain だけ。CI は plain だけ)
+- マークのアイコンの APK だけ (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`)
 - 単体テスト: `docker compose run --rm test`
 - カバレッジ (`core` の行と分岐が 100%): `docker compose run --rm coverage`
 - 整形の確認: `docker compose run --rm format` / 整形して書き換える: `docker compose run --rm format-fix`

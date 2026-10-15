@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- データ (JSON) を, GitHub から取得する -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 新しいビールが出たときの通知 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="false"
