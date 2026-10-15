@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.RatingBar
+import com.google.android.material.button.MaterialButton
 import jp.hopkotan.core.Ratings
 
 /**
@@ -36,11 +37,13 @@ class RatingActions(
  *
  * @receiver コンテキスト
  * @param current 今の星の数
- * @param onChange 星を選んだときの処理 (星の数を受け取る)
+ * @param withClear 評価を消すボタン (星の右) を付けるか
+ * @param onChange 星を選んだときの処理 (星の数を受け取る. 消したときは 0)
  * @return 星の部品を入れた枠
  */
 fun Context.ratingBar(
     current: Int,
+    withClear: Boolean = false,
     onChange: (Int) -> Unit,
 ): LinearLayout {
     val bar =
@@ -54,7 +57,7 @@ fun Context.ratingBar(
         }
 
     return LinearLayout(this).apply {
-        gravity = Gravity.CENTER_HORIZONTAL
+        gravity = Gravity.CENTER
         addView(
             bar,
             LinearLayout.LayoutParams(
@@ -62,6 +65,17 @@ fun Context.ratingBar(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             ),
         )
+        if (withClear) {
+            addView(
+                MaterialButton(context, null, android.R.attr.borderlessButtonStyle).apply {
+                    setText(R.string.rating_clear)
+                    setOnClickListener {
+                        bar.rating = 0f
+                        onChange(0)
+                    }
+                },
+            )
+        }
     }
 }
 
@@ -82,7 +96,7 @@ fun Context.showRatingDialog(
     AlertDialog
         .Builder(this)
         .setTitle(name)
-        .setView(ratingBar(current, onChange))
+        .setView(ratingBar(current, onChange = onChange))
         .setNeutralButton(R.string.rating_clear) { _, _ -> onChange(0) }
         .setPositiveButton(R.string.close, null)
         .show()

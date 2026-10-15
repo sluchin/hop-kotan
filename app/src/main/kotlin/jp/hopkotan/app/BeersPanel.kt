@@ -295,7 +295,10 @@ class BeersPanel(
             .setTitle(beer.name)
             .setMessage(detailText(beer))
             .setView(
-                activity.ratingBar(actions.ratings.of(Ratings.key(beer.id, beer.name))) {
+                activity.ratingBar(
+                    actions.ratings.of(Ratings.key(beer.id, beer.name)),
+                    withClear = true,
+                ) {
                     actions.ratings.set(Ratings.key(beer.id, beer.name), it)
                 },
             ).setPositiveButton(R.string.drink) { _, _ ->
