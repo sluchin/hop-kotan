@@ -44,14 +44,14 @@
         {
             "name": "Pilsner 2026",
             "style": "Harvest Pilsner",
-            "beerId": null,
+            "beerId": "harvest_brew/pilsner-2026",
             "url": "https://hopkotan.com/harvest_brew/pilsner-2026/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/f45f413ba59aa6b9df5694a5961790a1-240x240.jpg"
         },
         {
             "name": "Saison 2026",
             "style": "Harvest Saison",
-            "beerId": null,
+            "beerId": "harvest_brew/saison-2026",
             "url": "https://hopkotan.com/harvest_brew/saison-2026/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Saison-2026-240x240.jpg"
         },
@@ -72,14 +72,14 @@
         {
             "name": "ikor",
             "style": "Melon Hazy IPA",
-            "beerId": null,
+            "beerId": "originalsplus/ikor",
             "url": "https://hopkotan.com/originalsplus/ikor/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg"
         },
         {
             "name": "epana #6",
             "style": "Coffee Ale (Ordinary Bitter)",
-            "beerId": null,
+            "beerId": "originalsplus/epana-6",
             "url": "https://hopkotan.com/originalsplus/epana-6/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
         },
