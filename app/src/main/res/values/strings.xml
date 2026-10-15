@@ -34,6 +34,7 @@
     <string name="ibu_label">IBU %1$s</string>
     <string name="row_style_released">%1$s · %2$s</string>
     <string name="record_size">%1$s · %2$s %3$d ml</string>
+    <string name="record_size_time">%4$s · %1$s · %2$s %3$d ml</string>
     <string name="yen_badge">%1$s 円</string>
     <string name="filter_toggle">絞り込み</string>
     <string name="unknown">-</string>

@@ -29,6 +29,8 @@ import jp.hopkotan.core.Tap
 import jp.hopkotan.core.TapEntries
 import jp.hopkotan.core.TapList
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.concurrent.Executors
 
@@ -205,13 +207,14 @@ class MainActivity : AppCompatActivity() {
     ) {
         drinks =
             drinks.add(
-                DrinkLog.record(
-                    UUID.randomUUID().toString(),
-                    LocalDate.now().toString(),
-                    tap,
-                    size,
-                    abv,
-                ),
+                DrinkLog
+                    .record(
+                        UUID.randomUUID().toString(),
+                        LocalDate.now().toString(),
+                        tap,
+                        size,
+                        abv,
+                    ).copy(time = LocalTime.now().truncatedTo(ChronoUnit.MINUTES).toString()),
             )
         save()
         Toast.makeText(this, getString(R.string.recorded, tap.name), Toast.LENGTH_SHORT).show()

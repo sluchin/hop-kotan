@@ -23,6 +23,7 @@ import kotlinx.serialization.Serializable
  * @property yen 価格 (円)
  * @property abv アルコール度数 (%. 分からなければ null)
  * @property note メモ
+ * @property time 飲んだ時刻 (`20:15`. [DrinkLog.record] は null で作るので, 呼び出し側が付ける. 昔の記録は null)
  */
 @Serializable
 data class DrinkRecord(
@@ -36,6 +37,7 @@ data class DrinkRecord(
     val yen: Int,
     val abv: Double? = null,
     val note: String = "",
+    val time: String? = null,
 )
 
 /**

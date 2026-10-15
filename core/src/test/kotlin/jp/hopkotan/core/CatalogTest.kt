@@ -33,13 +33,14 @@ class CatalogTest {
     @Test
     fun jsonRoundTrip() {
         val record =
-            DrinkLog.record(
-                "1",
-                "2026-10-13",
-                Tap("a", "s", "freedoms/a"),
-                PriceSize("M", 310, 750),
-                5.0,
-            )
+            DrinkLog
+                .record(
+                    "1",
+                    "2026-10-13",
+                    Tap("a", "s", "freedoms/a"),
+                    PriceSize("M", 310, 750),
+                    5.0,
+                ).copy(time = "20:15")
 
         assertEquals(listOf(beer), CatalogJson.decodeBeers(CatalogJson.encodeBeers(listOf(beer))))
         assertTrue(CatalogJson.encodeBeers(listOf(beer)).contains("篝火"))

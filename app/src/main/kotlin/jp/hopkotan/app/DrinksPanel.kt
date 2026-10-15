@@ -119,13 +119,7 @@ class DrinksPanel(
             is DrinkRow.Item ->
                 RowModel(
                     title = row.record.beerName,
-                    subtitle =
-                        activity.getString(
-                            R.string.record_size,
-                            row.record.style,
-                            row.record.sizeLabel,
-                            row.record.ml,
-                        ),
+                    subtitle = recordSubtitle(row.record),
                     extra =
                         joinExtra(
                             Ratings.text(
@@ -137,6 +131,20 @@ class DrinksPanel(
                     badge = activity.getString(R.string.yen_badge, formatYen(row.record.yen)),
                     imageUrl = actions.imageOf(row.record.beerId),
                 )
+        }
+
+    /** 記録の 2 行目 (時刻があれば, 先頭に付ける). */
+    private fun recordSubtitle(record: DrinkRecord): String =
+        if (record.time == null) {
+            activity.getString(R.string.record_size, record.style, record.sizeLabel, record.ml)
+        } else {
+            activity.getString(
+                R.string.record_size_time,
+                record.style,
+                record.sizeLabel,
+                record.ml,
+                record.time,
+            )
         }
 
     private fun confirmDelete(record: DrinkRecord) {
