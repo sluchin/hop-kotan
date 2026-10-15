@@ -3,7 +3,7 @@
 ## Docker で開発する
 
 1. Docker をインストールする。
-2. ホストのユーザー ID を、環境変数にエクスポートする (生成物が、root 所有にならないように):
+2. ホストのユーザー ID を環境変数にエクスポートする (生成物が root 所有にならないように):
 
    ```bash
    export UID GID=$(id -g)
@@ -34,23 +34,23 @@ adb install -r app/build/outputs/apk/plain/debug/app-plain-debug.apk
 
 ## アイコンの素材 (private のサブモジュール)
 
-公式のマークから作るアイコンを使うときは、private のリポジトリ `hop-kotan-assets` (自分だけが、読める) を、サブモジュール `private/` として取り込む。取り込まなくても、オリジナルのアイコンで、ビルドできる。
+公式のマークから作るアイコンを使うときは private のリポジトリ `hop-kotan-assets` (自分だけが、読める) をサブモジュール `private/` として取り込む。取り込まなくても、オリジナルのアイコンで、ビルドできる。
 
 ```bash
 git submodule update --init private      # 取り込む (SSH で private のリポジトリを読める鍵が要る)
 git submodule update --remote private    # 最新にする
 ```
 
-CI (GitHub Actions) は、サブモジュールを取り込まない。マークを入れたビルドは、手元だけで使い、配布しない。
+CI (GitHub Actions) はサブモジュールを取り込まない。マークを入れたビルドは手元だけで使い、配布しない。
 
 ## GitHub Actions
 
 | ワークフロー | 内容 |
 |:---|:---|
-| `build.yml` (CI) | push と PR で、`build` `test` `coverage` `format` `analyze` `docs` を実行する |
-| `update-data.yml` | 毎日 12:30 と 17:30 (JST) に、タップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。17:30 の回に、ビール (ORIGINALS と FREEDOMS) の新しいものを探して、あれば保存する。タップリストとビールは、別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは、GitHub が署名する) |
+| `build.yml` (CI) | push と PR で `build` `test` `coverage` `format` `analyze` `docs` を実行する |
+| `update-data.yml` | 毎日 12:30 と 17:30 (JST) にタップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。17:30 の回にビール (ORIGINALS と FREEDOMS) の新しいものを探して、あれば保存する。タップリストとビールは別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名する) |
 
-`update-data.yml` は、`permissions: contents: write` を宣言しているので、`data/*.json` をコミットできる。コミットできないときは、リポジトリ (または組織) の Settings > Actions > General > Workflow permissions が、書き込みを禁止していないか確認する。
+`update-data.yml` は `permissions: contents: write` を宣言しているので、`data/*.json` をコミットできる。コミットできないときはリポジトリ (または組織) の Settings > Actions > General > Workflow permissions が書き込みを禁止していないか確認する。
 
 ## ツールの版 (実際に使うもの)
 
