@@ -66,6 +66,10 @@ docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、
 
 オリジナルのアイコン (ビールのグラスとホップ) を使います。作者の端末のビルドだけは、private のサブモジュール `private/` の、忽布古丹醸造のマークを使います (権利は、忽布古丹醸造にあります。このリポジトリには、含みません。配布もしません)。
 
+## リリース
+
+`v0.1.0` のようなタグを push すると、GitHub Actions の `release.yml` が、APK (plain。オリジナルのアイコン) を作って、GitHub Releases の**ドラフト**に載せます (中身を確かめて、手で公開します)。APK は、デバッグ鍵で署名したデバッグ版です。マークのアイコンの APK (marked) は、権利が忽布古丹醸造にあるので、作りません。タグを打たずに試すときは、Actions の Release を手動で実行します (成果物は、Artifacts に保存されます)。
+
 ## ライセンス
 
 [GPL-3.0-or-later](LICENSE)
