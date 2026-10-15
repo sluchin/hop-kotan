@@ -3,8 +3,8 @@ name: Release
 # v から始まるタグ (例: v0.1.0) を push すると, APK (plain: オリジナルのアイコン) をビルドして,
 # GitHub Releases のドラフトに載せる (中身を確かめて, 手で公開する). 手動実行 (workflow_dispatch) は,
 # タグを打たずにビルドして, APK を Actions の Artifacts に保存する.
-# マークのアイコンの APK (marked) は, 権利が忽布古丹醸造にあるので, ここでは作らない (.claude/CLAUDE.md).
-# APK は, デバッグ鍵で署名したデバッグ版 (リリース用の署名鍵は, 使っていない).
+# マークのアイコンの APK (marked) は権利が忽布古丹醸造にあるので, ここでは作らない (.claude/CLAUDE.md).
+# APK はデバッグ鍵で署名したデバッグ版 (リリース用の署名鍵は使っていない).
 
 on:
   push:

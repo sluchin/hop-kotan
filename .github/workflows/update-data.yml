@@ -2,9 +2,9 @@ name: Update the data
 
 # サイトからデータを取得して, data/*.json を更新する.
 #   taplist: 毎日 2 回 (タップルームの, 今日のタップリスト. 土日祝日は 12 時, 平日は 17 時から開くので, そのあとの 12:30 と 17:30)
-#   beers  : 毎日 1 回 (17:30 の回. ORIGINALS と FREEDOMS の, 新しいビールを探す. 取得済みのビールは, 取り直さない)
-# タップリスト (taplist.json) とビール (beers.json) は, 別のファイルに保存する.
-# タップリストは, 日ごとの履歴 (taplist/<日付>.json) と, その目次 (taplist/index.json) にも保存する.
+#   beers  : 毎日 1 回 (17:30 の回. ORIGINALS と FREEDOMS の, 新しいビールを探す. 取得済みのビールは取り直さない)
+# タップリスト (taplist.json) とビール (beers.json) は別のファイルに保存する.
+# タップリストは日ごとの履歴 (taplist/<日付>.json) と, その目次 (taplist/index.json) にも保存する.
 # 変わったときだけ, GitHub の Contents API でコミットする (scripts/publish-data.sh. Verified になる).
 # サイトの作りが変わって, 1 件も読めなくなったら, 失敗する.
 

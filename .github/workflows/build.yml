@@ -1,14 +1,14 @@
 name: CI
 
-# 開発環境 (Dockerfile) と同じイメージで, docker compose のサービスを実行する.
+# 開発環境 (Dockerfile) と同じイメージで docker compose のサービスを実行する.
 #   build   : 全てのモジュールのビルド. 警告が出たら失敗する
 #   test    : 単体テスト
 #   coverage: core の行と分岐のカバレッジが 100% であること
 #   format  : 整形の確認 (ktlint)
 #   analyze : 静的解析 (detekt)
 #   docs    : ドキュメント (Dokka の HTML). 警告があれば失敗する
-#   cleanup : 3 日より前の実行 (ログと artifact) を, push のたびに削除する. artifact は, 3 日で期限が切れる (retention-days)
-# どのジョブも, 実行のログを artifact に保存する. イメージは, レイヤーを GitHub Actions のキャッシュに保存する
+#   cleanup : 3 日より前の実行 (ログと artifact) を push のたびに削除する. artifact は 3 日で期限が切れる (retention-days)
+# どのジョブも, 実行のログを artifact に保存する. イメージはレイヤーを GitHub Actions のキャッシュに保存する
 # (.github/actions/docker-image). Gradle の依存関係も, キャッシュに保存する (.github/actions/gradle-cache).
 
 on:
