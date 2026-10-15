@@ -2,6 +2,7 @@
 agp = "9.4.1"
 material = "1.14.0"
 appcompat = "1.7.1"
+swiperefresh = "1.1.0"
 code-scanner = "16.1.0"
 kotlin = "2.4.21"
 ktlintPlugin = "14.2.0"
@@ -16,6 +17,7 @@ serialization = "1.11.0"
 material = { module = "com.google.android.material:material", version.ref = "material" }
 play-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "code-scanner" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+androidx-swiperefresh = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefresh" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }

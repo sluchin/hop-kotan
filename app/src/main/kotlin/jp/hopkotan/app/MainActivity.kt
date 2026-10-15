@@ -7,16 +7,18 @@
 package jp.hopkotan.app
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
+import androidx.core.view.isVisible
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.button.MaterialButton
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.PriceSize
@@ -40,6 +42,7 @@ private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420,
 class MainActivity : AppCompatActivity() {
     private lateinit var store: DataStore
     private lateinit var status: TextView
+    private lateinit var pull: SwipeRefreshLayout
     private lateinit var today: TodayPanel
     private lateinit var historyPanel: HistoryPanel
     private lateinit var beersPanel: BeersPanel
@@ -114,21 +117,6 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-        val statusRow =
-            LinearLayout(this).apply {
-                gravity = Gravity.CENTER_VERTICAL
-                addView(status, LinearLayout.LayoutParams(0, WRAP, 1f))
-                addView(
-                    MaterialButton(
-                        context,
-                        null,
-                        android.R.attr.borderlessButtonStyle,
-                    ).apply {
-                        setText(R.string.refresh)
-                        setOnClickListener { refresh() }
-                    },
-                )
-            }
         val content = FrameLayout(this).apply { panels.forEach { addView(it) } }
         val nav =
             BottomNavigationView(this).apply {
@@ -139,11 +127,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         show(0)
+        // 下に引いて更新する. 一覧が先頭でないとき (と, メニューの Web ページ) は, 引いても更新しない
+        pull =
+            SwipeRefreshLayout(this).apply {
+                addView(content)
+                setOnChildScrollUpCallback { _, _ -> current == MENU_INDEX || canScrollUp(content) }
+                setOnRefreshListener { refresh() }
+            }
 
         return LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            addView(statusRow)
-            addView(content, LinearLayout.LayoutParams(MATCH, 0, 1f))
+            addView(status, LinearLayout.LayoutParams(MATCH, WRAP))
+            addView(pull, LinearLayout.LayoutParams(MATCH, 0, 1f))
             addView(nav)
             applyInsets(this)
         }
@@ -160,6 +155,7 @@ class MainActivity : AppCompatActivity() {
     /** データを取得して, 画面を更新する (通信は, 別のスレッドで行う). */
     private fun refresh() {
         status.setText(R.string.status_loading)
+        pull.isRefreshing = true
         executor.execute {
             val result = runCatching { store.download() }
             // 履歴は, 取得できなくても, 端末にあるものを表示する
@@ -168,6 +164,7 @@ class MainActivity : AppCompatActivity() {
                     store.downloadHistory()
                 }.getOrElse { store.loadHistory() }
             runOnUiThread {
+                pull.isRefreshing = false
                 result
                     .onSuccess { (newBeers, newTaplist) ->
                         beers = newBeers
@@ -245,3 +242,11 @@ class MainActivity : AppCompatActivity() {
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
     }
 }
+
+/** 表示されている部分に, 上へスクロールできる一覧や画面があるか (更新の引き下げと, 区別する). */
+private fun canScrollUp(view: View): Boolean =
+    view.isVisible &&
+        (
+            view.canScrollVertically(-1) ||
+                (view is ViewGroup && view.children.any { canScrollUp(it) })
+        )

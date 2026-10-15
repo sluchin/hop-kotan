@@ -3,7 +3,7 @@
     <string name="app_name">hop-kotan</string>
     <string name="tab_today">今日</string>
     <string name="tab_recent">最近</string>
-    <string name="recent_none">履歴がありません。「更新」を押してください。</string>
+    <string name="recent_none">履歴がありません。画面を下に引いて、更新してください。</string>
     <string name="recent_total">最近 %1$d 日分のタップリスト</string>
     <string name="rating_clear">評価を消す</string>
     <string name="tab_menu">メニュー</string>
@@ -20,9 +20,8 @@
     <string name="menu_failed">QR コードを読めませんでした (%1$s)。</string>
     <string name="tab_beers">ビール</string>
     <string name="tab_drinks">記録</string>
-    <string name="refresh">更新</string>
     <string name="status_ready">更新日 %1$s / タップ %2$d 件 / ビール %3$d 件</string>
-    <string name="status_empty">データがありません。「更新」を押してください。</string>
+    <string name="status_empty">データがありません。画面を下に引いて、更新してください。</string>
     <string name="status_loading">更新しています…</string>
     <string name="status_failed">更新できませんでした (%1$s)。保存したデータを表示しています。</string>
     <string name="today_header">タップリスト (%1$s)。タップして、飲んだビールを記録します。</string>
