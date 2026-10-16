@@ -12,6 +12,7 @@ import android.widget.ListView
 import android.widget.TextView
 import jp.hopkotan.core.DaySummary
 import jp.hopkotan.core.Ratings
+import jp.hopkotan.core.Tap
 import jp.hopkotan.core.TapEntry
 
 /**
@@ -65,11 +66,13 @@ class TodayPanel(
      * @param entries タップのビール
      * @param date タップリストの更新日 (なければ null)
      * @param today 今日の飲んだ記録の集計
+     * @param newTaps 前の日のタップリストになかったビール (NEW の印をつける)
      */
     fun update(
         entries: List<TapEntry>,
         date: String?,
         today: DaySummary,
+        newTaps: List<Tap>,
     ) {
         header.text =
             if (date ==
@@ -88,7 +91,14 @@ class TodayPanel(
                 formatDecimal(today.alcoholG),
                 Math.round(today.kcal),
             )
-        list.replaceAdapter(rowAdapter(activity, entries, actions.images, { describe(it) }))
+        list.replaceAdapter(
+            rowAdapter(activity, entries, actions.images, {
+                describe(
+                    it,
+                    it.tap in newTaps,
+                )
+            }),
+        )
         list.setOnItemLongClickListener { _, _, position, _ ->
             val tap = entries[position].tap
             val key = Ratings.key(tap.beerId, tap.name)
@@ -105,7 +115,10 @@ class TodayPanel(
         }
     }
 
-    private fun describe(entry: TapEntry): RowModel {
+    private fun describe(
+        entry: TapEntry,
+        isNew: Boolean,
+    ): RowModel {
         val beer = entry.beer
 
         return RowModel(
@@ -118,6 +131,7 @@ class TodayPanel(
             badgeLead = beer?.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
             badge = beer?.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
             imageUrl = entry.tap.imageUrl ?: beer?.imageUrl,
+            isNew = isNew,
         )
     }
 

@@ -23,6 +23,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
+import jp.hopkotan.core.NewTaps
 import jp.hopkotan.core.PriceSize
 import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Tap
@@ -188,7 +189,16 @@ class MainActivity : AppCompatActivity() {
     private fun render(error: String?) {
         val list = taplist
         val entries = list?.let { TapEntries.of(it, beers) }.orEmpty()
-        today.update(entries, list?.date, drinks.summary(LocalDate.now().toString()))
+        val previous = list?.let { NewTaps.previousOf(history, it) }
+        val newTaps =
+            if (list != null &&
+                previous != null
+            ) {
+                NewTaps.find(previous, list)
+            } else {
+                emptyList()
+            }
+        today.update(entries, list?.date, drinks.summary(LocalDate.now().toString()), newTaps)
         historyPanel.update(history, beers)
         beersPanel.update(beers, entries.mapNotNull { it.beer?.id }.toSet())
         drinksPanel.update(drinks)

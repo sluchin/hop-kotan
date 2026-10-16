@@ -30,6 +30,7 @@
     <string name="today_summary">今日: %1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g / 約 %5$d キロカロリー</string>
     <string name="today_none">今日のタップリストがありません。</string>
     <string name="beer_detail">%1$s  %2$s  ABV %3$s  IBU %4$s</string>
+    <string name="new_mark">NEW</string>
     <string name="abv_badge">%1$s%%</string>
     <string name="ibu_label">IBU %1$s</string>
     <string name="row_style_released">%1$s · %2$s</string>

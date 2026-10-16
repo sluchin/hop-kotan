@@ -80,6 +80,7 @@ data class RowModel(
     val badgeLead: String? = null,
     val imageUrl: String? = null,
     val showImage: Boolean = true,
+    val isNew: Boolean = false,
 )
 
 /**
@@ -110,6 +111,8 @@ fun <T> rowAdapter(
                     ?: LayoutInflater.from(context).inflate(R.layout.item_row, parent, false)
             val content = model(items[position])
             row.findViewById<TextView>(R.id.title).text = content.title
+            row.findViewById<TextView>(R.id.new_mark).visibility =
+                if (content.isNew) View.VISIBLE else View.GONE
             row.findViewById<TextView>(R.id.subtitle).text = content.subtitle
             row.findViewById<TextView>(R.id.extra).bind(content.extra)
             row.findViewById<TextView>(R.id.badge_lead).bind(content.badgeLead)
