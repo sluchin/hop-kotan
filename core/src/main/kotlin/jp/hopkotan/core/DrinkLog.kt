@@ -84,6 +84,15 @@ data class DrinkLog(
     fun remove(id: String): DrinkLog = DrinkLog(records.filter { it.id != id })
 
     /**
+     * 記録を差し替えた一覧を返す (同じ ID の記録を, 同じ位置で入れ替える).
+     *
+     * @param record 新しい記録 (ID が同じ記録を置き換える)
+     * @return 新しい一覧 (同じ ID の記録がなければ, 変わらない)
+     */
+    fun update(record: DrinkRecord): DrinkLog =
+        DrinkLog(records.map { if (it.id == record.id) record else it })
+
+    /**
      * 1 日の記録を返す.
      *
      * @param date 日 (`2026-10-13`)

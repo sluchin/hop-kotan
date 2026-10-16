@@ -38,7 +38,7 @@ private sealed interface DrinkRow {
 }
 
 /**
- * 飲んだビールの記録を, 日ごとに表示するタブ (長く押すと, 消せる).
+ * 飲んだビールの記録を, 日ごとに表示するタブ (長く押すと, 変えるか消せる).
  *
  * @property activity 画面
  * @property actions アプリに頼む操作
@@ -97,7 +97,7 @@ class DrinksPanel(
             }
         }
         list.setOnItemLongClickListener { _, _, position, _ ->
-            (rows[position] as? DrinkRow.Item)?.let { confirmDelete(it.record) } != null
+            (rows[position] as? DrinkRow.Item)?.let { showActions(it.record) } != null
         }
     }
 
@@ -148,6 +148,21 @@ class DrinksPanel(
             )
         }
 
+    private fun showActions(record: DrinkRecord) {
+        AlertDialog
+            .Builder(activity)
+            .setTitle(record.beerName)
+            .setItems(
+                arrayOf(activity.getString(R.string.edit), activity.getString(R.string.delete)),
+            ) { _, which ->
+                if (which == 0) {
+                    activity.showRecordEditor(record, actions.sizes(), actions.records.edit)
+                } else {
+                    confirmDelete(record)
+                }
+            }.show()
+    }
+
     private fun confirmDelete(record: DrinkRecord) {
         AlertDialog
             .Builder(activity)
@@ -159,7 +174,7 @@ class DrinksPanel(
                     record.sizeLabel,
                     record.ml,
                 ),
-            ).setPositiveButton(R.string.delete) { _, _ -> actions.onDelete(record.id) }
+            ).setPositiveButton(R.string.delete) { _, _ -> actions.records.delete(record.id) }
             .setNegativeButton(R.string.cancel, null)
             .show()
     }

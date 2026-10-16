@@ -73,5 +73,11 @@
     <string name="record_line">%1$s (%2$s %3$d ml)</string>
     <string name="delete_title">この記録を消しますか</string>
     <string name="delete">消す</string>
+    <string name="edit">変える</string>
+    <string name="save">保存</string>
+    <string name="edit_time_none">時刻なし (タップして設定)</string>
+    <string name="edit_yen">価格 (円)</string>
+    <string name="edit_yen_value">%1$d</string>
+    <string name="edit_note">メモ</string>
     <string name="cancel">キャンセル</string>
 </resources>
