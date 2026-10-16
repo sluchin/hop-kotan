@@ -86,6 +86,7 @@ class TodayPanel(
                 today.ml,
                 formatYen(today.yen),
                 formatDecimal(today.alcoholG),
+                Math.round(today.kcal),
             )
         list.replaceAdapter(rowAdapter(activity, entries, actions.images, { describe(it) }))
         list.setOnItemLongClickListener { _, _, position, _ ->

@@ -54,6 +54,11 @@ class DrinkLogTest {
         assertEquals(730, summary.ml)
         assertEquals(1650, summary.yen)
         assertEquals(310 * 0.05 * 0.8, summary.alcoholG, 1e-9)
-        assertEquals(DaySummary("2026-10-14", 0, 0, 0, 0.0), log.summary("2026-10-14"))
+        assertEquals(
+            Calories.kcal("IPA", 5.0, 310) + Calories.kcal("IPA", null, 420),
+            summary.kcal,
+            1e-9,
+        )
+        assertEquals(DaySummary("2026-10-14", 0, 0, 0, 0.0, 0.0), log.summary("2026-10-14"))
     }
 }

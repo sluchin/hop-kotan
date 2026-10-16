@@ -48,6 +48,7 @@ data class DrinkRecord(
  * @property ml 量の合計 (ml)
  * @property yen 価格の合計 (円)
  * @property alcoholG 純アルコールの量 (g. ABV が分からない記録は, 含めない)
+ * @property kcal おおよその摂取カロリー (kcal. スタイルごとの目安. [Calories])
  */
 data class DaySummary(
     val date: String,
@@ -55,6 +56,7 @@ data class DaySummary(
     val ml: Int,
     val yen: Int,
     val alcoholG: Double,
+    val kcal: Double,
 )
 
 /**
@@ -105,8 +107,9 @@ data class DrinkLog(
     fun summary(date: String): DaySummary {
         val day = forDate(date)
         val alcohol = day.sumOf { alcoholGrams(it) }
+        val kcal = day.sumOf { Calories.kcal(it.style, it.abv, it.ml) }
 
-        return DaySummary(date, day.size, day.sumOf { it.ml }, day.sumOf { it.yen }, alcohol)
+        return DaySummary(date, day.size, day.sumOf { it.ml }, day.sumOf { it.yen }, alcohol, kcal)
     }
 
     /** 記録の作り方と, 計算の定数. */

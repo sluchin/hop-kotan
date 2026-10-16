@@ -27,7 +27,7 @@
     <string name="status_loading">更新しています…</string>
     <string name="status_failed">更新できませんでした (%1$s)。保存したデータを表示しています。</string>
     <string name="today_header">タップリスト (%1$s)。タップして、飲んだビールを記録します。</string>
-    <string name="today_summary">今日: %1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g</string>
+    <string name="today_summary">今日: %1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g / 約 %5$d キロカロリー</string>
     <string name="today_none">今日のタップリストがありません。</string>
     <string name="beer_detail">%1$s  %2$s  ABV %3$s  IBU %4$s</string>
     <string name="abv_badge">%1$s%%</string>
@@ -68,7 +68,7 @@
     <string name="recorded">記録しました: %1$s</string>
     <string name="drinks_total">合計: %1$d 日 / %2$d 杯 / %3$s 円</string>
     <string name="drinks_none">記録がありません。「今日」か「ビール」のタブで、ビールをタップして記録します。</string>
-    <string name="day_summary">%1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g</string>
+    <string name="day_summary">%1$d 杯 / %2$d ml / %3$s 円 / 純アルコール %4$s g / 約 %5$d キロカロリー</string>
     <string name="record_line">%1$s (%2$s %3$d ml)</string>
     <string name="delete_title">この記録を消しますか</string>
     <string name="delete">消す</string>

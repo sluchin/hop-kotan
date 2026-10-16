@@ -113,6 +113,7 @@ class DrinksPanel(
                             row.summary.ml,
                             formatYen(row.summary.yen),
                             formatDecimal(row.summary.alcoholG),
+                            Math.round(row.summary.kcal),
                         ),
                     showImage = false,
                 )
