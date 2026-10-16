@@ -11,6 +11,7 @@ import android.app.AlertDialog
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
+import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DaySummary
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.DrinkRecord
@@ -53,6 +54,7 @@ class DrinksPanel(
                 com.google.android.material.R.style.TextAppearance_Material3_BodyMedium,
             )
         }
+    private var beers: List<Beer> = emptyList()
     private val list = ListView(activity).apply { divider = null }
 
     /** タブの内容. */
@@ -67,8 +69,13 @@ class DrinksPanel(
      * 表示を更新する.
      *
      * @param log 飲んだ記録
+     * @param beers ビールのデータ (記録を変えるとき, 足りない ABV を補う)
      */
-    fun update(log: DrinkLog) {
+    fun update(
+        log: DrinkLog,
+        beers: List<Beer>,
+    ) {
+        this.beers = beers
         val rows =
             log.dates().flatMap { date ->
                 listOf<DrinkRow>(DrinkRow.Day(log.summary(date))) +
@@ -156,7 +163,11 @@ class DrinksPanel(
                 arrayOf(activity.getString(R.string.edit), activity.getString(R.string.delete)),
             ) { _, which ->
                 if (which == 0) {
-                    activity.showRecordEditor(record, actions.sizes(), actions.records.edit)
+                    activity.showRecordEditor(
+                        DrinkLog.complete(record, beers),
+                        actions.sizes(),
+                        actions.records.edit,
+                    )
                 } else {
                     confirmDelete(record)
                 }

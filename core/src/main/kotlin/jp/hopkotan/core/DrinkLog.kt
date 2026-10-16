@@ -123,6 +123,32 @@ data class DrinkLog(
 
     /** 記録の作り方と, 計算の定数. */
     companion object {
+        /**
+         * ビールのデータから, 記録の足りない ID と ABV を補う.
+         *
+         * 記録のあとに, ビールのデータに載ったビール (タップに出た新しいビールなど) の記録は,
+         * ID と ABV が null のまま残る. ID が同じか, ID がなければ名前が同じ (大文字と小文字は区別しない)
+         * ビールを探す. 記録にある値は, 変えない.
+         *
+         * @param record 記録
+         * @param beers ビールのデータ
+         * @return 補った記録 (見つからなければ, そのまま)
+         */
+        fun complete(
+            record: DrinkRecord,
+            beers: List<Beer>,
+        ): DrinkRecord {
+            val beer =
+                beers.firstOrNull { it.id == record.beerId }
+                    ?: beers.firstOrNull { it.name.equals(record.beerName, ignoreCase = true) }
+
+            return if (beer == null) {
+                record
+            } else {
+                record.copy(beerId = record.beerId ?: beer.id, abv = record.abv ?: beer.abv)
+            }
+        }
+
         /** エタノールの密度 (g/ml). */
         private const val ETHANOL_DENSITY = 0.8
 

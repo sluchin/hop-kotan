@@ -210,7 +210,7 @@ class MainActivity : AppCompatActivity() {
         today.update(entries, list?.date, drinks.summary(LocalDate.now().toString()), newTaps)
         historyPanel.update(history, beers)
         beersPanel.update(beers, entries.mapNotNull { it.beer?.id }.toSet())
-        drinksPanel.update(drinks)
+        drinksPanel.update(drinks, beers)
         status.text =
             when {
                 error != null -> getString(R.string.status_failed, error)

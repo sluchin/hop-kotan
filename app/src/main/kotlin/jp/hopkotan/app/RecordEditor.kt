@@ -68,6 +68,12 @@ private class RecordForm(
     private val dateButton = Button(context)
     private val timeButton = Button(context)
     private val yen = field(InputType.TYPE_CLASS_NUMBER, yenText(record.yen), R.string.edit_yen)
+    private val abv =
+        field(
+            InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL,
+            record.abv?.let { context.getString(R.string.edit_abv_value, it) }.orEmpty(),
+            R.string.edit_abv,
+        )
     private val note = field(InputType.TYPE_CLASS_TEXT, record.note, R.string.edit_note)
 
     /** 入力欄を並べた画面. */
@@ -76,7 +82,7 @@ private class RecordForm(
             orientation = LinearLayout.VERTICAL
             val pad = context.dp(FORM_PADDING_DP)
             setPadding(pad, pad, pad, 0)
-            listOf(dateButton, timeButton, sizeSpinner(), yen, note).forEach { addView(it) }
+            listOf(dateButton, timeButton, sizeSpinner(), yen, abv, note).forEach { addView(it) }
         }
 
     init {
@@ -88,7 +94,7 @@ private class RecordForm(
     /**
      * 入力した内容で, 記録を作る.
      *
-     * @return 変えた記録 (価格が数でなければ, 量の価格)
+     * @return 変えた記録 (価格が数でなければ, 量の価格. ABV が数でなければ, 分からない)
      */
     fun result(): DrinkRecord =
         record.copy(
@@ -97,6 +103,7 @@ private class RecordForm(
             sizeLabel = size.label,
             ml = size.ml,
             yen = yen.text.toString().toIntOrNull() ?: size.yen,
+            abv = abv.text.toString().toDoubleOrNull(),
             note = note.text.toString().trim(),
         )
 
