@@ -48,7 +48,7 @@ CI (GitHub Actions) はサブモジュールを取り込まない。マークを
 | ワークフロー | 内容 |
 |:---|:---|
 | `build.yml` (CI) | push と PR で `build` `test` `coverage` `format` `analyze` `docs` を実行する |
-| `update-data.yml` | 毎日 12:30 と 17:30 (JST) にタップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。17:30 の回にビール (ORIGINALS と FREEDOMS) の新しいものを探して、あれば保存する。タップリストとビールは別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名する) |
+| `update-data.yml` | 毎日 12:30 と 17:30 (JST) にタップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。同じ回にビール (ORIGINALS と FREEDOMS と、タップに出たもの) の新しいものを探して、あれば保存する。タップリストとビールは別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名する) |
 
 `update-data.yml` は `permissions: contents: write` を宣言しているので、`data/*.json` をコミットできる。コミットできないときはリポジトリ (または組織) の Settings > Actions > General > Workflow permissions が書き込みを禁止していないか確認する。
 

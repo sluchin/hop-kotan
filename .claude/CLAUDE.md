@@ -84,7 +84,7 @@ ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う�
 
 1. 機能開発は `ccr-*` ブランチで行う。
 2. Push 時に GitHub Actions (`.github/workflows/build.yml`) が開発用の Docker イメージで、`build` / `test` / `coverage` / `format` / `analyze` / `docs` を実行する。ログはアーティファクト (`<サービス名>_log`) に保存する。3 日より前の実行は削除する (`cleanup`)。
-3. データの更新 (`.github/workflows/update-data.yml`): 毎日 12:30 と 17:30 (JST) にタップリストを取得する。17:30 の回にビール (ORIGINALS と FREEDOMS。タップに出た ORIGINALS plus と HARVEST BREW も) の新しいものを探す。タップリストとビールは別のファイルに保存する。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名するので、Verified になる)。
+3. データの更新 (`.github/workflows/update-data.yml`): 毎日 12:30 と 17:30 (JST) にタップリストを取得する。同じ回に、ビール (ORIGINALS と FREEDOMS。タップに出た ORIGINALS plus と HARVEST BREW も) の新しいものを探す (タップに出た新しいビールを、その日のうちに、IBU と ABV つきで見られるように)。タップリストとビールは別のファイルに保存する。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名するので、Verified になる)。
 
 ### コード修正時のルール
 
