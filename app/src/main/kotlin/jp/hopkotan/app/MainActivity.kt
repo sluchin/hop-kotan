@@ -106,7 +106,16 @@ class MainActivity : AppCompatActivity() {
         val actions =
             PanelActions(
                 ::record,
-                ::delete,
+                RecordActions(
+                    { id ->
+                        drinks = drinks.remove(id)
+                        save()
+                    },
+                    { record ->
+                        drinks = drinks.update(record)
+                        save()
+                    },
+                ),
                 { taplist?.sizes?.ifEmpty { null } ?: DEFAULT_SIZES },
                 images,
                 { id -> beers.firstOrNull { it.id == id }?.imageUrl },
@@ -239,11 +248,6 @@ class MainActivity : AppCompatActivity() {
         val snapshot = ratings
         executor.execute { store.saveRatings(snapshot) }
         render(null)
-    }
-
-    private fun delete(id: String) {
-        drinks = drinks.remove(id)
-        save()
     }
 
     /** 記録を保存して, 画面を更新する (書き込みは, 別のスレッドで行う). */

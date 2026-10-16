@@ -41,6 +41,21 @@ class DrinkLogTest {
         assertEquals(log, log.remove("none"))
     }
 
+    /** 記録の変更: 同じ ID の記録を同じ位置で入れ替える. 日を変えると, 集計も移る. */
+    @Test
+    fun update() {
+        val a = DrinkLog.record("1", "2026-10-13", tap, sizeM, 5.0)
+        val b = DrinkLog.record("2", "2026-10-13", tap, sizeL, null)
+        val log = DrinkLog().add(a).add(b)
+        val moved = a.copy(date = "2026-10-01", time = "19:30", yen = 800, note = "memo")
+        val updated = log.update(moved)
+
+        assertEquals(listOf(moved, b), updated.records)
+        assertEquals(listOf("2026-10-13", "2026-10-01"), updated.dates())
+        assertEquals(1, updated.summary("2026-10-01").count)
+        assertEquals(log, log.update(moved.copy(id = "none")))
+    }
+
     /** 1 日の集計: 杯数, 量, 金額, 純アルコール (ABV が分からない記録は含めない). */
     @Test
     fun summary() {

@@ -30,7 +30,7 @@ const val CONTENT_PADDING_DP = 12
  * パネルが, アプリに頼む操作.
  *
  * @property onRecord 飲んだビールを記録する (名前などを持つビール, 量, ABV を受け取る)
- * @property onDelete 記録を消す (記録の ID を受け取る)
+ * @property records 記録を変える操作 (消す, 差し替える)
  * @property sizes 選べる量と価格
  * @property images 写真の読み込み
  * @property imageOf ビールの ID から, 写真の URL を探す (なければ null)
@@ -38,11 +38,22 @@ const val CONTENT_PADDING_DP = 12
  */
 class PanelActions(
     val onRecord: (jp.hopkotan.core.Tap, PriceSize, Double?) -> Unit,
-    val onDelete: (String) -> Unit,
+    val records: RecordActions,
     val sizes: () -> List<PriceSize>,
     val images: ImageLoader,
     val imageOf: (String?) -> String?,
     val ratings: RatingActions,
+)
+
+/**
+ * パネルが, アプリに頼む記録の操作.
+ *
+ * @property delete 記録を消す (記録の ID を受け取る)
+ * @property edit 記録を差し替える (変えた記録を受け取る)
+ */
+class RecordActions(
+    val delete: (String) -> Unit,
+    val edit: (jp.hopkotan.core.DrinkRecord) -> Unit,
 )
 
 /**
