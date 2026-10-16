@@ -56,6 +56,26 @@ class DrinkLogTest {
         assertEquals(log, log.update(moved.copy(id = "none")))
     }
 
+    /** 足りない ID と ABV を, ビールのデータから補う. 記録にある値は変えない. */
+    @Test
+    fun complete() {
+        val ikor = Beer("originalsplus/ikor", Series.ORIGINALS_PLUS, "ikor", "Hazy", "u", abv = 7.5)
+        val other = Beer("freedoms/x", Series.FREEDOMS, "X", "IPA", "u", abv = 4.0)
+        val bare = DrinkLog.record("1", "2026-10-13", Tap("IKOR", "Hazy"), sizeM, null)
+
+        assertEquals(
+            bare.copy(beerId = "originalsplus/ikor", abv = 7.5),
+            DrinkLog.complete(bare, listOf(other, ikor)),
+        )
+        assertEquals(bare, DrinkLog.complete(bare, listOf(other)))
+        val byId = bare.copy(beerId = "freedoms/x", abv = 6.0)
+        assertEquals(byId, DrinkLog.complete(byId, listOf(other, ikor)))
+        assertEquals(
+            byId.copy(abv = 4.0),
+            DrinkLog.complete(byId.copy(abv = null), listOf(other, ikor)),
+        )
+    }
+
     /** 1 日の集計: 杯数, 量, 金額, 純アルコール (ABV が分からない記録は含めない). */
     @Test
     fun summary() {

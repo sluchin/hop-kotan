@@ -78,6 +78,8 @@
     <string name="edit_time_none">時刻なし (タップして設定)</string>
     <string name="edit_yen">価格 (円)</string>
     <string name="edit_yen_value">%1$d</string>
+    <string name="edit_abv">ABV (%) 分からなければ空</string>
+    <string name="edit_abv_value">%1$.1f</string>
     <string name="edit_note">メモ</string>
     <string name="cancel">キャンセル</string>
 </resources>
