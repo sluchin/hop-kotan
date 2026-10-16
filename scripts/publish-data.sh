@@ -30,10 +30,13 @@ for file in "$@"; do
         fi
     fi
 
-    args=(-X PUT "$api" -f "message=${MESSAGE}" -f "branch=${BRANCH}" -f "content=$(base64 -w0 "$file")")
-    if [ -n "$sha" ]; then
-        args+=(-f "sha=${sha}")
-    fi
-    gh api "${args[@]}" --jq '.commit.html_url'
+    # 内容は, 引数ではなく, 標準入力の JSON で渡す (1 つの引数は 128 KB までなので, 大きいファイルは渡せない)
+    jq -n \
+        --arg message "$MESSAGE" \
+        --arg branch "$BRANCH" \
+        --arg sha "$sha" \
+        --rawfile content <(base64 -w0 "$file") \
+        '{message: $message, branch: $branch, content: $content} + (if $sha != "" then {sha: $sha} else {} end)' |
+        gh api -X PUT "$api" --input - --jq '.commit.html_url'
     echo "${file}: committed"
 done
