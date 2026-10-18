@@ -50,18 +50,21 @@ private const val TAG = "Menu"
  * セッションは WebView の中にだけできて, ブラウザ (Chrome) とは共有しないので, 注文はアプリの中で完結させる.
  * 原因を調べられるように, ページの移動, HTTP のエラー, ページの JavaScript のエラーを, ログに出す.
  *
- * 下に, 飲んだビールを記録する帯 ([MenuBar]) を出す.
+ * 「注文数を選ぶ」を押したら, そのビールを飲んだ記録に入れる画面を出す ([MenuRecorder]). 上の「記録」で,
+ * 今日のタップから手で記録できる.
  *
  * @property activity 画面
  * @property actions アプリに頼む操作
  * @property taps 今日のタップ
  * @property beers ORIGINALS と FREEDOMS のビール
+ * @param onOpened メニューで見つけたビールのうち, 今日のタップリストにないものを足す (あとから開栓したビール)
  */
 class MenuPanel(
     private val activity: Activity,
     actions: PanelActions,
     taps: () -> List<Tap>,
     beers: () -> List<Beer>,
+    onOpened: (List<Tap>) -> Unit,
 ) {
     private val hint =
         TextView(activity).apply {
@@ -76,7 +79,13 @@ class MenuPanel(
             setOnClickListener { web.reload() }
         }
     private val web = createWebView()
-    private val bar = MenuBar(activity, actions, taps, beers, web).apply { view.isVisible = false }
+    private val recorder = MenuRecorder(activity, actions, taps, beers, web, onOpened)
+    private val manual =
+        MaterialButton(activity, null, android.R.attr.borderlessButtonStyle).apply {
+            setText(R.string.menu_record)
+            isVisible = false
+            setOnClickListener { recorder.pickOther() }
+        }
 
     /** タブの内容. */
     val view: LinearLayout =
@@ -92,12 +101,12 @@ class MenuPanel(
                         },
                     )
                     addView(host, LinearLayout.LayoutParams(0, WRAP, 1f))
+                    addView(manual)
                     addView(reload)
                 },
             )
             addView(hint)
             addView(web, LinearLayout.LayoutParams(MATCH, 0, 1f))
-            addView(bar.view)
         }
 
     /**
@@ -133,17 +142,19 @@ class MenuPanel(
             webChromeClient =
                 object : WebChromeClient() {
                     override fun onConsoleMessage(message: ConsoleMessage): Boolean {
-                        // 「注文数を選ぶ」が押されたときの, 注文の画面の文字 (ログには書かない)
+                        // 「注文数を選ぶ」が押されたときの, 注文の画面の文字と, メニューのページの文字は, ログに書かない
                         val body = message.message()
-                        if (body.startsWith(ORDER_MESSAGE)) {
-                            bar.findOrdered(body.removePrefix(ORDER_MESSAGE))
-                            return true
-                        }
-                        val text = "Console ${message.messageLevel()}: ${message.message()}"
-                        when (message.messageLevel()) {
-                            ConsoleMessage.MessageLevel.ERROR,
-                            ConsoleMessage.MessageLevel.WARNING,
-                            -> AppLog.w(TAG, text)
+                        val text = "Console ${message.messageLevel()}: $body"
+                        when {
+                            body.startsWith(
+                                ORDER_MESSAGE,
+                            ) -> recorder.onOrder(body.removePrefix(ORDER_MESSAGE))
+                            body.startsWith(
+                                MENU_MESSAGE,
+                            ) -> recorder.onMenu(body.removePrefix(MENU_MESSAGE))
+                            message.messageLevel() == ConsoleMessage.MessageLevel.ERROR ||
+                                message.messageLevel() == ConsoleMessage.MessageLevel.WARNING ->
+                                AppLog.w(TAG, text)
                             else -> AppLog.d(TAG) { text }
                         }
                         return true
@@ -198,7 +209,7 @@ class MenuPanel(
                     override fun onPageFinished(
                         view: WebView,
                         url: String,
-                    ) = bar.watchOrder()
+                    ) = recorder.watchOrder()
                 }
         }
 
@@ -232,7 +243,7 @@ class MenuPanel(
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
-        bar.view.isVisible = true
+        manual.isVisible = true
         web.isVisible = true
         web.loadUrl(url)
     }

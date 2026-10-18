@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.NewTaps
+import jp.hopkotan.core.OpenedTaps
 import jp.hopkotan.core.PriceSize
 import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Tap
@@ -64,6 +65,9 @@ class MainActivity : AppCompatActivity() {
     private var history = emptyList<TapList>()
     private var drinks = DrinkLog()
     private var ratings = Ratings()
+
+    /** サイトのタップリストを取得したあとに, 開栓したビール (店のメニューで注文して, 見つかったもの). */
+    private var opened = OpenedTaps()
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var images: ImageLoader
 
@@ -76,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         history = store.loadHistory()
         drinks = store.loadDrinks()
         ratings = store.loadRatings()
+        opened = OpenedStore.load(this)
         setContentView(buildScreen())
         // 新しいビールの通知: 権限を求めて (許可されなくても動く), 定期の確認を予約する
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -128,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         historyPanel = HistoryPanel(this, actions)
         beersPanel = BeersPanel(this, actions)
         drinksPanel = DrinksPanel(this, actions)
-        menuPanel = MenuPanel(this, actions, { taplist?.taps.orEmpty() }, { beers })
+        menuPanel = MenuPanel(this, actions, { todayTaps?.taps.orEmpty() }, { beers }, ::addOpened)
         panels =
             listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view, menuPanel.view)
         status =
@@ -207,9 +212,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * メニューで見つけたビールのうち, 今日のタップリストにないものを足して, 保存する (あとから開栓したビール).
+     *
+     * @param found メニューで見つけたビール
+     */
+    private fun addOpened(found: List<Tap>) {
+        val list = taplist ?: return
+        val added = found.fold(opened) { acc, tap -> acc.add(list, tap) }
+        if (added == opened) return
+        val count = added.taps.size - (if (added.date == opened.date) opened.taps.size else 0)
+        opened = added
+        executor.execute { OpenedStore.save(this, added) }
+        if (count > 0) {
+            Toast.makeText(this, getString(R.string.opened_added, count), Toast.LENGTH_SHORT).show()
+        }
+        render(null)
+    }
+
+    /** 今日のタップリスト (サイトのタップリストに, あとから開栓したビールを足したもの. まだなければ null). */
+    private val todayTaps: TapList?
+        get() = taplist?.let { opened.applyTo(it) }
+
     /** 全てのタブと, 状態の表示を更新する. */
     private fun render(error: String?) {
-        val list = taplist
+        val list = todayTaps
         val entries = list?.let { TapEntries.of(it, beers) }.orEmpty()
         val previous = list?.let { NewTaps.previousOf(history, it) }
         val newTaps =
