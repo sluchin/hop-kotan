@@ -8,6 +8,7 @@ package jp.hopkotan.app
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.view.Gravity
 import android.view.View
@@ -40,8 +41,9 @@ private const val TAG = "Menu"
  * 店の QR コードを読み込んで, メニューのページをアプリの中 (WebView) に表示するタブ.
  *
  * QR コードは, Google のコードスキャナ (Google Play 開発者サービス) で読む (カメラの権限は, 要らない).
- * 表示するのは, `https` のページだけ. QR コードのホスト (とそのサブドメイン) の外へ移るときは,
- * ブラウザで開く. テーブルや注文の情報は, 保存しない (画面を離れたら, Cookie と保存したデータを消す).
+ * 表示するのは, `https` のページだけ. 注文のページは, 認証や支払いで別のサイトを通るので, `https` の
+ * ページは, どのホストでも, アプリの中で続ける (`https` 以外の, ほかのアプリを開くリンクだけ, 外で開く).
+ * テーブルや注文の情報は, 保存しない (画面を離れたら, Cookie と保存したデータを消す).
  *
  * 注文のページ (Air レジ オーダーなど) は, Cookie でセッションを持つので, WebView でも, 他のサイトの
  * Cookie を受け付ける (WebView は, 最初は受け付けず, Chrome では動くのに, 認証エラーになることがある).
@@ -61,7 +63,6 @@ class MenuPanel(
     taps: () -> List<Tap>,
     beers: () -> List<Beer>,
 ) {
-    private var base: String? = null
     private val hint =
         TextView(activity).apply {
             setText(R.string.menu_hint)
@@ -149,13 +150,20 @@ class MenuPanel(
                         request: WebResourceRequest,
                     ): Boolean {
                         val url = request.url.toString()
-                        val inside = base?.let { MenuUrl.isInside(url, it) } == true
+                        val inside = MenuUrl.opensInApp(url)
                         // 問い合わせ (テーブルやセッションの値) は, ログに書かない
                         AppLog.d(
                             TAG,
-                        ) { "Navigate to ${request.url.host}${request.url.path} (inside: $inside)" }
-                        if (!inside) {
-                            AppLog.i(TAG, "Opening ${request.url.host} in the browser")
+                        ) {
+                            "Navigate to ${request.url.scheme}://${request.url.host}${request.url.path}"
+                        }
+                        if (inside) {
+                            request.url.host?.let {
+                                host.text =
+                                    activity.getString(R.string.menu_host, it)
+                            }
+                        } else {
+                            AppLog.i(TAG, "Opening a ${request.url.scheme} link outside the app")
                             openOutside(url)
                         }
 
@@ -215,7 +223,6 @@ class MenuPanel(
             return
         }
         clearData()
-        base = url
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
@@ -224,10 +231,28 @@ class MenuPanel(
         web.loadUrl(url)
     }
 
-    /** アプリの外 (ブラウザ) で開く (`https` だけ). */
+    /**
+     * アプリの外で開く (ほかのアプリを開くリンク). `intent:` のリンクは, 開けるアプリがなければ,
+     * 代わりの `https` のページ (`browser_fallback_url`) を, アプリの中で開く.
+     *
+     * @param url リンク
+     */
     private fun openOutside(url: String) {
-        if (MenuUrl.parse(url) != null) {
-            activity.startActivity(Intent(Intent.ACTION_VIEW, url.toUri()))
+        val intent =
+            runCatching { Intent.parseUri(url, Intent.URI_INTENT_SCHEME) }
+                .getOrElse { Intent(Intent.ACTION_VIEW, url.toUri()) }
+                .apply {
+                    // ほかのアプリの, 公開していない画面は開かない (ブラウザから開けるものだけ)
+                    addCategory(Intent.CATEGORY_BROWSABLE)
+                    component = null
+                    selector = null
+                }
+        try {
+            activity.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            val fallback = intent.getStringExtra(FALLBACK_URL)?.takeIf { MenuUrl.opensInApp(it) }
+            AppLog.w(TAG, "No app for the link (fallback: ${fallback != null})", e)
+            fallback?.let { web.loadUrl(it) }
         }
     }
 
@@ -245,5 +270,8 @@ class MenuPanel(
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
         const val HINT_PADDING_DP = 12
+
+        /** `intent:` のリンクの, 開けるアプリがないときの, 代わりの URL の名前. */
+        const val FALLBACK_URL = "browser_fallback_url"
     }
 }

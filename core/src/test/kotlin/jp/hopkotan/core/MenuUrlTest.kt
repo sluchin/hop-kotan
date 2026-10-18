@@ -31,16 +31,14 @@ class MenuUrlTest {
         assertNull(MenuUrl.parse("hello world"))
     }
 
-    /** 同じホストと, そのサブドメインは中. 別のホストや, 似た名前や, 認められない URL は外. */
+    /** https のページは, どのホストでも, アプリの中で開く. それ以外は, アプリの外. */
     @Test
-    fun isInside() {
-        assertTrue(MenuUrl.isInside("https://order.example.com/cart", base))
-        assertTrue(MenuUrl.isInside("https://ORDER.example.com/cart", base))
-        assertTrue(MenuUrl.isInside("https://img.order.example.com/a.png", base))
-        assertFalse(MenuUrl.isInside("https://pay.example.com/", base))
-        assertFalse(MenuUrl.isInside("https://evilorder.example.com/", base))
-        assertFalse(MenuUrl.isInside("http://order.example.com/", base))
-        assertFalse(MenuUrl.isInside("intent://x", base))
+    fun opensInApp() {
+        assertTrue(MenuUrl.opensInApp("https://order.example.com/cart"))
+        assertTrue(MenuUrl.opensInApp("https://login.example.org/auth"))
+        assertFalse(MenuUrl.opensInApp("http://order.example.com/"))
+        assertFalse(MenuUrl.opensInApp("intent://x#Intent;scheme=app;end"))
+        assertFalse(MenuUrl.opensInApp("tel:0123"))
     }
 
     /** 表示するホスト名. */

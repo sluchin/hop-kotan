@@ -32,23 +32,16 @@ object MenuUrl {
     }
 
     /**
-     * URL が, メニューのホストの中 (同じホストか, そのサブドメイン) かを確かめる.
+     * 移動の先を, アプリの中 (WebView) で開くかを決める.
      *
-     * 中でなければ, アプリの中では開かない (支払いなどの別のサイトは, ブラウザで開く).
+     * 注文のページは, 認証 (リクルート ID など) や支払いで, 別のサイトを通ってから戻ってくる. セッションは
+     * WebView の中にだけあるので, `https` のページは, どのホストでも, アプリの中で続ける. `https` 以外
+     * (`intent:`, `tel:`, `mailto:` など, ほかのアプリを開くリンク) は, アプリの外で開く.
      *
      * @param url 開こうとしている URL
-     * @param base メニューの URL ([parse] で認められたもの)
-     * @return 中なら true
+     * @return アプリの中で開くなら true
      */
-    fun isInside(
-        url: String,
-        base: String,
-    ): Boolean {
-        val target = parse(url)?.let { URI(it).host.lowercase() }
-        val host = URI(base).host.lowercase()
-
-        return target != null && (target == host || target.endsWith(".$host"))
-    }
+    fun opensInApp(url: String): Boolean = parse(url) != null
 
     /**
      * 表示するホスト名を返す.
