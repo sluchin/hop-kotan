@@ -158,6 +158,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.swiperefresh)
+    implementation(libs.androidx.drawerlayout)
     implementation(libs.androidx.work)
     implementation(libs.play.code.scanner)
 }

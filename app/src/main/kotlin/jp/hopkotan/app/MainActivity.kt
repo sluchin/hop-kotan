@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
+import jp.hopkotan.core.Favorites
 import jp.hopkotan.core.NewTaps
 import jp.hopkotan.core.OpenedTaps
 import jp.hopkotan.core.PriceSize
@@ -45,6 +46,7 @@ private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420,
 
 /**
  * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (5 つのタブ: 今日, 最近, ビール, 記録, メニュー).
+ * 左から引き出すメニュー ([AppDrawer]) から, お気に入りのビールの画面を開く.
  *
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
@@ -58,6 +60,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var beersPanel: BeersPanel
     private lateinit var drinksPanel: DrinksPanel
     private lateinit var menuPanel: MenuPanel
+    private lateinit var favoritesPanel: FavoritesPanel
+    private lateinit var nav: BottomNavigationView
     private var current = 0
     private lateinit var panels: List<View>
 
@@ -69,6 +73,7 @@ class MainActivity : AppCompatActivity() {
 
     /** サイトのタップリストを取得したあとに, 開栓したビール (店のメニューで注文して, 見つかったもの). */
     private var opened = OpenedTaps()
+    private var favorites = Favorites()
     private val executor = Executors.newSingleThreadExecutor()
     private lateinit var images: ImageLoader
 
@@ -82,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         drinks = store.loadDrinks()
         ratings = store.loadRatings()
         opened = OpenedStore.load(this)
+        favorites = FavoritesStore.load(this)
         setContentView(buildScreen())
         // 新しいビールの通知: 権限を求めて (許可されなくても動く), 定期の確認を予約する
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
@@ -95,6 +101,9 @@ class MainActivity : AppCompatActivity() {
                 override fun handleOnBackPressed() {
                     if (current == MENU_INDEX && menuPanel.canGoBack()) {
                         menuPanel.goBack()
+                    } else if (current == FAVORITES_INDEX) {
+                        // お気に入りの画面からは, 前のタブに戻る
+                        show(NAV_IDS.indexOf(nav.selectedItemId))
                     } else {
                         isEnabled = false
                         onBackPressedDispatcher.onBackPressed()
@@ -111,32 +120,52 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
+    /** パネルが, アプリに頼む操作. */
+    private val actions by lazy {
+        PanelActions(
+            ::record,
+            RecordActions(
+                { id ->
+                    drinks = drinks.remove(id)
+                    save()
+                },
+                { record ->
+                    drinks = drinks.update(record)
+                    save()
+                },
+            ),
+            { taplist?.sizes?.ifEmpty { null } ?: DEFAULT_SIZES },
+            images,
+            { id -> beers.firstOrNull { it.id == id }?.imageUrl },
+            RatingActions({ ratings.of(it) }, { ratings }, ::rate),
+        )
+    }
+
+    /** お気に入りの操作 (切り替えたら, 保存して, 画面を更新する. 書き込みは, 別のスレッドで行う). */
+    private val favoriteActions =
+        FavoriteActions({ it in favorites }) { key ->
+            favorites = favorites.toggle(key)
+            val snapshot = favorites
+            executor.execute { FavoritesStore.save(this, snapshot) }
+            render(null)
+        }
+
     private fun buildScreen(): View {
-        val actions =
-            PanelActions(
-                ::record,
-                RecordActions(
-                    { id ->
-                        drinks = drinks.remove(id)
-                        save()
-                    },
-                    { record ->
-                        drinks = drinks.update(record)
-                        save()
-                    },
-                ),
-                { taplist?.sizes?.ifEmpty { null } ?: DEFAULT_SIZES },
-                images,
-                { id -> beers.firstOrNull { it.id == id }?.imageUrl },
-                RatingActions({ ratings.of(it) }, { ratings }, ::rate),
-            )
         today = TodayPanel(this, actions)
         historyPanel = HistoryPanel(this, actions)
-        beersPanel = BeersPanel(this, actions)
+        beersPanel = BeersPanel(this, actions, favoriteActions)
         drinksPanel = DrinksPanel(this, actions)
         menuPanel = MenuPanel(this, actions, { todayTaps?.taps.orEmpty() }, { beers }, ::addOpened)
+        favoritesPanel = FavoritesPanel(this, actions, favoriteActions)
         panels =
-            listOf(today.view, historyPanel.view, beersPanel.view, drinksPanel.view, menuPanel.view)
+            listOf(
+                today.view,
+                historyPanel.view,
+                beersPanel.view,
+                drinksPanel.view,
+                menuPanel.view,
+                favoritesPanel.view,
+            )
         status =
             TextView(this).apply {
                 setTextAppearance(
@@ -145,7 +174,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         val content = FrameLayout(this).apply { panels.forEach { addView(it) } }
-        val nav =
+        nav =
             BottomNavigationView(this).apply {
                 inflateMenu(R.menu.bottom_nav)
                 // 項目が 4 つ以上だと, 既定では選んだものにしか名前が出ないので, 全てに出す
@@ -164,17 +193,26 @@ class MainActivity : AppCompatActivity() {
                 setOnRefreshListener { refresh() }
             }
 
-        return LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
-            addView(status, LinearLayout.LayoutParams(MATCH, WRAP))
-            addView(pull, LinearLayout.LayoutParams(MATCH, 0, 1f))
-            addView(nav)
-            applyInsets(this)
-        }
+        val root =
+            LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                addView(status, LinearLayout.LayoutParams(MATCH, WRAP))
+                addView(pull, LinearLayout.LayoutParams(MATCH, 0, 1f))
+                addView(nav)
+                applyInsets(this)
+            }
+
+        return AppDrawer(this, root) { show(FAVORITES_INDEX) }.view
     }
 
+    /**
+     * パネルを切り替える (お気に入りの画面のときは, 下のタブを, どれも選んでいない見た目にする).
+     *
+     * @param index パネルの番号 (下のタブの順. お気に入りは [FAVORITES_INDEX])
+     */
     private fun show(index: Int) {
         current = index
+        nav.menu.setGroupCheckable(0, index != FAVORITES_INDEX, true)
         panels.forEachIndexed { i, panel ->
             panel.visibility =
                 if (i == index) View.VISIBLE else View.GONE
@@ -252,7 +290,9 @@ class MainActivity : AppCompatActivity() {
             }
         today.update(entries, list?.date, drinks.summary(LocalDate.now().toString()), newTaps)
         historyPanel.update(history, beers)
-        beersPanel.update(beers, entries.mapNotNull { it.beer?.id }.toSet())
+        val onTapIds = entries.mapNotNull { it.beer?.id }.toSet()
+        beersPanel.update(beers, onTapIds)
+        favoritesPanel.update(beers, favorites, onTapIds)
         drinksPanel.update(drinks, beers)
         status.text =
             when {
@@ -302,6 +342,7 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         const val MENU_INDEX = 4
+        const val FAVORITES_INDEX = 5
         val NAV_IDS =
             listOf(R.id.nav_today, R.id.nav_recent, R.id.nav_beers, R.id.nav_drinks, R.id.nav_menu)
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT

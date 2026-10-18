@@ -8,7 +8,6 @@ package jp.hopkotan.app
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
@@ -19,7 +18,6 @@ import android.widget.ListView
 import android.widget.ScrollView
 import android.widget.Spinner
 import android.widget.TextView
-import androidx.core.net.toUri
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -29,7 +27,6 @@ import jp.hopkotan.core.BeerQuery
 import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Series
 import jp.hopkotan.core.SortKey
-import jp.hopkotan.core.Tap
 
 /** ABV の下限の選択肢 (%). */
 private val ABV_CHOICES = listOf(4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
@@ -42,10 +39,12 @@ private val IBU_CHOICES = listOf(20, 40, 60, 80)
  *
  * @property activity 画面
  * @property actions アプリに頼む操作
+ * @property favorites お気に入りの操作
  */
 class BeersPanel(
     private val activity: Activity,
     private val actions: PanelActions,
+    private val favorites: FavoriteActions,
 ) {
     private var beers = emptyList<Beer>()
     private var onTapIds = emptySet<String>()
@@ -251,66 +250,14 @@ class BeersPanel(
                 ratings = actions.ratings.all(),
             )
         count.text = activity.getString(R.string.count, sorted.size)
-        list.replaceAdapter(rowAdapter(activity, sorted, actions.images, { describe(it) }))
-        list.setOnItemClickListener { _, _, position, _ -> showDetail(sorted[position]) }
-    }
-
-    private fun describe(beer: Beer): RowModel {
-        val extra =
-            joinExtra(
-                Ratings.text(actions.ratings.of(Ratings.key(beer.id, beer.name))),
-                if (beer.id in onTapIds) activity.getString(R.string.on_tap) else null,
-            )
-
-        return RowModel(
-            title = beer.name,
-            subtitle =
-                activity.getString(
-                    R.string.row_style_released,
-                    beer.style,
-                    beer.released ?: beer.series.name,
-                ),
-            extra = extra,
-            badgeLead = beer.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
-            badge = beer.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },
-            imageUrl = beer.imageUrl,
+        list.replaceAdapter(
+            rowAdapter(activity, sorted, actions.images, {
+                activity.beerRow(it, actions, favorites, it.id in onTapIds)
+            }),
         )
-    }
-
-    private fun detailText(beer: Beer): String {
-        val unknown = activity.getString(R.string.unknown)
-
-        return activity.getString(
-            R.string.beer_detail,
-            beer.style,
-            beer.released ?: beer.series.name,
-            beer.abv?.let { formatDecimal(it) } ?: unknown,
-            beer.ibu?.toString() ?: unknown,
-        )
-    }
-
-    private fun showDetail(beer: Beer) {
-        AlertDialog
-            .Builder(activity)
-            .setTitle(beer.name)
-            .setMessage(detailText(beer))
-            .setView(
-                activity.ratingBar(
-                    actions.ratings.of(Ratings.key(beer.id, beer.name)),
-                    withClear = true,
-                ) {
-                    actions.ratings.set(Ratings.key(beer.id, beer.name), it)
-                },
-            ).setPositiveButton(R.string.drink) { _, _ ->
-                val tap = Tap(beer.name, beer.style, beer.id, beer.url, beer.imageUrl)
-                activity.showSizeDialog(
-                    beer.name,
-                    actions.sizes(),
-                ) { actions.onRecord(tap, it, beer.abv) }
-            }.setNeutralButton(R.string.open_site) { _, _ ->
-                activity.startActivity(Intent(Intent.ACTION_VIEW, beer.url.toUri()))
-            }.setNegativeButton(R.string.close, null)
-            .show()
+        list.setOnItemClickListener { _, _, position, _ ->
+            activity.showBeerDetail(sorted[position], actions, favorites)
+        }
     }
 
     private companion object {
