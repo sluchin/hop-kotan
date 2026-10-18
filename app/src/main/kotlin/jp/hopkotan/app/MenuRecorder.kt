@@ -72,7 +72,7 @@ private val ORDER_WATCH_SCRIPT =
  * メニューのページで注文したビールを, 飲んだ記録に入れる.
  *
  * 「注文数を選ぶ」が押されたら, 注文の画面の文字から, 知っているビールを探して (端末の中だけで. 文字は
- * 保存しない), 量を選ぶ画面をすぐに出す. メニューのページにあるビールのうち, 今日のタップリストにない
+ * 保存しない), 記録するかを聞いて, 記録するなら, 量を選ぶ画面を出す. メニューのページにあるビールのうち, 今日のタップリストにない
  * ものは, 今日のタップリストに足す (サイトのタップリストを取得したあとに, 開栓したビール). ビールが複数見つかったら, 先にどのビールかを選ぶ. 見つからない
  * ときと, 手で記録したいときは, 今日のタップから選ぶ ([pickOther]).
  *
@@ -95,7 +95,7 @@ class MenuRecorder(
     fun watchOrder() = web.evaluateJavascript(ORDER_WATCH_SCRIPT, null)
 
     /**
-     * 「注文数を選ぶ」が押されたときに, 注文の画面の文字から, ビールを探して, 記録の画面を出す.
+     * 「注文数を選ぶ」が押されたときに, 注文の画面の文字から, ビールを探して, 記録するかを聞く.
      *
      * @param json 文字の候補 (JSON の配列. 狭い順)
      */
@@ -113,8 +113,15 @@ class MenuRecorder(
         onOpened(list)
         when (list.size) {
             0 -> Toast.makeText(activity, R.string.menu_none_found, Toast.LENGTH_LONG).show()
-            1 -> record(list[0])
-            else -> choose(R.string.menu_pick_found, list)
+            1 ->
+                // 記録するか, しないかを, 先に聞く (同じビールを続けて頼むときや, 注文をやめたとき)
+                AlertDialog
+                    .Builder(activity)
+                    .setMessage(activity.getString(R.string.menu_record_ask, list[0].name))
+                    .setPositiveButton(R.string.menu_record_yes) { _, _ -> record(list[0]) }
+                    .setNegativeButton(R.string.menu_record_no, null)
+                    .show()
+            else -> choose(R.string.menu_pick_found, list, R.string.menu_record_no)
         }
     }
 
@@ -138,16 +145,18 @@ class MenuRecorder(
      *
      * @param title 題名の文字列のリソース
      * @param list ビール
+     * @param negative 選ばずに閉じるボタンの文字列のリソース
      */
     private fun choose(
         title: Int,
         list: List<Tap>,
+        negative: Int = R.string.cancel,
     ) {
         AlertDialog
             .Builder(activity)
             .setTitle(title)
             .setItems(list.map { it.name }.toTypedArray()) { _, index -> record(list[index]) }
-            .setNegativeButton(R.string.cancel, null)
+            .setNegativeButton(negative, null)
             .show()
     }
 
