@@ -12,7 +12,9 @@ import android.content.Intent
 import android.view.Gravity
 import android.view.View
 import android.webkit.CookieManager
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebStorage
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -29,12 +31,19 @@ import jp.hopkotan.core.Beer
 import jp.hopkotan.core.MenuUrl
 import jp.hopkotan.core.Tap
 
+/** ログのタグ. */
+private const val TAG = "Menu"
+
 /**
  * 店の QR コードを読み込んで, メニューのページをアプリの中 (WebView) に表示するタブ.
  *
  * QR コードは, Google のコードスキャナ (Google Play 開発者サービス) で読む (カメラの権限は, 要らない).
  * 表示するのは, `https` のページだけ. QR コードのホスト (とそのサブドメイン) の外へ移るときは,
  * ブラウザで開く. テーブルや注文の情報は, 保存しない (画面を離れたら, Cookie と保存したデータを消す).
+ *
+ * 注文のページ (Air レジ オーダーなど) は, Cookie でセッションを持つので, WebView でも, 他のサイトの
+ * Cookie を受け付ける (WebView は, 最初は受け付けず, Chrome では動くのに, 認証エラーになることがある).
+ * それでも開けないときのために, 読み込んだ QR コードのページを, ブラウザ (Chrome) で開くボタンを出す.
  *
  * 下に, 飲んだビールを記録する帯 ([MenuBar]) を出す.
  *
@@ -62,6 +71,12 @@ class MenuPanel(
             isVisible = false
             setOnClickListener { web.reload() }
         }
+    private val browser =
+        MaterialButton(activity, null, android.R.attr.borderlessButtonStyle).apply {
+            setText(R.string.menu_browser)
+            isVisible = false
+            setOnClickListener { base?.let { openOutside(it) } }
+        }
     private val web = createWebView()
     private val bar = MenuBar(activity, actions, taps, beers, web).apply { view.isVisible = false }
 
@@ -79,6 +94,7 @@ class MenuPanel(
                         },
                     )
                     addView(host, LinearLayout.LayoutParams(0, WRAP, 1f))
+                    addView(browser)
                     addView(reload)
                 },
             )
@@ -113,6 +129,9 @@ class MenuPanel(
             settings.allowFileAccess = false
             settings.allowContentAccess = false
             settings.javaScriptCanOpenWindowsAutomatically = false
+            // セッションの Cookie を, 他のサイトのものも受け付ける (Chrome と同じにする)
+            CookieManager.getInstance().setAcceptCookie(true)
+            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
             webViewClient =
                 object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(
@@ -121,9 +140,35 @@ class MenuPanel(
                     ): Boolean {
                         val url = request.url.toString()
                         val inside = base?.let { MenuUrl.isInside(url, it) } == true
-                        if (!inside) openOutside(url)
+                        // 問い合わせ (テーブルやセッションの値) は, ログに書かない
+                        AppLog.d(
+                            TAG,
+                        ) { "Navigate to ${request.url.host}${request.url.path} (inside: $inside)" }
+                        if (!inside) {
+                            AppLog.i(TAG, "Opening ${request.url.host} in the browser")
+                            openOutside(url)
+                        }
 
                         return !inside
+                    }
+
+                    override fun onReceivedHttpError(
+                        view: WebView,
+                        request: WebResourceRequest,
+                        errorResponse: WebResourceResponse,
+                    ) {
+                        AppLog.w(
+                            TAG,
+                            "HTTP ${errorResponse.statusCode} from ${request.url.host}${request.url.path}",
+                        )
+                    }
+
+                    override fun onReceivedError(
+                        view: WebView,
+                        request: WebResourceRequest,
+                        error: WebResourceError,
+                    ) {
+                        AppLog.w(TAG, "Could not load ${request.url.host}: ${error.description}")
                     }
 
                     override fun onPageFinished(
@@ -164,6 +209,7 @@ class MenuPanel(
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
+        browser.isVisible = true
         bar.view.isVisible = true
         web.isVisible = true
         web.loadUrl(url)
