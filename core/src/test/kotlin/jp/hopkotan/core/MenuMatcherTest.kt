@@ -38,4 +38,17 @@ class MenuMatcherTest {
         assertEquals(emptyList(), MenuMatcher.find("nothing here", listOf(upopo), beers))
         assertEquals(emptyList(), MenuMatcher.find("ab ab ab", listOf(short), emptyList()))
     }
+
+    /** 狭い範囲から順に見て, ビールが見つかった最初の候補のビールを返す. どこにもなければ空. */
+    @Test
+    fun findOrdered() {
+        val candidates = listOf("M ¥780", "UPOPO", "upopo Harvest Brew")
+
+        assertEquals(
+            listOf("upopo"),
+            MenuMatcher.findOrdered(candidates, listOf(upopo, harvest), beers).map { it.name },
+        )
+        assertEquals(emptyList(), MenuMatcher.findOrdered(listOf("none"), listOf(upopo), beers))
+        assertEquals(emptyList(), MenuMatcher.findOrdered(emptyList(), listOf(upopo), beers))
+    }
 }

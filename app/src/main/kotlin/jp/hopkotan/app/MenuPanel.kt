@@ -133,6 +133,12 @@ class MenuPanel(
             webChromeClient =
                 object : WebChromeClient() {
                     override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+                        // 「注文数を選ぶ」が押されたときの, 注文の画面の文字 (ログには書かない)
+                        val body = message.message()
+                        if (body.startsWith(ORDER_MESSAGE)) {
+                            bar.findOrdered(body.removePrefix(ORDER_MESSAGE))
+                            return true
+                        }
                         val text = "Console ${message.messageLevel()}: ${message.message()}"
                         when (message.messageLevel()) {
                             ConsoleMessage.MessageLevel.ERROR,
@@ -192,7 +198,7 @@ class MenuPanel(
                     override fun onPageFinished(
                         view: WebView,
                         url: String,
-                    ) = bar.find()
+                    ) = bar.watchOrder()
                 }
         }
 

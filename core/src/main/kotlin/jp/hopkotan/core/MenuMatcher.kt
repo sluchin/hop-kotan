@@ -39,6 +39,26 @@ object MenuMatcher {
             }.distinctBy { Ratings.key(it.beerId, it.name) }
     }
 
+    /**
+     * 注文しようとしているビールを探す. 文字の候補を, 狭い範囲から順に見て, ビールが見つかった最初の候補の
+     * ビールを返す (注文の画面の見出しから, 外側へ. 外側ほど, 後ろのメニューのビールも含むため).
+     *
+     * @param candidates 文字の候補 (狭い範囲から順)
+     * @param taps 今日のタップ
+     * @param beers ORIGINALS と FREEDOMS のビール
+     * @return ビール (どの候補にもなければ, 空)
+     */
+    fun findOrdered(
+        candidates: List<String>,
+        taps: List<Tap>,
+        beers: List<Beer>,
+    ): List<Tap> =
+        candidates
+            .asSequence()
+            .map { find(it, taps, beers) }
+            .firstOrNull { it.isNotEmpty() }
+            .orEmpty()
+
     /** 文字の違い (幅, 大文字と小文字, 空白, 記号) をなくす. */
     private fun normalize(text: String): String =
         Normalizer.normalize(text, Normalizer.Form.NFKC).lowercase().filter { it.isLetterOrDigit() }
