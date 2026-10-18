@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-17",
+    "date": "2026-10-18",
     "sizes": [
         {
             "label": "M",
@@ -63,18 +63,18 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
         },
         {
-            "name": "AKIRA囃子",
-            "style": "Märzenbier",
-            "beerId": "freedoms/akira-bayashi",
-            "url": "https://hopkotan.com/freedoms/akira-bayashi/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/55c844fe1bfbfe299461c94961a98ab1-240x240.jpg"
+            "name": "Time Flies",
+            "style": "Best Bitter",
+            "beerId": "freedoms/time-flies",
+            "url": "https://hopkotan.com/freedoms/time-flies/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/Time-Flies-240x240.jpg"
         },
         {
-            "name": "BEER KOTAN IPA",
-            "style": "American IPA",
-            "beerId": "freedoms/beer-kotan-ipa",
-            "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
+            "name": "ikor",
+            "style": "Melon Hazy IPA",
+            "beerId": "originalsplus/ikor",
+            "url": "https://hopkotan.com/originalsplus/ikor/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg"
         },
         {
             "name": "epana #6",
@@ -91,11 +91,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/f4fc55c50d9cb58c768b774f677a7066-240x240.jpg"
         },
         {
-            "name": "INVERSION",
-            "style": "Kölsch-style Ale",
-            "beerId": "freedoms/inversion",
-            "url": "https://hopkotan.com/freedoms/inversion/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/08/INVERSION-240x240.jpg"
+            "name": "BEER KOTAN IPA",
+            "style": "American IPA",
+            "beerId": "freedoms/beer-kotan-ipa",
+            "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
         }
     ]
 }
