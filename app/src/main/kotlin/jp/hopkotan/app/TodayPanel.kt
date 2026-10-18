@@ -18,12 +18,16 @@ import jp.hopkotan.core.TapEntry
 /**
  * 今日のタップリストを表示して, 飲んだビールを記録するタブ.
  *
+ * ビールをタップすると, 評価, お気に入り, 量ごとの記録のボタンを出す ([showTapDialog]).
+ *
  * @property activity 画面
  * @property actions アプリに頼む操作
+ * @property favorites お気に入りの操作
  */
 class TodayPanel(
     private val activity: Activity,
     private val actions: PanelActions,
+    private val favorites: FavoriteActions,
 ) {
     private val header =
         TextView(activity).apply {
@@ -108,10 +112,7 @@ class TodayPanel(
             true
         }
         list.setOnItemClickListener { _, _, position, _ ->
-            val entry = entries[position]
-            activity.showSizeDialog(entry.tap.name, actions.sizes()) {
-                actions.onRecord(entry.tap, it, entry.beer?.abv)
-            }
+            activity.showTapDialog(entries[position], actions, favorites)
         }
     }
 
@@ -120,13 +121,15 @@ class TodayPanel(
         isNew: Boolean,
     ): RowModel {
         val beer = entry.beer
+        val key = Ratings.key(entry.tap.beerId, entry.tap.name)
 
         return RowModel(
             title = entry.tap.name,
             subtitle = entry.tap.style,
             extra =
                 joinExtra(
-                    Ratings.text(actions.ratings.of(Ratings.key(entry.tap.beerId, entry.tap.name))),
+                    if (favorites.has(key)) activity.getString(R.string.favorite_mark) else null,
+                    Ratings.text(actions.ratings.of(key)),
                 ),
             badgeLead = beer?.ibu?.let { activity.getString(R.string.ibu_label, it.toString()) },
             badge = beer?.abv?.let { activity.getString(R.string.abv_badge, formatDecimal(it)) },

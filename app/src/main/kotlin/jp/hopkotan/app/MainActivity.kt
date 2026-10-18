@@ -151,7 +151,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     private fun buildScreen(): View {
-        today = TodayPanel(this, actions)
+        today = TodayPanel(this, actions, favoriteActions)
         historyPanel = HistoryPanel(this, actions)
         beersPanel = BeersPanel(this, actions, favoriteActions)
         drinksPanel = DrinksPanel(this, actions)

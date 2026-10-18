@@ -17,7 +17,7 @@ import jp.hopkotan.core.Ratings
 import jp.hopkotan.core.Tap
 
 /** ポップアップの中身の, 左右の余白 (dp. ポップアップの字に合わせる). */
-private const val DIALOG_PADDING_DP = 24
+const val DIALOG_PADDING_DP = 24
 
 /**
  * パネルが, アプリに頼むお気に入りの操作.
@@ -126,7 +126,7 @@ fun Activity.showBeerDetail(
  * @param favorites お気に入りの操作
  * @return ボタン
  */
-private fun Activity.favoriteButton(
+fun Activity.favoriteButton(
     key: String,
     favorites: FavoriteActions,
 ): MaterialButton =
