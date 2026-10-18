@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 下のタブと, 左から引き出すメニューの, 両方で使う (同じ画面に移る) -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/nav_today"
-        android:icon="@drawable/ic_today"
-        android:title="@string/tab_today" />
-    <item
-        android:id="@+id/nav_recent"
-        android:icon="@drawable/ic_recent"
-        android:title="@string/tab_recent" />
-    <item
-        android:id="@+id/nav_beers"
-        android:icon="@drawable/ic_beers"
-        android:title="@string/tab_beers" />
-    <item
-        android:id="@+id/nav_drinks"
-        android:icon="@drawable/ic_history"
-        android:title="@string/tab_drinks" />
-    <item
-        android:id="@+id/nav_menu"
-        android:icon="@drawable/ic_menu_book"
-        android:title="@string/tab_menu" />
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_today"
+            android:icon="@drawable/ic_today"
+            android:title="@string/tab_today" />
+        <item
+            android:id="@+id/nav_recent"
+            android:icon="@drawable/ic_recent"
+            android:title="@string/tab_recent" />
+        <item
+            android:id="@+id/nav_beers"
+            android:icon="@drawable/ic_beers"
+            android:title="@string/tab_beers" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_favorite"
+            android:title="@string/favorites_title" />
+        <item
+            android:id="@+id/nav_drinks"
+            android:icon="@drawable/ic_history"
+            android:title="@string/tab_drinks" />
+        <item
+            android:id="@+id/nav_menu"
+            android:icon="@drawable/ic_menu_book"
+            android:title="@string/tab_menu" />
+    </group>
 </menu>

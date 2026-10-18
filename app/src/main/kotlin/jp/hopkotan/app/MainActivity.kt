@@ -45,8 +45,8 @@ private const val TAG = "Data"
 private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420, 900))
 
 /**
- * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (5 つのタブ: 今日, 最近, ビール, 記録, メニュー).
- * 左から引き出すメニュー ([AppDrawer]) から, お気に入りのビールの画面を開く.
+ * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (6 つのタブ: 今日, 最近, ビール, お気に入り, 記録,
+ * メニュー). 左から引き出すメニュー ([AppDrawer]) からも, 同じ画面に移る.
  *
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var menuPanel: MenuPanel
     private lateinit var favoritesPanel: FavoritesPanel
     private lateinit var nav: BottomNavigationView
+    private lateinit var drawer: AppDrawer
     private var current = 0
     private lateinit var panels: List<View>
 
@@ -101,9 +102,6 @@ class MainActivity : AppCompatActivity() {
                 override fun handleOnBackPressed() {
                     if (current == MENU_INDEX && menuPanel.canGoBack()) {
                         menuPanel.goBack()
-                    } else if (current == FAVORITES_INDEX) {
-                        // お気に入りの画面からは, 前のタブに戻る
-                        show(NAV_IDS.indexOf(nav.selectedItemId))
                     } else {
                         isEnabled = false
                         onBackPressedDispatcher.onBackPressed()
@@ -162,9 +160,9 @@ class MainActivity : AppCompatActivity() {
                 today.view,
                 historyPanel.view,
                 beersPanel.view,
+                favoritesPanel.view,
                 drinksPanel.view,
                 menuPanel.view,
-                favoritesPanel.view,
             )
         status =
             TextView(this).apply {
@@ -179,8 +177,14 @@ class MainActivity : AppCompatActivity() {
                 inflateMenu(R.menu.bottom_nav)
                 // 項目が 4 つ以上だと, 既定では選んだものにしか名前が出ないので, 全てに出す
                 labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
+                // お気に入りは, ハートの絵だけにする (名前は, 読み上げのためだけに残す)
+                menu.findItem(R.id.nav_favorites).apply {
+                    contentDescription = title
+                    title = ""
+                }
                 setOnItemSelectedListener {
                     show(NAV_IDS.indexOf(it.itemId))
+                    drawer.select(it.itemId)
                     true
                 }
             }
@@ -202,17 +206,20 @@ class MainActivity : AppCompatActivity() {
                 applyInsets(this)
             }
 
-        return AppDrawer(this, root) { show(FAVORITES_INDEX) }.view
+        // 左から引き出すメニューで選んだら, 下のタブを選ぶ (タブの切り替えと, 同じ動きにする)
+        drawer = AppDrawer(this, root) { nav.selectedItemId = it }
+        drawer.select(nav.selectedItemId)
+
+        return drawer.view
     }
 
     /**
-     * パネルを切り替える (お気に入りの画面のときは, 下のタブを, どれも選んでいない見た目にする).
+     * パネルを切り替える.
      *
-     * @param index パネルの番号 (下のタブの順. お気に入りは [FAVORITES_INDEX])
+     * @param index パネルの番号 (下のタブの順)
      */
     private fun show(index: Int) {
         current = index
-        nav.menu.setGroupCheckable(0, index != FAVORITES_INDEX, true)
         panels.forEachIndexed { i, panel ->
             panel.visibility =
                 if (i == index) View.VISIBLE else View.GONE
@@ -341,10 +348,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private companion object {
-        const val MENU_INDEX = 4
-        const val FAVORITES_INDEX = 5
+        const val MENU_INDEX = 5
         val NAV_IDS =
-            listOf(R.id.nav_today, R.id.nav_recent, R.id.nav_beers, R.id.nav_drinks, R.id.nav_menu)
+            listOf(
+                R.id.nav_today,
+                R.id.nav_recent,
+                R.id.nav_beers,
+                R.id.nav_favorites,
+                R.id.nav_drinks,
+                R.id.nav_menu,
+            )
         const val MATCH = LinearLayout.LayoutParams.MATCH_PARENT
         const val WRAP = LinearLayout.LayoutParams.WRAP_CONTENT
     }

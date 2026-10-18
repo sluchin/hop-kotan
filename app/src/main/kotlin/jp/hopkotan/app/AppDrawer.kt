@@ -27,16 +27,16 @@ private const val HEADER_PADDING_DP = 24
 /**
  * 左から引き出すメニュー (ナビゲーションドロワー).
  *
- * 上のバーの左のボタン (三本線) か, 画面の左端から引き出す. 戻るの操作で, 閉じる. 今は, お気に入りだけ.
+ * 上のバーの左のボタン (三本線) か, 画面の左端から引き出す. 戻るの操作で, 閉じる. 項目は, 下のタブと同じ.
  *
  * @param activity 画面
  * @param content 中身 (下のタブの画面)
- * @param onFavorites お気に入りの画面を開く
+ * @param onSelect 項目を選んだ (下のタブのメニューの ID を受け取る)
  */
 class AppDrawer(
     activity: AppCompatActivity,
     content: View,
-    onFavorites: () -> Unit,
+    onSelect: (Int) -> Unit,
 ) {
     /** 画面をまとめた View. */
     val view = DrawerLayout(activity)
@@ -53,10 +53,10 @@ class AppDrawer(
                     setPadding(padding, padding, padding, padding)
                 },
             )
-            inflateMenu(R.menu.nav_drawer)
+            inflateMenu(R.menu.bottom_nav)
             setNavigationItemSelectedListener {
                 view.closeDrawer(this)
-                if (it.itemId == R.id.nav_favorites) onFavorites()
+                onSelect(it.itemId)
                 true
             }
         }
@@ -116,4 +116,11 @@ class AppDrawer(
             insets
         }
     }
+
+    /**
+     * 今の画面の項目を, 選んだ見た目にする.
+     *
+     * @param itemId 下のタブのメニューの ID
+     */
+    fun select(itemId: Int) = navigation.setCheckedItem(itemId)
 }

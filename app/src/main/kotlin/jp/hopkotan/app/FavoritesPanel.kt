@@ -16,7 +16,7 @@ import jp.hopkotan.core.Beer
 import jp.hopkotan.core.Favorites
 
 /**
- * お気に入りのビールの画面 (左から引き出すメニュー ([AppDrawer]) から開く).
+ * お気に入りのビールの画面 (下のタブか, 左から引き出すメニュー ([AppDrawer]) から開く).
  *
  * 新しく足したビールを先に並べる. タップすると, 「ビール」のタブと同じ詳細を出す (お気に入りから外せる).
  *
