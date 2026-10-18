@@ -18,8 +18,9 @@ kotlin {
     }
 }
 
-// 忽布古丹醸造のマーク (private のサブモジュール). あるときだけ, それを使う APK (marked) を作れる.
-// マークの権利は, 忽布古丹醸造にある. リポジトリにコミットせず, その APK を配布しない (.claude/CLAUDE.md)
+// 忽布古丹醸造のマーク (private のサブモジュール). あれば, アイコンをマークにする. なければ, オリジナルの
+// アイコン (src/icon/res). マークの権利は, 忽布古丹醸造にある. リポジトリにコミットせず, マークを入れた APK を
+// 配布しない (.claude/CLAUDE.md)
 val markFile = rootProject.file("private/kotan-mark.svg")
 
 /** SVG のマーク (path が 1 つ) から, アダプティブアイコンの絵 (Android のベクター) を作る. */
@@ -118,15 +119,6 @@ android {
         buildConfig = true
     }
 
-    // plain: オリジナルのアイコン. marked: 忽布古丹醸造のマークのアイコン (private/ があるときだけ)
-    flavorDimensions += "icon"
-    productFlavors {
-        create("plain") { dimension = "icon" }
-        if (markFile.exists()) {
-            create("marked") { dimension = "icon" }
-        }
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -139,9 +131,10 @@ android {
     }
 }
 
+// アイコンの絵 (ic_launcher_foreground と ic_launcher_background) を, マークか, オリジナルから足す
 androidComponents {
-    if (markFile.exists()) {
-        onVariants(selector().withFlavor("icon" to "marked")) { variant ->
+    onVariants { variant ->
+        if (markFile.exists()) {
             val task =
                 tasks.register<GenerateMarkIcon>(
                     "generate${variant.name.replaceFirstChar { it.uppercase() }}Icon",
@@ -149,6 +142,8 @@ androidComponents {
                     svg.set(markFile)
                 }
             variant.sources.res?.addGeneratedSourceDirectory(task, GenerateMarkIcon::outputDir)
+        } else {
+            variant.sources.res?.addStaticSourceDirectory("src/icon/res")
         }
     }
 }

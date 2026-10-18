@@ -12,8 +12,7 @@
 
    | コマンド | 内容 |
    |:---|:---|
-   | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/plain/debug/hop-kotan-<版>-plain-debug.apk`)。`private/kotan-mark.svg` (サブモジュール) があれば、マークの APK (`marked`。配布しない) も作る |
-   | `docker compose run --rm build-marked` | 忽布古丹醸造のマークのアイコンの APK だけ (`private/` が要る) |
+   | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk`)。`private/kotan-mark.svg` (サブモジュール) があれば、アイコンを忽布古丹醸造のマークにする (その APK は配布しない) |
    | `docker compose run --rm test` | 単体テスト |
    | `docker compose run --rm coverage` | `core` の行と分岐が 100% か |
    | `docker compose run --rm format` / `format-fix` | 整形の確認 / 整形して書き換える |
@@ -27,7 +26,7 @@
 ## 実機へのインストール (ホストの adb)
 
 ```bash
-adb install -r app/build/outputs/apk/plain/debug/hop-kotan-*-plain-debug.apk
+adb install -r app/build/outputs/apk/debug/hop-kotan-*-debug.apk
 ```
 
 ホストに `adb` を入れて、スマートフォンの「USB デバッグ」を有効にして、USB でつなぐ。

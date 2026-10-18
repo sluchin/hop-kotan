@@ -58,7 +58,7 @@ Docker があれば、動きます (Android Studio も、JDK も、要りませ�
 
 ```bash
 export UID GID=$(id -g)
-docker compose run --rm build          # APK (app/build/outputs/apk/plain/debug/hop-kotan-<版>-plain-debug.apk)
+docker compose run --rm build          # APK (app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk)
 docker compose run --rm test           # 単体テスト
 docker compose run --rm scrape-taplist # data/taplist.json を更新
 docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、時間がかかる)
@@ -72,7 +72,7 @@ docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、
 
 ## リリース
 
-`v0.1.0` のようなタグを push すると、GitHub Actions の `release.yml` が APK (plain。オリジナルのアイコン) を作って、GitHub Releases の**ドラフト**に載せます (中身を確かめて、手で公開します)。APK はデバッグ鍵で署名したデバッグ版です。マークのアイコンの APK (marked) は権利が忽布古丹醸造にあるので、作りません。タグを打たずに試すときは Actions の Release を手動で実行します (成果物は Artifacts に保存されます)。
+`v0.1.0` のようなタグを push すると、GitHub Actions の `release.yml` が APK (オリジナルのアイコン。CI はサブモジュールを取り込まない) を作って、GitHub Releases の**ドラフト**に載せます (中身を確かめて、手で公開します)。APK はデバッグ鍵で署名したデバッグ版です。マークのアイコンの APK は権利が忽布古丹醸造にあるので、作りません。タグを打たずに試すときは Actions の Release を手動で実行します (成果物は Artifacts に保存されます)。
 
 ## ライセンス
 

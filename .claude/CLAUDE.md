@@ -31,7 +31,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 
 - **公式のマークをこのリポジトリ (公開) にコミットしない。** 履歴にも残さない。マークの権利は忽布古丹醸造にあり、許可は得ていない。`private/` の中身は `hop-kotan-assets` に置く。
 - **マークを入れてビルドした APK を公開しない** (CI の成果物、リリース、配布)。CI はサブモジュールを取り込まない (`actions/checkout` の `submodules` を指定しない)。
-- マークがなくても、ビルドできること。`private/kotan-mark.svg` があれば、`app/build.gradle.kts` がプロダクトフレーバー `marked` を足す (マークの SVG から、アイコンの絵を作る `GenerateMarkIcon`)。なければ、`plain` (オリジナルのアイコン。`app/src/plain/res/`) だけ。
+- マークがなくても、ビルドできること。`private/kotan-mark.svg` があれば、`app/build.gradle.kts` が、マークの SVG からアイコンの絵を作って使う (`GenerateMarkIcon`)。なければ、オリジナルのアイコン (`app/src/icon/res/`) を使う。フレーバーは分けない (APK は 1 つ。サブモジュールの有無で、アイコンだけが変わる)。手元でサブモジュールを置いてビルドした APK は、マークが入るので、配布しない。
 - スクリーンショットや、READMEの画像に公式のマークを写さない。
 
 ## コマンド
@@ -39,8 +39,7 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 > **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは thermo-term の `.claude/CLAUDE.md` と同じ。
 
 - `docker compose run` には必ず `--rm` を付ける (終わったコンテナを残さないため)。`UID` と `GID` をシェルでエクスポートしておく。
-- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/hop-kotan-<版>-plain-debug.apk`。`private/kotan-mark.svg` があれば、マークの APK (`app/build/outputs/apk/marked/debug/hop-kotan-<版>-marked-debug.apk`。配布しない) も作る。なければ plain だけ。CI は plain だけ)
-- マークのアイコンの APK だけ (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/hop-kotan-<版>-marked-debug.apk`)
+- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk`。`private/kotan-mark.svg` があれば、アイコンはマーク (配布しない)。なければ、オリジナルのアイコン。CI は、サブモジュールがないので、オリジナルのアイコン)
 - 単体テスト: `docker compose run --rm test`
 - カバレッジ (`core` の行と分岐が 100%): `docker compose run --rm coverage`
 - 整形の確認: `docker compose run --rm format` / 整形して書き換える: `docker compose run --rm format-fix`

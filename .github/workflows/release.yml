@@ -1,9 +1,9 @@
 name: Release
 
-# v から始まるタグ (例: v0.1.0) を push すると, APK (plain: オリジナルのアイコン) をビルドして,
+# v から始まるタグ (例: v0.1.0) を push すると, APK (オリジナルのアイコン) をビルドして,
 # GitHub Releases のドラフトに載せる (中身を確かめて, 手で公開する). 手動実行 (workflow_dispatch) は,
 # タグを打たずにビルドして, APK を Actions の Artifacts に保存する.
-# マークのアイコンの APK (marked) は権利が忽布古丹醸造にあるので, ここでは作らない (.claude/CLAUDE.md).
+# マークのアイコンの APK は権利が忽布古丹醸造にあるので, ここでは作らない (サブモジュールを取り込まない. .claude/CLAUDE.md).
 # APK はデバッグ鍵で署名したデバッグ版 (リリース用の署名鍵は使っていない).
 
 on:
@@ -33,7 +33,7 @@ jobs:
         run: env UID="$(id -u)" GID="$(id -g)" docker compose run --rm build
 
       - name: Name the APK
-        run: cp app/build/outputs/apk/plain/debug/hop-kotan-*-plain-debug.apk "hop-kotan_${{ github.ref_name }}.apk"
+        run: cp app/build/outputs/apk/debug/hop-kotan-*-debug.apk "hop-kotan_${{ github.ref_name }}.apk"
 
       - name: Create the draft release with the APK
         if: github.ref_type == 'tag'
