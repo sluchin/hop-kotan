@@ -11,7 +11,9 @@ import android.app.Activity
 import android.content.Intent
 import android.view.Gravity
 import android.view.View
+import android.webkit.ConsoleMessage
 import android.webkit.CookieManager
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -43,7 +45,8 @@ private const val TAG = "Menu"
  *
  * 注文のページ (Air レジ オーダーなど) は, Cookie でセッションを持つので, WebView でも, 他のサイトの
  * Cookie を受け付ける (WebView は, 最初は受け付けず, Chrome では動くのに, 認証エラーになることがある).
- * それでも開けないときのために, 読み込んだ QR コードのページを, ブラウザ (Chrome) で開くボタンを出す.
+ * セッションは WebView の中にだけできて, ブラウザ (Chrome) とは共有しないので, 注文はアプリの中で完結させる.
+ * 原因を調べられるように, ページの移動, HTTP のエラー, ページの JavaScript のエラーを, ログに出す.
  *
  * 下に, 飲んだビールを記録する帯 ([MenuBar]) を出す.
  *
@@ -71,12 +74,6 @@ class MenuPanel(
             isVisible = false
             setOnClickListener { web.reload() }
         }
-    private val browser =
-        MaterialButton(activity, null, android.R.attr.borderlessButtonStyle).apply {
-            setText(R.string.menu_browser)
-            isVisible = false
-            setOnClickListener { base?.let { openOutside(it) } }
-        }
     private val web = createWebView()
     private val bar = MenuBar(activity, actions, taps, beers, web).apply { view.isVisible = false }
 
@@ -94,7 +91,6 @@ class MenuPanel(
                         },
                     )
                     addView(host, LinearLayout.LayoutParams(0, WRAP, 1f))
-                    addView(browser)
                     addView(reload)
                 },
             )
@@ -132,6 +128,20 @@ class MenuPanel(
             // セッションの Cookie を, 他のサイトのものも受け付ける (Chrome と同じにする)
             CookieManager.getInstance().setAcceptCookie(true)
             CookieManager.getInstance().setAcceptThirdPartyCookies(this, true)
+            // ページの JavaScript のエラーと警告を, ログに出す (情報のメッセージは, デバッグ版だけ)
+            webChromeClient =
+                object : WebChromeClient() {
+                    override fun onConsoleMessage(message: ConsoleMessage): Boolean {
+                        val text = "Console ${message.messageLevel()}: ${message.message()}"
+                        when (message.messageLevel()) {
+                            ConsoleMessage.MessageLevel.ERROR,
+                            ConsoleMessage.MessageLevel.WARNING,
+                            -> AppLog.w(TAG, text)
+                            else -> AppLog.d(TAG) { text }
+                        }
+                        return true
+                    }
+                }
             webViewClient =
                 object : WebViewClient() {
                     override fun shouldOverrideUrlLoading(
@@ -209,7 +219,6 @@ class MenuPanel(
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
-        browser.isVisible = true
         bar.view.isVisible = true
         web.isVisible = true
         web.loadUrl(url)

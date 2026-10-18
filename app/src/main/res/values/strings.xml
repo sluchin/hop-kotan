@@ -11,7 +11,6 @@
     <string name="tab_menu">メニュー</string>
     <string name="menu_scan">QR コードを読む</string>
     <string name="menu_reload">再読み込み</string>
-    <string name="menu_browser">ブラウザで開く</string>
     <string name="menu_hint">お店の QR コードを読み込むと、メニューをここに表示します。注文は、メニューのページの中で行います。アプリは、注文を代行せず、テーブルや注文の情報を保存しません。</string>
     <string name="menu_found">メニューにあるビール (タップして、飲んだビールを記録)</string>
     <string name="menu_none_found">メニューにあるビールが見つかりません。「探す」か「ほかを記録」を使います。</string>
