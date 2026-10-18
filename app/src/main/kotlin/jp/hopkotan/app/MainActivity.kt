@@ -21,6 +21,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 import jp.hopkotan.core.Beer
 import jp.hopkotan.core.DrinkLog
 import jp.hopkotan.core.NewTaps
@@ -147,6 +148,8 @@ class MainActivity : AppCompatActivity() {
         val nav =
             BottomNavigationView(this).apply {
                 inflateMenu(R.menu.bottom_nav)
+                // 項目が 4 つ以上だと, 既定では選んだものにしか名前が出ないので, 全てに出す
+                labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
                 setOnItemSelectedListener {
                     show(NAV_IDS.indexOf(it.itemId))
                     true
