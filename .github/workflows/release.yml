@@ -33,7 +33,7 @@ jobs:
         run: env UID="$(id -u)" GID="$(id -g)" docker compose run --rm build
 
       - name: Name the APK
-        run: cp app/build/outputs/apk/plain/debug/app-plain-debug.apk "hop-kotan_${{ github.ref_name }}.apk"
+        run: cp app/build/outputs/apk/plain/debug/hop-kotan-*-plain-debug.apk "hop-kotan_${{ github.ref_name }}.apk"
 
       - name: Create the draft release with the APK
         if: github.ref_type == 'tag'

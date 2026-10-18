@@ -39,8 +39,8 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 > **クラウドのセッション (claude.ai/code。環境変数 `CLAUDE_CODE_REMOTE` が `true`) では、`docker compose run --rm <サービス>` を使わず、`scripts/cloud-docker.sh run <サービス>` で実行する。** 詳しくは thermo-term の `.claude/CLAUDE.md` と同じ。
 
 - `docker compose run` には必ず `--rm` を付ける (終わったコンテナを残さないため)。`UID` と `GID` をシェルでエクスポートしておく。
-- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/app-plain-debug.apk`。`private/kotan-mark.svg` があれば、マークの APK (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`。配布しない) も作る。なければ plain だけ。CI は plain だけ)
-- マークのアイコンの APK だけ (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/app-marked-debug.apk`)
+- ビルド: `docker compose run --rm build` (デバッグ APK: `app/build/outputs/apk/plain/debug/hop-kotan-<版>-plain-debug.apk`。`private/kotan-mark.svg` があれば、マークの APK (`app/build/outputs/apk/marked/debug/hop-kotan-<版>-marked-debug.apk`。配布しない) も作る。なければ plain だけ。CI は plain だけ)
+- マークのアイコンの APK だけ (`private/` が要る。配布しない): `docker compose run --rm build-marked` (`app/build/outputs/apk/marked/debug/hop-kotan-<版>-marked-debug.apk`)
 - 単体テスト: `docker compose run --rm test`
 - カバレッジ (`core` の行と分岐が 100%): `docker compose run --rm coverage`
 - 整形の確認: `docker compose run --rm format` / 整形して書き換える: `docker compose run --rm format-fix`

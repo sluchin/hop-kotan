@@ -58,7 +58,7 @@ Docker があれば、動きます (Android Studio も、JDK も、要りませ�
 
 ```bash
 export UID GID=$(id -g)
-docker compose run --rm build          # APK (app/build/outputs/apk/plain/debug/app-plain-debug.apk)
+docker compose run --rm build          # APK (app/build/outputs/apk/plain/debug/hop-kotan-<版>-plain-debug.apk)
 docker compose run --rm test           # 単体テスト
 docker compose run --rm scrape-taplist # data/taplist.json を更新
 docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、時間がかかる)

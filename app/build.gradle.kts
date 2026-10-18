@@ -153,6 +153,11 @@ androidComponents {
     }
 }
 
+// APK の名前を, リポジトリの名前と版にする (例: hop-kotan-0.1.0-debug.apk. 後ろに, ビルドの種類が付く)
+base {
+    archivesName = "hop-kotan-${android.defaultConfig.versionName}"
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(libs.material)
