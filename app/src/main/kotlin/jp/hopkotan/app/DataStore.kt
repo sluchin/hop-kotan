@@ -18,6 +18,9 @@ import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 
+/** ログのタグ. */
+private const val TAG = "Data"
+
 /** 接続と読み込みの待ち時間 (ミリ秒). */
 private const val TIMEOUT_MS = 15_000
 
@@ -50,7 +53,9 @@ class DataStore(
         context
             .readLocal(CatalogJob.BEERS_FILE)
             ?.let {
-                runCatching { CatalogJson.decodeBeers(it) }.getOrNull()
+                runCatching { CatalogJson.decodeBeers(it) }
+                    .onFailure { AppLog.w(TAG, "Could not read the saved beers", it) }
+                    .getOrNull()
             }.orEmpty()
 
     /**
@@ -60,7 +65,9 @@ class DataStore(
      */
     fun loadTaplist(): TapList? =
         context.readLocal(CatalogJob.TAPLIST_FILE)?.let {
-            runCatching { CatalogJson.decodeTaplist(it) }.getOrNull()
+            runCatching { CatalogJson.decodeTaplist(it) }
+                .onFailure { AppLog.w(TAG, "Could not read the saved taplist", it) }
+                .getOrNull()
         }
 
     /**
@@ -73,7 +80,14 @@ class DataStore(
             .listFiles { file -> file.name != CatalogJob.INDEX_FILE && file.extension == "json" }
             .orEmpty()
             .mapNotNull { file ->
-                runCatching { CatalogJson.decodeTaplist(file.readText(Charsets.UTF_8)) }.getOrNull()
+                runCatching { CatalogJson.decodeTaplist(file.readText(Charsets.UTF_8)) }
+                    .onFailure {
+                        AppLog.w(
+                            TAG,
+                            "Could not read the saved history ${file.name}",
+                            it,
+                        )
+                    }.getOrNull()
             }.sortedByDescending { it.date }
 
     /**
@@ -85,7 +99,11 @@ class DataStore(
         context
             .readLocal(
                 DRINKS_FILE,
-            )?.let { runCatching { CatalogJson.decodeDrinks(it) }.getOrNull() }
+            )?.let {
+                runCatching { CatalogJson.decodeDrinks(it) }
+                    .onFailure { AppLog.w(TAG, "Could not read the saved drinks", it) }
+                    .getOrNull()
+            }
             ?: DrinkLog()
 
     /**
@@ -104,7 +122,11 @@ class DataStore(
         context
             .readLocal(
                 RATINGS_FILE,
-            )?.let { runCatching { CatalogJson.decodeRatings(it) }.getOrNull() }
+            )?.let {
+                runCatching { CatalogJson.decodeRatings(it) }
+                    .onFailure { AppLog.w(TAG, "Could not read the saved ratings", it) }
+                    .getOrNull()
+            }
             ?: Ratings()
 
     /**

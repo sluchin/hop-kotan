@@ -18,6 +18,9 @@ import java.net.URL
 import java.security.MessageDigest
 import java.util.concurrent.Executors
 
+/** ログのタグ. */
+private const val TAG = "Images"
+
 /** 接続と読み込みの待ち時間 (ミリ秒). */
 private const val TIMEOUT_MS = 15_000
 
@@ -116,11 +119,17 @@ class ImageLoader(
             if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                 val bytes = connection.inputStream.use { it.readBytes() }
                 file(url).writeBytes(bytes)
+                AppLog.d(TAG) { "Downloaded an image (${bytes.size} bytes): $url" }
                 BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             } else {
+                AppLog.d(
+                    TAG,
+                ) { "Could not download an image (HTTP ${connection.responseCode}): $url" }
                 null
             }
         } catch (e: IOException) {
+            // 通信できないと, 画像の数だけ出るので, デバッグ版だけ
+            AppLog.d(TAG) { "Could not download an image: $url ($e)" }
             null
         } finally {
             connection.disconnect()

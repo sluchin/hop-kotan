@@ -64,3 +64,19 @@ CI (GitHub Actions) はサブモジュールを取り込まない。マークを
 | jsoup | 1.23.2 |
 | kotlinx-serialization-json | 1.11.0 |
 | ktlint (プラグイン) / detekt / Dokka / JaCoCo | 14.2.0 / 1.23.8 / 2.2.0 / 0.8.15 |
+
+
+## ログを見る
+
+アプリのログは、Android の logcat に出ます (`app/src/main/kotlin/jp/hopkotan/app/AppLog.kt`)。タグは機能ごとです (`Data`、`NewBeers`、`Images`)。
+
+```bash
+# エミュレータ (Docker) のログを、タグで絞って見る (D はデバッグ以上)
+docker compose exec emulator adb logcat -s Data:D NewBeers:D AndroidRuntime:E
+# 実機 (USB でつなぐ) なら
+adb logcat -s Data:D NewBeers:D AndroidRuntime:E
+```
+
+- デバッグのログ (`AppLog.d`) は、デバッグ版 (`assembleDebug`) だけで出ます。リリース版では、情報 (`AppLog.i`)、警告 (`AppLog.w`)、エラー (`AppLog.e`) だけが出ます。
+- アプリが落ちたときの例外は、`AndroidRuntime` のタグで出ます。
+- Google Play で公開したら、落ちたときの例外と ANR (応答なし) は、Play Console の「Android Vitals」に集まります (アプリのコードは要りません。利用者が、使用状況と診断情報の送信を許可している端末から、集まります)。リリース版で R8 の難読化を有効にしたら、Play Console に、対応表 (`mapping.txt`) を上げると、例外の場所が読めます。

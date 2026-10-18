@@ -18,6 +18,9 @@ import jp.hopkotan.core.NewTaps
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+/** ログのタグ. */
+private const val TAG = "NewBeers"
+
 /** 定期の確認の名前. */
 private const val WORK_NAME = "new_beer"
 
@@ -39,6 +42,7 @@ class NewBeerWorker(
             val store = DataStore(applicationContext)
             val current = store.download().second
             val previous = NewTaps.previousOf(store.downloadHistory(), current)
+            AppLog.i(TAG, "Checked the taplist of ${current.date}")
             if (previous != null) {
                 NewBeerNotifier.notifyOnce(
                     applicationContext,
@@ -47,9 +51,11 @@ class NewBeerWorker(
                 )
             }
             Result.success()
-        } catch (_: IOException) {
+        } catch (e: IOException) {
+            AppLog.w(TAG, "Could not check the new beers, retrying later", e)
             Result.retry()
-        } catch (_: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
+            AppLog.e(TAG, "Could not read the downloaded data", e)
             Result.failure()
         }
 

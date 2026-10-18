@@ -35,6 +35,9 @@ import java.time.temporal.ChronoUnit
 import java.util.UUID
 import java.util.concurrent.Executors
 
+/** ログのタグ. */
+private const val TAG = "Data"
+
 /** 量と価格が取れていないときの, 既定 (サイトの M と L). */
 private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420, 900))
 
@@ -180,16 +183,26 @@ class MainActivity : AppCompatActivity() {
             val newHistory =
                 runCatching {
                     store.downloadHistory()
-                }.getOrElse { store.loadHistory() }
+                }.getOrElse {
+                    AppLog.w(TAG, "Could not download the history, using the saved one", it)
+                    store.loadHistory()
+                }
             runOnUiThread {
                 pull.isRefreshing = false
                 result
                     .onSuccess { (newBeers, newTaplist) ->
+                        AppLog.i(
+                            TAG,
+                            "Downloaded ${newBeers.size} beers and ${newHistory.size} taplists",
+                        )
                         beers = newBeers
                         taplist = newTaplist
                         history = newHistory
                         render(null)
-                    }.onFailure { render(it.message ?: it.javaClass.simpleName) }
+                    }.onFailure {
+                        AppLog.w(TAG, "Could not download the data", it)
+                        render(it.message ?: it.javaClass.simpleName)
+                    }
             }
         }
     }

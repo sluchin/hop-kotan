@@ -49,6 +49,13 @@ Android アプリ ◀── JSON を HTTPS でダウンロード (raw.githubuser
 - データの取得: `docker compose run --rm scrape-taplist` (`data/taplist.json`) / `docker compose run --rm scrape-beers` (`data/beers.json`。初回は詳細のページを 1 件ずつ取るので、時間がかかる)
 - クリーン: `docker compose run --rm clean` / 開発シェル: `docker compose run --rm dev`
 
+## ログ
+
+- ログは `AppLog` (`AppLog.kt`) だけを使う (`android.util.Log` を直接呼ばない)。タグは、ファイルごとの `private const val TAG` (機能の名前)。
+- `AppLog.d` はデバッグ版だけ出す (判定は、関数の中の `BuildConfig.DEBUG`。引数は、文字列を返す関数にして、リリース版では文字列も作らない)。`AppLog.i` (最低限の情報)、`AppLog.w` (失敗したが続けられる)、`AppLog.e` (利用者の操作が失敗した) は、リリース版でも出す。
+- パスワード、トークン、鍵などの秘密は、どのレベルでも書かない。ログの文字は英語。
+- 落ちたときの例外は、Android が logcat に出し、Google Play では Play Console の Android Vitals が集める (コードは要らない)。見方は `SETUP.md` の「ログを見る」。
+
 ## コーディング規約
 
 ktlint (Kotlin 公式のスタイル) と、detekt (既定の規則) に従う。迷ったら、ツールが正しい。
