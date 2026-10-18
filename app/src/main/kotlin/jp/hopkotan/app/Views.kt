@@ -6,7 +6,6 @@
 
 package jp.hopkotan.app
 
-import android.app.AlertDialog
 import android.content.Context
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -170,34 +169,6 @@ fun Context.spinner(
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
     }
-
-/**
- * 量を選ぶダイアログを出す.
- *
- * @receiver コンテキスト
- * @param title 題名 (ビールの名前)
- * @param sizes 量と価格
- * @param onChoose 選んだときの処理
- */
-fun Context.showSizeDialog(
-    title: String,
-    sizes: List<PriceSize>,
-    onChoose: (PriceSize) -> Unit,
-) {
-    // 行を素早く 2 回タップすると, 量の画面が重なって開き, 2 杯記録されるので, 開いている間は開かない
-    if (sizeDialog?.isShowing == true) return
-    val labels = sizes.map { getString(R.string.size_item, it.label, it.ml, it.yen) }
-    sizeDialog =
-        AlertDialog
-            .Builder(this)
-            .setTitle(title)
-            .setItems(labels.toTypedArray()) { _, index -> onChoose(sizes[index]) }
-            .setNegativeButton(R.string.cancel, null)
-            .show()
-}
-
-/** いま開いている, 量を選ぶ画面 (同時に 2 つ開かないため). */
-private var sizeDialog: AlertDialog? = null
 
 /**
  * 部品に, 小さな見出しを付ける.
