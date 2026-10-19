@@ -177,11 +177,6 @@ class MainActivity : AppCompatActivity() {
                 inflateMenu(R.menu.bottom_nav)
                 // 項目が 4 つ以上だと, 既定では選んだものにしか名前が出ないので, 全てに出す
                 labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
-                // お気に入りは, ハートの絵だけにする (名前は, 読み上げのためだけに残す)
-                menu.findItem(R.id.nav_favorites).apply {
-                    contentDescription = title
-                    title = ""
-                }
                 setOnItemSelectedListener {
                     show(NAV_IDS.indexOf(it.itemId))
                     drawer.select(it.itemId)
