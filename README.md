@@ -67,7 +67,7 @@ docker compose run --rm scrape-taplist # data/taplist.json を更新
 docker compose run --rm scrape-beers   # data/beers.json を更新 (初回は、時間がかかる)
 ```
 
-そのほかのコマンドは [SETUP.md](SETUP.md) と [.claude/CLAUDE.md](.claude/CLAUDE.md) にあります。
+そのほかのコマンドは [SETUP.md](SETUP.md) と [.claude/CLAUDE.md](.claude/CLAUDE.md) にあります。実機での結合試験の項目は [INTEGRATION_TEST.md](INTEGRATION_TEST.md) にあります。
 
 ## アイコン
 
