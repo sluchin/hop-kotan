@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-19",
+    "date": "2026-10-20",
     "sizes": [
         {
             "label": "M",
@@ -84,11 +84,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
         },
         {
-            "name": "篝火",
-            "style": "Düsseldorfer Alt",
-            "beerId": "freedoms/篝火",
-            "url": "https://hopkotan.com/freedoms/%e7%af%9d%e7%81%ab/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/f4fc55c50d9cb58c768b774f677a7066-240x240.jpg"
+            "name": "粋なはかRYE",
+            "style": "Imperial Rye Stout",
+            "beerId": "freedoms/ikinahakarye",
+            "url": "https://hopkotan.com/freedoms/ikinahakarye/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/3d94a7582ead8dcdffd3999ff28be021-240x240.jpg"
         },
         {
             "name": "BEER KOTAN IPA",
