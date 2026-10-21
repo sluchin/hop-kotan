@@ -1,10 +1,10 @@
 [versions]
 agp = "9.4.1"
 material = "1.14.0"
-appcompat = "1.7.1"
-swiperefresh = "1.1.0"
+appcompat = "1.8.0"
+swiperefresh = "1.2.0"
 drawerlayout = "1.2.0"
-work = "2.10.1"
+work = "2.12.0"
 code-scanner = "16.1.0"
 kotlin = "2.4.21"
 ktlintPlugin = "14.2.0"
