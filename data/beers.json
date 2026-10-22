@@ -5830,17 +5830,6 @@
         "ibu": 28
     },
     {
-        "id": "originalsplus/ikor",
-        "series": "ORIGINALS_PLUS",
-        "name": "ikor",
-        "style": "Melon Hazy IPA",
-        "url": "https://hopkotan.com/originalsplus/ikor/",
-        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg",
-        "released": null,
-        "abv": 7.5,
-        "ibu": 28
-    },
-    {
         "id": "originalsplus/epana-6",
         "series": "ORIGINALS_PLUS",
         "name": "epana #6",
@@ -5850,5 +5839,16 @@
         "released": null,
         "abv": 4.5,
         "ibu": 22
+    },
+    {
+        "id": "originalsplus/ikor",
+        "series": "ORIGINALS_PLUS",
+        "name": "ikor",
+        "style": "Melon Hazy IPA",
+        "url": "https://hopkotan.com/originalsplus/ikor/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg",
+        "released": null,
+        "abv": 7.5,
+        "ibu": 28
     }
 ]
