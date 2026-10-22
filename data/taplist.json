@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-21",
+    "date": "2026-10-22",
     "sizes": [
         {
             "label": "M",
@@ -68,13 +68,6 @@
             "beerId": "freedoms/time-flies",
             "url": "https://hopkotan.com/freedoms/time-flies/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/Time-Flies-240x240.jpg"
-        },
-        {
-            "name": "ikor",
-            "style": "Melon Hazy IPA",
-            "beerId": "originalsplus/ikor",
-            "url": "https://hopkotan.com/originalsplus/ikor/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg"
         },
         {
             "name": "epana #6",
