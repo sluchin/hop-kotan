@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-22",
+    "date": "2026-10-23",
     "sizes": [
         {
             "label": "M",
@@ -68,6 +68,13 @@
             "beerId": "freedoms/time-flies",
             "url": "https://hopkotan.com/freedoms/time-flies/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/Time-Flies-240x240.jpg"
+        },
+        {
+            "name": "kampoca 2026",
+            "style": "Imperial Pumpkin Ale",
+            "beerId": "originalsplus/kampoca-2026",
+            "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
         },
         {
             "name": "epana #6",
