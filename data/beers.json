@@ -5830,6 +5830,17 @@
         "ibu": 28
     },
     {
+        "id": "originalsplus/kampoca-2026",
+        "series": "ORIGINALS_PLUS",
+        "name": "kampoca 2026",
+        "style": "Imperial Pumpkin Ale",
+        "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg",
+        "released": null,
+        "abv": 8.0,
+        "ibu": 15
+    },
+    {
         "id": "originalsplus/epana-6",
         "series": "ORIGINALS_PLUS",
         "name": "epana #6",
