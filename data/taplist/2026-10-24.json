@@ -1,0 +1,101 @@
+{
+    "date": "2026-10-24",
+    "sizes": [
+        {
+            "label": "M",
+            "ml": 310,
+            "yen": 750
+        },
+        {
+            "label": "L",
+            "ml": 420,
+            "yen": 900
+        }
+    ],
+    "taps": [
+        {
+            "name": "upopo",
+            "style": "PILSNER",
+            "beerId": "originals/upopo",
+            "url": "https://hopkotan.com/originals/#upopo",
+            "imageUrl": "https://hopkotan.com/img/tap-upopo.jpg"
+        },
+        {
+            "name": "nonno",
+            "style": "PALE ALE",
+            "beerId": "originals/nonno",
+            "url": "https://hopkotan.com/originals/#nonno",
+            "imageUrl": "https://hopkotan.com/img/tap-nonno.jpg"
+        },
+        {
+            "name": "haskap",
+            "style": "FRUITS ALE",
+            "beerId": "originals/haskap",
+            "url": "https://hopkotan.com/originals/#haskap",
+            "imageUrl": "https://hopkotan.com/img/tap-haskap.jpg"
+        },
+        {
+            "name": "kunne (HOP KOTAN ORIGINALS)",
+            "style": "Schwarz",
+            "beerId": "freedoms/kunne-hop-kotan-originals",
+            "url": "https://hopkotan.com/freedoms/kunne-hop-kotan-originals/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2025/07/originals-kunne-240x240.png"
+        },
+        {
+            "name": "Pilsner 2026",
+            "style": "Harvest Pilsner",
+            "beerId": "harvest_brew/pilsner-2026",
+            "url": "https://hopkotan.com/harvest_brew/pilsner-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/f45f413ba59aa6b9df5694a5961790a1-240x240.jpg"
+        },
+        {
+            "name": "Saison 2026",
+            "style": "Harvest Saison",
+            "beerId": "harvest_brew/saison-2026",
+            "url": "https://hopkotan.com/harvest_brew/saison-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Saison-2026-240x240.jpg"
+        },
+        {
+            "name": "Rauch 2026",
+            "style": "Harvest Rauch",
+            "beerId": "harvest_brew/rauch-2026",
+            "url": "https://hopkotan.com/harvest_brew/rauch-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
+        },
+        {
+            "name": "Time Flies",
+            "style": "Best Bitter",
+            "beerId": "freedoms/time-flies",
+            "url": "https://hopkotan.com/freedoms/time-flies/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/Time-Flies-240x240.jpg"
+        },
+        {
+            "name": "kampoca 2026",
+            "style": "Imperial Pumpkin Ale",
+            "beerId": "originalsplus/kampoca-2026",
+            "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
+        },
+        {
+            "name": "epana #6",
+            "style": "Coffee Ale (Ordinary Bitter)",
+            "beerId": "originalsplus/epana-6",
+            "url": "https://hopkotan.com/originalsplus/epana-6/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
+        },
+        {
+            "name": "粋なはかRYE",
+            "style": "Imperial Rye Stout",
+            "beerId": "freedoms/ikinahakarye",
+            "url": "https://hopkotan.com/freedoms/ikinahakarye/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/3d94a7582ead8dcdffd3999ff28be021-240x240.jpg"
+        },
+        {
+            "name": "BEER KOTAN IPA",
+            "style": "American IPA",
+            "beerId": "freedoms/beer-kotan-ipa",
+            "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
+        }
+    ]
+}
