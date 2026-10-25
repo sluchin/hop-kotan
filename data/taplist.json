@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-24",
+    "date": "2026-10-25",
     "sizes": [
         {
             "label": "M",
@@ -63,11 +63,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
         },
         {
-            "name": "Time Flies",
-            "style": "Best Bitter",
-            "beerId": "freedoms/time-flies",
-            "url": "https://hopkotan.com/freedoms/time-flies/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/Time-Flies-240x240.jpg"
+            "name": "広目天麦酒",
+            "style": "Dortmunder",
+            "beerId": "freedoms/koumokuten-beer",
+            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
         },
         {
             "name": "kampoca 2026",
