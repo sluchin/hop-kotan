@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-25",
+    "date": "2026-10-26",
     "sizes": [
         {
             "label": "M",
@@ -77,11 +77,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
         },
         {
-            "name": "epana #6",
-            "style": "Coffee Ale (Ordinary Bitter)",
-            "beerId": "originalsplus/epana-6",
-            "url": "https://hopkotan.com/originalsplus/epana-6/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
+            "name": "梅見がち",
+            "style": "Ume Saison",
+            "beerId": "freedoms/梅見がち",
+            "url": "https://hopkotan.com/freedoms/%e6%a2%85%e8%a6%8b%e3%81%8c%e3%81%a1/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/03/dcdd281ebd67f45318e9306fefafcc26-240x240.jpg"
         },
         {
             "name": "粋なはかRYE",
