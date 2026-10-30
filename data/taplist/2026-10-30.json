@@ -1,0 +1,101 @@
+{
+    "date": "2026-10-30",
+    "sizes": [
+        {
+            "label": "M",
+            "ml": 310,
+            "yen": 750
+        },
+        {
+            "label": "L",
+            "ml": 420,
+            "yen": 900
+        }
+    ],
+    "taps": [
+        {
+            "name": "upopo",
+            "style": "PILSNER",
+            "beerId": "originals/upopo",
+            "url": "https://hopkotan.com/originals/#upopo",
+            "imageUrl": "https://hopkotan.com/img/tap-upopo.jpg"
+        },
+        {
+            "name": "nonno",
+            "style": "PALE ALE",
+            "beerId": "originals/nonno",
+            "url": "https://hopkotan.com/originals/#nonno",
+            "imageUrl": "https://hopkotan.com/img/tap-nonno.jpg"
+        },
+        {
+            "name": "haskap",
+            "style": "FRUITS ALE",
+            "beerId": "originals/haskap",
+            "url": "https://hopkotan.com/originals/#haskap",
+            "imageUrl": "https://hopkotan.com/img/tap-haskap.jpg"
+        },
+        {
+            "name": "kunne (HOP KOTAN ORIGINALS)",
+            "style": "Schwarz",
+            "beerId": "freedoms/kunne-hop-kotan-originals",
+            "url": "https://hopkotan.com/freedoms/kunne-hop-kotan-originals/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2025/07/originals-kunne-240x240.png"
+        },
+        {
+            "name": "Pilsner 2026",
+            "style": "Harvest Pilsner",
+            "beerId": "harvest_brew/pilsner-2026",
+            "url": "https://hopkotan.com/harvest_brew/pilsner-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/f45f413ba59aa6b9df5694a5961790a1-240x240.jpg"
+        },
+        {
+            "name": "Saison 2026",
+            "style": "Harvest Saison",
+            "beerId": "harvest_brew/saison-2026",
+            "url": "https://hopkotan.com/harvest_brew/saison-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Saison-2026-240x240.jpg"
+        },
+        {
+            "name": "Rauch 2026",
+            "style": "Harvest Rauch",
+            "beerId": "harvest_brew/rauch-2026",
+            "url": "https://hopkotan.com/harvest_brew/rauch-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
+        },
+        {
+            "name": "広目天麦酒",
+            "style": "Dortmunder",
+            "beerId": "freedoms/koumokuten-beer",
+            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
+        },
+        {
+            "name": "kampoca 2026",
+            "style": "Imperial Pumpkin Ale",
+            "beerId": "originalsplus/kampoca-2026",
+            "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
+        },
+        {
+            "name": "梅見がち",
+            "style": "Ume Saison",
+            "beerId": "freedoms/梅見がち",
+            "url": "https://hopkotan.com/freedoms/%e6%a2%85%e8%a6%8b%e3%81%8c%e3%81%a1/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/03/dcdd281ebd67f45318e9306fefafcc26-240x240.jpg"
+        },
+        {
+            "name": "AKIRA in Wonderland",
+            "style": "Weizen",
+            "beerId": "freedoms/akira-in-wonderland",
+            "url": "https://hopkotan.com/freedoms/akira-in-wonderland/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/AKIRA-in-Wonderland-240x240.jpg"
+        },
+        {
+            "name": "BEER KOTAN IPA",
+            "style": "American IPA",
+            "beerId": "freedoms/beer-kotan-ipa",
+            "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
+        }
+    ]
+}
