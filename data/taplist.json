@@ -1,5 +1,5 @@
 {
-    "date": "2026-10-29",
+    "date": "2026-10-30",
     "sizes": [
         {
             "label": "M",
@@ -84,11 +84,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/03/dcdd281ebd67f45318e9306fefafcc26-240x240.jpg"
         },
         {
-            "name": "粋なはかRYE",
-            "style": "Imperial Rye Stout",
-            "beerId": "freedoms/ikinahakarye",
-            "url": "https://hopkotan.com/freedoms/ikinahakarye/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/3d94a7582ead8dcdffd3999ff28be021-240x240.jpg"
+            "name": "AKIRA in Wonderland",
+            "style": "Weizen",
+            "beerId": "freedoms/akira-in-wonderland",
+            "url": "https://hopkotan.com/freedoms/akira-in-wonderland/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/AKIRA-in-Wonderland-240x240.jpg"
         },
         {
             "name": "BEER KOTAN IPA",
