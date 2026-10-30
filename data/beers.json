@@ -44,6 +44,17 @@
         "ibu": 22
     },
     {
+        "id": "freedoms/akira-in-wonderland",
+        "series": "FREEDOMS",
+        "name": "AKIRA in Wonderland",
+        "style": "Weizen",
+        "url": "https://hopkotan.com/freedoms/akira-in-wonderland/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/AKIRA-in-Wonderland-240x240.jpg",
+        "released": "2026-10",
+        "abv": 5.0,
+        "ibu": 16
+    },
+    {
         "id": "freedoms/rosy-fizz",
         "series": "FREEDOMS",
         "name": "Rosy Fizz",
