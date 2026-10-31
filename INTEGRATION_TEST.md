@@ -4,7 +4,7 @@ hop-kotan の結合試験の項目です。単体テスト (`core` の JUnit 5�
 
 ## 対象と範囲
 
-```
+```text
 GitHub Actions (update-data.yml) ──取得──> hopkotan.com
        │  scraper ─> core (解析) ─> data/*.json ─> Contents API でコミット
        ▼

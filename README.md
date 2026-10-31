@@ -6,7 +6,7 @@
 
 ## 仕組み
 
-```
+```text
 GitHub Actions (毎日) ──取得──> hopkotan.com
        │
        └─ data/taplist.json (今日のタップリスト) と data/beers.json (ORIGINALS と FREEDOMS と、タップに出たビール) を更新

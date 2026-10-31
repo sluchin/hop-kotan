@@ -8,6 +8,7 @@
    ```bash
    export UID GID=$(id -g)
    ```
+
 3. サービスを実行する (必ず `--rm` を付ける):
 
    | コマンド | 内容 |
@@ -63,7 +64,6 @@ CI (GitHub Actions) はサブモジュールを取り込まない。マークを
 | jsoup | 1.23.2 |
 | kotlinx-serialization-json | 1.11.0 |
 | ktlint (プラグイン) / detekt / Dokka / JaCoCo | 14.2.0 / 1.23.8 / 2.2.0 / 0.8.15 |
-
 
 ## ログを見る
 
