@@ -78,7 +78,7 @@ jobs:
         if: always()
         with:
           name: docs
-          path: core/build/dokka/html/
+          path: build/docs/html/
           if-no-files-found: error
           retention-days: 3
 
