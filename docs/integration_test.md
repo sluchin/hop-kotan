@@ -23,8 +23,8 @@ raw.githubusercontent.com ──ダウンロード──> Android アプリ (app
 | もの | 内容 |
 |:---|:---|
 | 端末 | Android 13 以上の実機 (Google Play 開発者サービスがあるもの。QR コードのスキャナに要る)。エミュレータは置いていないので、実機で行う |
-| APK | `docker compose run --rm build` で作ったデバッグ版 (`app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk`)。`adb install -r` で入れる (`SETUP.md` の「実機へのインストール」) |
-| ログ | `adb logcat -s Data:D NewBeers:D Images:D Menu:D AndroidRuntime:E` (`SETUP.md` の「ログを見る」)。どの項目でも、`AndroidRuntime` に例外が出ないこと |
+| APK | `docker compose run --rm build` で作ったデバッグ版 (`app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk`)。`adb install -r` で入れる (`docs/setup.md` の「実機へのインストール」) |
+| ログ | `adb logcat -s Data:D NewBeers:D Images:D Menu:D AndroidRuntime:E` (`docs/setup.md` の「ログを見る」)。どの項目でも、`AndroidRuntime` に例外が出ないこと |
 | ネットワーク | Wi-Fi かモバイル回線。オフラインの項目は、機内モードで行う |
 | データ | GitHub の `main` の `data/*.json` (アプリは `https://raw.githubusercontent.com/sluchin/hop-kotan/main/data/` から取る) |
 
