@@ -44,6 +44,17 @@
         "ibu": 22
     },
     {
+        "id": "freedoms/im-only-krush",
+        "series": "FREEDOMS",
+        "name": "I’m only KRUSH",
+        "style": "Hoppy Lager",
+        "url": "https://hopkotan.com/freedoms/im-only-krush/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/Im-only-KRUSH-240x240.jpg",
+        "released": "2026-11",
+        "abv": 5.5,
+        "ibu": 30
+    },
+    {
         "id": "freedoms/akira-in-wonderland",
         "series": "FREEDOMS",
         "name": "AKIRA in Wonderland",
