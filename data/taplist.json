@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-05",
+    "date": "2026-11-06",
     "sizes": [
         {
             "label": "M",
@@ -63,18 +63,18 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
         },
         {
-            "name": "広目天麦酒",
-            "style": "Dortmunder",
-            "beerId": "freedoms/koumokuten-beer",
-            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
-        },
-        {
             "name": "kampoca 2026",
             "style": "Imperial Pumpkin Ale",
             "beerId": "originalsplus/kampoca-2026",
             "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
+        },
+        {
+            "name": "I’m only KRUSH",
+            "style": "Hoppy Lager",
+            "beerId": "freedoms/im-only-krush",
+            "url": "https://hopkotan.com/freedoms/im-only-krush/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/Im-only-KRUSH-240x240.jpg"
         },
         {
             "name": "梅見がち",
