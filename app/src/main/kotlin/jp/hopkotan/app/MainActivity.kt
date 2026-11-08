@@ -94,6 +94,18 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
             .launch(Manifest.permission.POST_NOTIFICATIONS)
         NewBeerWorker.schedule(this)
+        // 作り直されたとき (回転, ダークモードの切り替え, メモリ不足での終了) に, 同じタブと, メニューのページを
+        // 開き直す (QR コードを読み直さなくてよい)
+        savedStateRegistry.registerSavedStateProvider(STATE_KEY) {
+            Bundle().apply {
+                putInt(STATE_TAB, current)
+                menuPanel.currentUrl?.let { putString(STATE_MENU_URL, it) }
+            }
+        }
+        savedStateRegistry.consumeRestoredStateForKey(STATE_KEY)?.let {
+            menuPanel.restore(it.getString(STATE_MENU_URL))
+            nav.selectedItemId = NAV_IDS[it.getInt(STATE_TAB).coerceIn(NAV_IDS.indices)]
+        }
         render(null)
         refresh()
         onBackPressedDispatcher.addCallback(
@@ -112,7 +124,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        menuPanel.destroy()
+        // アプリを閉じるときだけ, Cookie を消す (作り直されるだけなら, メニューのセッションを残す)
+        menuPanel.destroy(clear = isFinishing)
         executor.shutdown()
         images.shutdown()
         super.onDestroy()
@@ -344,6 +357,11 @@ class MainActivity : AppCompatActivity() {
 
     private companion object {
         const val MENU_INDEX = 5
+
+        /** 画面の状態に預ける, 名前と, 選んでいたタブの番号と, メニューのページの URL の名前. */
+        const val STATE_KEY = "hop_kotan"
+        const val STATE_TAB = "tab"
+        const val STATE_MENU_URL = "menu_url"
         val NAV_IDS =
             listOf(
                 R.id.nav_today,

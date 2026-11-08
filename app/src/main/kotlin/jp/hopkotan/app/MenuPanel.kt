@@ -43,7 +43,9 @@ private const val TAG = "Menu"
  * QR コードは, Google のコードスキャナ (Google Play 開発者サービス) で読む (カメラの権限は, 要らない).
  * 表示するのは, `https` のページだけ. 注文のページは, 認証や支払いで別のサイトを通るので, `https` の
  * ページは, どのホストでも, アプリの中で続ける (`https` 以外の, ほかのアプリを開くリンクだけ, 外で開く).
- * テーブルや注文の情報は, 保存しない (画面を離れたら, Cookie と保存したデータを消す).
+ * テーブルや注文の情報は, 端末に保存しない (アプリを閉じたら, Cookie と保存したデータを消す). 画面が作り直される
+ * だけのとき (回転など) は, 別の画面 (タブ) へ移っても, QR コードを読み直さずに続けられるよう, Cookie を残して,
+ * 開いていたページを開き直す.
  *
  * 注文のページ (Air レジ オーダーなど) は, Cookie でセッションを持つので, WebView でも, 他のサイトの
  * Cookie を受け付ける (WebView は, 最初は受け付けず, Chrome では動くのに, 認証エラーになることがある).
@@ -119,9 +121,39 @@ class MenuPanel(
     /** WebView の履歴を 1 つ戻る. */
     fun goBack() = web.goBack()
 
-    /** WebView を片付ける (Cookie と, 保存したデータを消す). */
-    fun destroy() {
-        clearData()
+    /**
+     * 今開いているメニューのページの URL (メニューをまだ開いていなければ null).
+     *
+     * 画面が作り直されても (回転, ダークモードの切り替え, メモリ不足での終了), 同じページを開き直すために,
+     * 画面の状態として一時的に預ける (端末には保存しない).
+     */
+    val currentUrl: String?
+        get() = web.url?.takeIf { MenuUrl.opensInApp(it) }
+
+    /**
+     * 画面が作り直されたときに, 預けておいたページを開き直す (QR コードを読み直さなくてよい).
+     *
+     * Cookie は, 画面が作り直されても消さないので (`destroy` の `clear`), セッションが続く.
+     *
+     * @param url [currentUrl] で預けた URL
+     */
+    fun restore(url: String?) {
+        if (MenuUrl.parse(url) != null) {
+            AppLog.i(TAG, "Restoring the menu page")
+            open(url, clear = false)
+        }
+    }
+
+    /**
+     * WebView を片付ける.
+     *
+     * @param clear Cookie と, 保存したデータを消すなら true. 画面が作り直されるだけのときは false にして,
+     *   作り直したあとも, セッションを続ける
+     */
+    fun destroy(clear: Boolean) {
+        if (clear) {
+            clearData()
+        }
         web.destroy()
     }
 
@@ -231,15 +263,26 @@ class MenuPanel(
             }
     }
 
-    /** QR コードの内容が, 表示してよい URL なら, メニューを開く. */
-    private fun open(raw: String?) {
+    /**
+     * QR コードの内容が, 表示してよい URL なら, メニューを開く.
+     *
+     * @param raw QR コードの内容
+     * @param clear 前の Cookie と保存したデータを消すなら true (QR コードを読み直したとき). 作り直された画面で,
+     *   同じページを開き直すときは false (セッションを続ける)
+     */
+    private fun open(
+        raw: String?,
+        clear: Boolean = true,
+    ) {
         val url = MenuUrl.parse(raw)
         if (url == null) {
             toast(activity.getString(R.string.menu_invalid))
 
             return
         }
-        clearData()
+        if (clear) {
+            clearData()
+        }
         host.text = activity.getString(R.string.menu_host, MenuUrl.host(url))
         hint.isVisible = false
         reload.isVisible = true
