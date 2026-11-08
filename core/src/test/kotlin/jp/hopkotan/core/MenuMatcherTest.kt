@@ -32,6 +32,32 @@ class MenuMatcherTest {
         assertEquals("originals/upopo", MenuMatcher.find(text, listOf(upopo), beers)[0].beerId)
     }
 
+    /** 英字の名前に日本語の読みが挟まれたり, 並べられたりしても, 英字と数字が同じなら見つかる. 数字が違えば見つからない. */
+    @Test
+    fun findWithJapaneseReading() {
+        val kampoca = Tap("kampoca 2026", "Imperial Pumpkin Ale", "originalsplus/kampoca-2026")
+
+        listOf(
+            "kampoca 2026",
+            "kampoca−カンポチャ−2026 ¥900",
+            "カンポチャ-kampoca 2026",
+        ).forEach { text ->
+            assertEquals(
+                listOf(kampoca),
+                MenuMatcher.find(text, listOf(kampoca), emptyList()),
+                text,
+            )
+        }
+        assertEquals(
+            emptyList(),
+            MenuMatcher.find("kampoca−カンポチャ−2025", listOf(kampoca), emptyList()),
+        )
+        assertEquals(emptyList(), MenuMatcher.find("カンポチャ", listOf(kampoca), emptyList()))
+        // 日本語を含む名前は, 今までどおり, 全体が同じときだけ
+        val kagaribi = Tap("篝火 Kagaribi", "Alt", "freedoms/kagaribi")
+        assertEquals(emptyList(), MenuMatcher.find("kagaribi", listOf(kagaribi), emptyList()))
+    }
+
     /** 見つからなければ空. 短すぎる名前は探さない. */
     @Test
     fun findNothing() {
