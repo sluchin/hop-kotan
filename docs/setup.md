@@ -12,7 +12,7 @@
 3. サービスを実行する (必ず `--rm` を付ける):
 
    | コマンド | 内容 |
-   |:---|:---|
+   | :--- | :--- |
    | `docker compose run --rm build` | 全てのモジュールのビルド (APK: `app/build/outputs/apk/debug/hop-kotan-<版>-debug.apk`)。`private/kotan-mark.svg` (サブモジュール) があれば、アイコンを忽布古丹醸造のマークにする (その APK は配布しない) |
    | `docker compose run --rm test` | 単体テスト |
    | `docker compose run --rm coverage` | `core` の行と分岐が 100% か |
@@ -46,7 +46,7 @@ CI (GitHub Actions) はサブモジュールを取り込まない。マークを
 ## GitHub Actions
 
 | ワークフロー | 内容 |
-|:---|:---|
+| :--- | :--- |
 | `build.yml` (CI) | push と PR で `build` `test` `coverage` `format` `analyze` `docs` を実行する |
 | `update-data.yml` | 毎日 12:30 と 17:30 (JST) にタップリストを取得する (土日祝日は 12 時、平日は 17 時から開くため)。同じ回にビール (ORIGINALS と FREEDOMS と、タップに出たもの) の新しいものを探して、あれば保存する。タップリストとビールは別のファイルに保存する。手動 (Run workflow) でも実行できる。変わったときだけ、GitHub の Contents API で `data/*.json` をコミットする (API で作ったコミットは GitHub が署名する) |
 
@@ -55,7 +55,7 @@ CI (GitHub Actions) はサブモジュールを取り込まない。マークを
 ## ツールの版 (実際に使うもの)
 
 | 項目 | 版 |
-|:---|:---|
+| :--- | :--- |
 | JDK | 17 (Docker のイメージ) |
 | Android Gradle Plugin / compileSdk / minSdk | 9.4.1 / 37 / 33 |
 | Material Components / AppCompat | 1.14.0 / 1.7.1 |
