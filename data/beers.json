@@ -5852,6 +5852,17 @@
         "ibu": 15
     },
     {
+        "id": "originalsplus/epitta-2026-sorachi-ace-ipa",
+        "series": "ORIGINALS_PLUS",
+        "name": "epitta 2026 -Sorachi Ace IPA-",
+        "style": "American IPA",
+        "url": "https://hopkotan.com/originalsplus/epitta-2026-sorachi-ace-ipa/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/2438d4107f018a8052ba8ce6b4fa07a6-240x240.jpg",
+        "released": null,
+        "abv": 7.0,
+        "ibu": 60
+    },
+    {
         "id": "originalsplus/ikor",
         "series": "ORIGINALS_PLUS",
         "name": "ikor",
