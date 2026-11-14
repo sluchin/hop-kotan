@@ -29,7 +29,7 @@ class CatalogTest {
     private val list =
         TapList("2026-10-13", listOf(PriceSize("M", 310, 750)), listOf(Tap("a", "s")))
 
-    /** ビール, タップリスト, 記録は, JSON にして読み戻せる. 日本語は, そのまま書く. */
+    /** ビール, タップリスト, 記録は, JSON にして読み戻せる. 日本語はそのまま書く. */
     @Test
     fun jsonRoundTrip() {
         val record =
@@ -64,7 +64,7 @@ class CatalogTest {
         )
     }
 
-    /** タップリストは, 日ごとの履歴にも書く. 目次は, 新しい日が先で, 同じ日は 1 つにする. */
+    /** タップリストは, 日ごとの履歴にも書く. 目次は, 新しい日が先で同じ日は 1 つにする. */
     @Test
     fun updateTaplistKeepsHistory() {
         val dir = Files.createTempDirectory("hop")

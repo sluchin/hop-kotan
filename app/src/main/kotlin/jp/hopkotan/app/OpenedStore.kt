@@ -21,7 +21,7 @@ object OpenedStore {
      * 開栓したビールを読む.
      *
      * @param context コンテキスト
-     * @return 開栓したビール (なければ, 空)
+     * @return 開栓したビール (なければ空)
      */
     fun load(context: Context): OpenedTaps =
         context.readLocal(OPENED_FILE)?.let {

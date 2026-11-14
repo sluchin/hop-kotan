@@ -39,5 +39,5 @@ fun main(args: Array<String>) {
         }
 }
 
-/** 使い方を伝えて, 失敗にする. */
+/** 使い方を伝えて失敗にする. */
 private fun usage(): Nothing = error("Usage: taplist|beers <directory>")

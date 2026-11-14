@@ -19,7 +19,7 @@ for file in "$@"; do
     [ -f "$file" ] || { echo "Error: $file not found" >&2; exit 1; }
     api="repos/${GITHUB_REPOSITORY}/contents/${file}"
 
-    # 今のファイルの sha と内容 (なければ, 空)
+    # 今のファイルの sha と内容 (なければ空)
     remote="$(gh api "${api}?ref=${BRANCH}" 2>/dev/null || true)"
     sha="$(printf '%s' "$remote" | jq -r '.sha // empty')"
     if [ -n "$sha" ]; then

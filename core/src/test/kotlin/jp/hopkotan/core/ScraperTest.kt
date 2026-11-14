@@ -193,7 +193,7 @@ class ScraperTest {
         assertEquals(2, fetcher.fetched.size)
     }
 
-    /** FREEDOMS: 1 件も読めなければ, 失敗にする. */
+    /** FREEDOMS: 1 件も読めなければ失敗にする. */
     @Test
     fun freedomsEmpty() {
         val scraper = Scraper(FakeFetcher(mapOf("$base/freedoms/" to "<p>x</p>")))

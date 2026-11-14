@@ -47,7 +47,7 @@ class DataStore(
     /**
      * 端末に残してあるビールを読む.
      *
-     * @return ビール (なければ, 空)
+     * @return ビール (なければ空)
      */
     fun loadBeers(): List<Beer> =
         context
@@ -93,7 +93,7 @@ class DataStore(
     /**
      * 飲んだ記録を読む.
      *
-     * @return 記録 (なければ, 空)
+     * @return 記録 (なければ空)
      */
     fun loadDrinks(): DrinkLog =
         context
@@ -116,7 +116,7 @@ class DataStore(
     /**
      * 星の評価を読む.
      *
-     * @return 評価 (なければ, 空)
+     * @return 評価 (なければ空)
      */
     fun loadRatings(): Ratings =
         context
@@ -156,7 +156,7 @@ class DataStore(
     }
 
     /**
-     * 最近の日のタップリスト (履歴) をダウンロードして, 端末に保存する.
+     * 最近の日のタップリスト (履歴) をダウンロードして端末に保存する.
      *
      * 過去の日は変わらないので, 端末にある日は取り直さない (最新の日だけ, 毎回取り直す).
      *

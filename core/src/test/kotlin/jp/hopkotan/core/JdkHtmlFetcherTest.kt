@@ -57,7 +57,7 @@ class JdkHtmlFetcherTest {
         assertEquals(emptyList(), slept)
     }
 
-    /** 続けて取得するときは, 前の取得から間隔を空ける. 間隔がたっていれば, 待たない. */
+    /** 続けて取得するときは, 前の取得から間隔を空ける. 間隔がたっていれば待たない. */
     @Test
     fun interval() {
         val fetcher = fetcher()
@@ -70,7 +70,7 @@ class JdkHtmlFetcherTest {
         assertEquals(listOf(700L), slept)
     }
 
-    /** 失敗したら, 間隔を空けて, やり直す. */
+    /** 失敗したら間隔を空けてやり直す. */
     @Test
     fun retry() {
         statuses += listOf(500, 503)
@@ -80,7 +80,7 @@ class JdkHtmlFetcherTest {
         assertEquals(listOf(1000L, 1000L), slept)
     }
 
-    /** 試行の回数を超えたら, 失敗にする. */
+    /** 試行の回数を超えたら失敗にする. */
     @Test
     fun giveUp() {
         statuses += listOf(404, 404, 404)

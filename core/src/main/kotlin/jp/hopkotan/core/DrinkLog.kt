@@ -78,7 +78,7 @@ data class DrinkLog(
     /**
      * 記録を消した一覧を返す.
      *
-     * @param id 消す記録の ID (なければ, 変わらない)
+     * @param id 消す記録の ID (なければ変わらない)
      * @return 新しい一覧
      */
     fun remove(id: String): DrinkLog = DrinkLog(records.filter { it.id != id })
@@ -111,7 +111,7 @@ data class DrinkLog(
      * 1 日の集計を返す.
      *
      * @param date 日 (`2026-10-13`)
-     * @return 集計 (記録がなければ, 全て 0)
+     * @return 集計 (記録がなければ全て 0)
      */
     fun summary(date: String): DaySummary {
         val day = forDate(date)
@@ -132,7 +132,7 @@ data class DrinkLog(
          *
          * @param record 記録
          * @param beers ビールのデータ
-         * @return 補った記録 (見つからなければ, そのまま)
+         * @return 補った記録 (見つからなければそのまま)
          */
         fun complete(
             record: DrinkRecord,

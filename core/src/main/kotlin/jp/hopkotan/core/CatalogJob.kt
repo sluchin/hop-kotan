@@ -41,7 +41,7 @@ class CatalogJob(
      * ORIGINALS と FREEDOMS と, タップに出ている ORIGINALS plus と HARVEST BREW を取得して, `beers.json` に書く.
      *
      * すでに書いてあるビールは, 詳細のページを取り直さない (ORIGINALS plus と HARVEST BREW は, 前にタップに出た
-     * ものも残す). ORIGINALS は, 1 ページなので, 毎回取る.
+     * ものも残す). ORIGINALS は, 1 ページなので毎回取る.
      *
      * @return ビールの数
      */

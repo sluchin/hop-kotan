@@ -36,7 +36,7 @@ class FavoritesTest {
         assertEquals(emptyList(), Favorites().beersIn(listOf(upopo)))
     }
 
-    /** JSON にして, 読み戻せる. */
+    /** JSON にして読み戻せる. */
     @Test
     fun json() {
         val favorites = Favorites(listOf(upopo.id, "name:Guest Ale"))

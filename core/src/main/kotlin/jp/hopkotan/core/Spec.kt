@@ -25,7 +25,7 @@ object DetailParser {
      * 詳細のページから, ABV と IBU を取り出す.
      *
      * @param html ページの HTML
-     * @return 仕様 (なければ, null の項目)
+     * @return 仕様 (なければ null の項目)
      */
     fun parse(html: String): BeerSpec = parseSpec(org.jsoup.Jsoup.parse(html))
 }
@@ -34,7 +34,7 @@ object DetailParser {
  * `dl.beer-spec` の `ABV` と `IBU` を取り出す.
  *
  * @param root 探す範囲
- * @return 仕様 (なければ, null の項目)
+ * @return 仕様 (なければ null の項目)
  */
 internal fun parseSpec(root: Element): BeerSpec {
     val values =

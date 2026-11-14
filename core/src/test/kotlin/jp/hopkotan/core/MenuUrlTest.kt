@@ -31,7 +31,7 @@ class MenuUrlTest {
         assertNull(MenuUrl.parse("hello world"))
     }
 
-    /** https のページは, どのホストでも, アプリの中で開く. それ以外は, アプリの外. */
+    /** https のページは, どのホストでもアプリの中で開く. それ以外は, アプリの外. */
     @Test
     fun opensInApp() {
         assertTrue(MenuUrl.opensInApp("https://order.example.com/cart"))

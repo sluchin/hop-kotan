@@ -61,7 +61,7 @@ class NewBeerWorker(
 
     companion object {
         /**
-         * 定期の確認を予約する (すでに予約してあれば, そのままにする).
+         * 定期の確認を予約する (すでに予約してあればそのままにする).
          *
          * @param context コンテキスト
          */

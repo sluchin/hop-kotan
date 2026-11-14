@@ -30,7 +30,7 @@ class BeerIdsTest {
         )
     }
 
-    /** ORIGINALS の詳細の URL と, アンカーの URL (前後に空白がある) から, 同じ ID を作る. */
+    /** ORIGINALS の詳細の URL と, アンカーの URL (前後に空白がある) から同じ ID を作る. */
     @Test
     fun originalsPathAndFragment() {
         assertEquals("originals/alpha", BeerIds.fromUrl("https://hopkotan.com/originals/alpha/"))

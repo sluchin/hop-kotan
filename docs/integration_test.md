@@ -1,6 +1,6 @@
 # 結合試験項目書
 
-hop-kotan の結合試験の項目です。単体テスト (`core` の JUnit 5。カバレッジ 100%) では確かめられない、モジュールとモジュール、アプリと外のもの (GitHub Actions、GitHub、忽布古丹醸造のサイト、店のメニューのページ、Android の機能) のつながりを、実際に動かして確かめます。
+hop-kotan の結合試験の項目です。モジュールとモジュールのつながりと、アプリと外のもの (GitHub Actions、GitHub、忽布古丹醸造のサイト、店のメニューのページ、Android の機能) のつながりを、実際に動かして確かめます。これらは、単体テスト (`core` の JUnit 5。カバレッジ 100%) では確かめられません。
 
 ## 対象と範囲
 
@@ -9,14 +9,14 @@ GitHub Actions (update-data.yml) ──取得──> hopkotan.com
        │  scraper ─> core (解析) ─> data/*.json ─> Contents API でコミット
        ▼
 raw.githubusercontent.com ──ダウンロード──> Android アプリ (app ─> core)
-                                             ├─ 端末のファイル (drinks.json、ratings.json、favorites.json、opened.json、data/*.json)
-                                             ├─ 写真 (hopkotan.com の画像。ImageLoader)
-                                             ├─ WorkManager と通知 (NewBeerWorker、NewBeerNotifier)
-                                             └─ WebView (店のメニューのページ。MenuPanel、MenuRecorder)
+                                             ├─ 端末のファイル (drinks.json, ratings.json, favorites.json, opened.json, data/*.json)
+                                             ├─ 写真 (hopkotan.com の画像. ImageLoader)
+                                             ├─ WorkManager と通知 (NewBeerWorker, NewBeerNotifier)
+                                             └─ WebView (店のメニューのページ. MenuPanel, MenuRecorder)
 ```
 
 - 範囲に入れるもの: データの取得からアプリの表示まで、端末への保存と読み込み、画面と画面のつながり、通知、メニューのページとの連動、CI とリリース。
-- 範囲に入れないもの: `core` の関数ごとの動き (単体テストで確かめる)、見た目の細かいところ (余白、色の値)、店での実際の注文と支払い (お金がかかるので、利用者が店で確かめる。「メニュー」の M 系の項目の一部)。
+- 範囲に入れないもの: `core` の関数ごとの動き (単体テストで確かめる)、見た目の細かいところ (余白、色の値)、店での実際の注文と支払い (お金がかかるので利用者が店で確かめる。「メニュー」の M 系の項目の一部)。
 
 ## 環境
 
@@ -135,7 +135,7 @@ raw.githubusercontent.com ──ダウンロード──> Android アプリ (app
 
 ## 10. メニュー (店の QR コード)
 
-店のメニューのページは、店の外では開けないことがあります。店で行う項目には、「(店)」を付けます。
+店のメニューのページは、店の外では開けないことがあります。店で行う項目には「(店)」を付けます。
 
 | ID | 項目 | 手順 | 期待結果 | 結果 |
 |:---|:---|:---|:---|:---|
@@ -175,5 +175,5 @@ raw.githubusercontent.com ──ダウンロード──> Android アプリ (app
 
 ## 未確認と注意
 
-- 店のメニューのページ (Air レジ オーダー) の利用規約で、WebView に組み込んでよいかは、まだ確かめていない (`TODO.md`)。M 系の項目は、個人で使う範囲で行う。
-- 写真と公式のマークは、権利が忽布古丹醸造にある。試験のスクリーンショットを、公開の場所 (Issue、README など) に載せない。
+- 店のメニューのページ (Air レジ オーダー) の利用規約で、WebView に組み込んでよいかは、まだ確かめていない (`TODO.md`)。M 系の項目は個人で使う範囲で行う。
+- 写真と公式のマークは権利が忽布古丹醸造にある。試験のスクリーンショットを、公開の場所 (Issue、README など) に載せない。

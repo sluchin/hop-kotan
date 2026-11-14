@@ -163,7 +163,7 @@ class ParsersTest {
         )
     }
 
-    /** タップリスト: 更新日がなければ, 失敗にする. */
+    /** タップリスト: 更新日がなければ失敗にする. */
     @Test
     fun taplistWithoutDate() {
         assertFailsWith<ScrapeException> { TaplistParser.parse("<p>x</p>", "$base/taproom/") }

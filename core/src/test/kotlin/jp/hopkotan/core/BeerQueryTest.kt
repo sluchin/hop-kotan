@@ -34,7 +34,7 @@ class BeerQueryTest {
 
     private fun names(list: List<Beer>) = list.map { it.name }
 
-    /** 並べ方: 既定は新しい順 (発売月が分からないものは最後). 昇順にしても, 最後. */
+    /** 並べ方: 既定は新しい順 (発売月が分からないものは最後). 昇順にしても最後. */
     @Test
     fun sortByReleased() {
         assertEquals(listOf("Alpha", "delta", "beta", "Gamma"), names(BeerQuery.apply(all)))
@@ -137,7 +137,7 @@ class BeerQueryTest {
         )
     }
 
-    /** 条件は, 全て満たすものだけ残す. 何もなければ, 空. */
+    /** 条件は, 全て満たすものだけ残す. 何もなければ空. */
     @Test
     fun filterCombined() {
         assertEquals(

@@ -50,7 +50,7 @@ class NewTapsTest {
         )
     }
 
-    /** 変わりがなければ, 空. */
+    /** 変わりがなければ空. */
     @Test
     fun findReturnsEmptyWhenNothingIsNew() {
         val same = list("2026-10-14", tap("a", "originals/a"))

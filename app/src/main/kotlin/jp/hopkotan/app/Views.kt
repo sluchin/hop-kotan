@@ -79,7 +79,7 @@ fun formatDecimal(value: Double): String = String.format(Locale.JAPAN, "%.1f", v
  * @property extra 3 行目 (小さな字. なければ null)
  * @property badge 右端の印 (ABV や価格. なければ null)
  * @property badgeLead 右端の印の左の印 (IBU. 同じ形. なければ null)
- * @property imageUrl 写真の URL (なければ, 代わりの絵)
+ * @property imageUrl 写真の URL (なければ代わりの絵)
  * @property showImage 写真の場所を出すか (日の見出しは, 出さない)
  */
 data class RowModel(
@@ -94,7 +94,7 @@ data class RowModel(
 )
 
 /**
- * 写真つきの行 (名前, スタイル, 小さな字, 右端の印) を並べる, 一覧のアダプタを作る.
+ * 写真つきの行 (名前, スタイル, 小さな字, 右端の印) を並べる一覧のアダプタを作る.
  *
  * @param context コンテキスト
  * @param items 項目
@@ -137,7 +137,7 @@ fun <T> rowAdapter(
         override fun isEnabled(position: Int): Boolean = enabled(items[position])
     }
 
-/** 文字があれば表示して, なければ隠す. */
+/** 文字があれば表示してなければ隠す. */
 private fun TextView.bind(text: String?) {
     this.text = text
     visibility = if (text == null) View.GONE else View.VISIBLE

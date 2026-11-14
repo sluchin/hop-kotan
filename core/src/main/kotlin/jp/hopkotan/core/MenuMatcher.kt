@@ -56,7 +56,7 @@ object MenuMatcher {
      * @param candidates 文字の候補 (狭い範囲から順)
      * @param taps 今日のタップ
      * @param beers ORIGINALS と FREEDOMS のビール
-     * @return ビール (どの候補にもなければ, 空)
+     * @return ビール (どの候補にもなければ空)
      */
     fun findOrdered(
         candidates: List<String>,

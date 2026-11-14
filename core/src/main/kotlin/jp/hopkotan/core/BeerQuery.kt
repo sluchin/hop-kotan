@@ -30,14 +30,14 @@ enum class SortKey {
 /**
  * ビールの絞り込み (指定した条件を, 全て満たすものだけ残す).
  *
- * @property text 名前かスタイルに含まれる文字 (大文字と小文字は区別しない. 空なら, 絞らない)
- * @property style ビアスタイル (大文字と小文字は区別しない. null なら, 絞らない)
- * @property series シリーズ (null なら, 絞らない)
- * @property minAbv ABV の下限 (%. 分からないビールは, 除く. null なら, 絞らない)
- * @property minIbu IBU の下限 (分からないビールは, 除く. null なら, 絞らない)
- * @property year 発売年 (`2026`. 発売月が分からないビールは, 除く. null なら, 絞らない)
- * @property minStars 星の下限 (評価していないビールは, 除く. null なら, 絞らない)
- * @property onTapIds 残すビールの ID (今日のタップにあるものだけ見るとき. null なら, 絞らない)
+ * @property text 名前かスタイルに含まれる文字 (大文字と小文字は区別しない. 空なら絞らない)
+ * @property style ビアスタイル (大文字と小文字は区別しない. null なら絞らない)
+ * @property series シリーズ (null なら絞らない)
+ * @property minAbv ABV の下限 (%. 分からないビールは, 除く. null なら絞らない)
+ * @property minIbu IBU の下限 (分からないビールは, 除く. null なら絞らない)
+ * @property year 発売年 (`2026`. 発売月が分からないビールは, 除く. null なら絞らない)
+ * @property minStars 星の下限 (評価していないビールは, 除く. null なら絞らない)
+ * @property onTapIds 残すビールの ID (今日のタップにあるものだけ見るとき. null なら絞らない)
  */
 data class BeerFilter(
     val text: String = "",
@@ -53,9 +53,9 @@ data class BeerFilter(
 /** ビールのソートと絞り込み. */
 object BeerQuery {
     /**
-     * 絞り込んで, 並べる.
+     * 絞り込んで並べる.
      *
-     * 値が分からない (null) ビールは, 昇順でも降順でも, 最後に並べる. 同じ値は, 名前順.
+     * 値が分からない (null) ビールは, 昇順でも降順でも最後に並べる. 同じ値は, 名前順.
      *
      * @param beers ビール
      * @param filter 絞り込み

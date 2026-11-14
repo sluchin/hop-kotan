@@ -46,7 +46,7 @@ private val DEFAULT_SIZES = listOf(PriceSize("M", 310, 750), PriceSize("L", 420,
 
 /**
  * 忽布古丹醸造のビールを見て, 飲んだビールを記録する画面 (6 つのタブ: 今日, 最近, ビール, お気に入り, 記録,
- * メニュー). 左から引き出すメニュー ([AppDrawer]) からも, 同じ画面に移る.
+ * メニュー). 左から引き出すメニュー ([AppDrawer]) からも同じ画面に移る.
  *
  * データは, GitHub の JSON (GitHub Actions が, 毎日更新する) を, 起動のときに取得する. 取得できなければ,
  * 端末に保存したデータを表示する. 飲んだ記録は, 端末の中だけに保存する.
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {}
             .launch(Manifest.permission.POST_NOTIFICATIONS)
         NewBeerWorker.schedule(this)
-        // 作り直されたとき (回転, ダークモードの切り替え, メモリ不足での終了) に, 同じタブと, メニューのページを
+        // 作り直されたとき (回転, ダークモードの切り替え, メモリ不足での終了) に, 同じタブとメニューのページを
         // 開き直す (QR コードを読み直さなくてよい)
         savedStateRegistry.registerSavedStateProvider(STATE_KEY) {
             Bundle().apply {
@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    /** お気に入りの操作 (切り替えたら, 保存して, 画面を更新する. 書き込みは, 別のスレッドで行う). */
+    /** お気に入りの操作 (切り替えたら, 保存して画面を更新する. 書き込みは, 別のスレッドで行う). */
     private val favoriteActions =
         FavoriteActions({ it in favorites }) { key ->
             favorites = favorites.toggle(key)

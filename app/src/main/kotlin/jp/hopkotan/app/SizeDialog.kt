@@ -54,7 +54,7 @@ fun Context.showOnce(show: () -> AlertDialog) {
 }
 
 /**
- * テーマなどで包まれたコンテキストから, 中の画面 (Activity) を取り出す (なければ, いちばん内側).
+ * テーマなどで包まれたコンテキストから, 中の画面 (Activity) を取り出す (なければいちばん内側).
  *
  * @receiver コンテキスト
  * @return 画面

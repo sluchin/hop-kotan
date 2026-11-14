@@ -21,7 +21,7 @@ object FavoritesStore {
      * お気に入りを読む.
      *
      * @param context コンテキスト
-     * @return お気に入り (なければ, 空)
+     * @return お気に入り (なければ空)
      */
     fun load(context: Context): Favorites =
         context.readLocal(FAVORITES_FILE)?.let {

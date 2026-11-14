@@ -30,7 +30,7 @@ data class Favorites(
     operator fun contains(key: String): Boolean = key in keys
 
     /**
-     * お気に入りを切り替える (お気に入りなら外し, そうでなければ, 最後に足す).
+     * お気に入りを切り替える (お気に入りなら外し, そうでなければ最後に足す).
      *
      * @param key [Ratings.key] で作ったキー
      * @return 新しい一覧

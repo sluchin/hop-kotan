@@ -44,7 +44,7 @@ object BeerIds {
     }
 
     /**
-     * ID から, シリーズを返す.
+     * ID からシリーズを返す.
      *
      * @param id [Beer.id]
      * @return シリーズ (知らないシリーズなら null)

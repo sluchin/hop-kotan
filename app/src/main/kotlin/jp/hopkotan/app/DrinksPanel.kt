@@ -141,7 +141,7 @@ class DrinksPanel(
                 )
         }
 
-    /** 記録の 2 行目 (時刻があれば, 先頭に付ける). */
+    /** 記録の 2 行目 (時刻があれば先頭に付ける). */
     private fun recordSubtitle(record: DrinkRecord): String =
         if (record.time == null) {
             activity.getString(R.string.record_size, record.style, record.sizeLabel, record.ml)

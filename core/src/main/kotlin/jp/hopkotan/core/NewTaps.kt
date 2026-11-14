@@ -11,7 +11,7 @@ object NewTaps {
     /**
      * 前の日になくて, 今日のタップリストにあるビールを返す.
      *
-     * ビールの同じさは [Tap.beerId] で決める (なければ, 名前).
+     * ビールの同じさは [Tap.beerId] で決める (なければ名前).
      *
      * @param previous 前の日のタップリスト
      * @param current 今日のタップリスト

@@ -15,7 +15,7 @@ class DrinkLogTest {
     private val sizeL = PriceSize("L", 420, 900)
     private val tap = Tap("Test", "IPA", "freedoms/test")
 
-    /** タップとサイズから, 記録を作る. */
+    /** タップとサイズから記録を作る. */
     @Test
     fun record() {
         val record = DrinkLog.record("1", "2026-10-13", tap, sizeM, 5.0)

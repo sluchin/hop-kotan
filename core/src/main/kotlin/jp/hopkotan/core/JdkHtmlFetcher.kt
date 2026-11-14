@@ -17,7 +17,7 @@ import java.time.Duration
  * JDK の HTTP クライアントで, ページを取得する.
  *
  * サイトに負荷をかけないよう, 前の取得から [intervalMs] 以上, 間を空ける. 失敗したら, 間を空けて,
- * [attempts] 回まで, やり直す.
+ * [attempts] 回までやり直す.
  *
  * @property intervalMs 取得の最小の間隔 (ミリ秒)
  * @property attempts 1 つのページの試行の回数

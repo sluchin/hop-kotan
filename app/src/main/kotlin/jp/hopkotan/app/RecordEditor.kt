@@ -31,7 +31,7 @@ private const val FORM_PADDING_DP = 20
  *
  * @receiver コンテキスト
  * @param record 変える記録
- * @param sizes 選べる量と価格 (記録の量がなければ, 記録の量も選べる)
+ * @param sizes 選べる量と価格 (記録の量がなければ記録の量も選べる)
  * @param onSave 保存の処理 (変えた記録を受け取る)
  */
 fun Context.showRecordEditor(
@@ -92,9 +92,9 @@ private class RecordForm(
     }
 
     /**
-     * 入力した内容で, 記録を作る.
+     * 入力した内容で記録を作る.
      *
-     * @return 変えた記録 (価格が数でなければ, 量の価格. ABV が数でなければ, 分からない)
+     * @return 変えた記録 (価格が数でなければ量の価格. ABV が数でなければ分からない)
      */
     fun result(): DrinkRecord =
         record.copy(
