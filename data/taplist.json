@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-13",
+    "date": "2026-11-14",
     "sizes": [
         {
             "label": "M",
@@ -70,11 +70,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
         },
         {
-            "name": "I’m only KRUSH",
-            "style": "Hoppy Lager",
-            "beerId": "freedoms/im-only-krush",
-            "url": "https://hopkotan.com/freedoms/im-only-krush/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/Im-only-KRUSH-240x240.jpg"
+            "name": "epitta 2026 -Sorachi Ace IPA-",
+            "style": "American IPA",
+            "beerId": "originalsplus/epitta-2026-sorachi-ace-ipa",
+            "url": "https://hopkotan.com/originalsplus/epitta-2026-sorachi-ace-ipa/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/2438d4107f018a8052ba8ce6b4fa07a6-240x240.jpg"
         },
         {
             "name": "ikor",
@@ -84,11 +84,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/1615bf7be99239aab77979c3dc383909-4-240x240.jpg"
         },
         {
-            "name": "AKIRA in Wonderland",
-            "style": "Weizen",
-            "beerId": "freedoms/akira-in-wonderland",
-            "url": "https://hopkotan.com/freedoms/akira-in-wonderland/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/AKIRA-in-Wonderland-240x240.jpg"
+            "name": "紅きは酒の咎",
+            "style": "Kamifuranian Rotbier",
+            "beerId": "freedoms/akakiha-sakeno-toga",
+            "url": "https://hopkotan.com/freedoms/akakiha-sakeno-toga/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/07/a9c35a0cb0a751510e23f59d6647b69e-240x240.jpg"
         },
         {
             "name": "BEER KOTAN IPA",
