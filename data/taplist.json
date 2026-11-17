@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-16",
+    "date": "2026-11-17",
     "sizes": [
         {
             "label": "M",
@@ -63,11 +63,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
         },
         {
-            "name": "kampoca 2026",
-            "style": "Imperial Pumpkin Ale",
-            "beerId": "originalsplus/kampoca-2026",
-            "url": "https://hopkotan.com/originalsplus/kampoca-2026/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/01d48bcfb73341d228fde5c8d455ab9c-240x240.jpg"
+            "name": "epana #6",
+            "style": "Coffee Ale (Ordinary Bitter)",
+            "beerId": "originalsplus/epana-6",
+            "url": "https://hopkotan.com/originalsplus/epana-6/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
         },
         {
             "name": "epitta 2026 -Sorachi Ace IPA-",
