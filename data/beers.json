@@ -55,6 +55,17 @@
         "ibu": 30
     },
     {
+        "id": "freedoms/mashi-mashi",
+        "series": "FREEDOMS",
+        "name": "mashi mashi",
+        "style": "German style Lager",
+        "url": "https://hopkotan.com/freedoms/mashi-mashi/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/mashi-mashi-240x240.jpg",
+        "released": "2026-11",
+        "abv": 5.5,
+        "ibu": 23
+    },
+    {
         "id": "freedoms/akira-in-wonderland",
         "series": "FREEDOMS",
         "name": "AKIRA in Wonderland",
