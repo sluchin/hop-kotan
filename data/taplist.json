@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-20",
+    "date": "2026-11-21",
     "sizes": [
         {
             "label": "M",
@@ -70,11 +70,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
         },
         {
-            "name": "epitta 2026 -Sorachi Ace IPA-",
-            "style": "American IPA",
-            "beerId": "originalsplus/epitta-2026-sorachi-ace-ipa",
-            "url": "https://hopkotan.com/originalsplus/epitta-2026-sorachi-ace-ipa/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/2438d4107f018a8052ba8ce6b4fa07a6-240x240.jpg"
+            "name": "広目天麦酒",
+            "style": "Dortmunder",
+            "beerId": "freedoms/koumokuten-beer",
+            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
         },
         {
             "name": "mashi mashi",
