@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-21",
+    "date": "2026-11-22",
     "sizes": [
         {
             "label": "M",
@@ -84,11 +84,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/mashi-mashi-240x240.jpg"
         },
         {
-            "name": "紅きは酒の咎",
-            "style": "Kamifuranian Rotbier",
-            "beerId": "freedoms/akakiha-sakeno-toga",
-            "url": "https://hopkotan.com/freedoms/akakiha-sakeno-toga/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/07/a9c35a0cb0a751510e23f59d6647b69e-240x240.jpg"
+            "name": "MISTY WAY",
+            "style": "Hazy IPA",
+            "beerId": "freedoms/misty-way",
+            "url": "https://hopkotan.com/freedoms/misty-way/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/MISTY-WAY-240x240.jpg"
         },
         {
             "name": "BEER KOTAN IPA",
