@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-23",
+    "date": "2026-11-24",
     "sizes": [
         {
             "label": "M",
@@ -42,11 +42,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2025/07/originals-kunne-240x240.png"
         },
         {
-            "name": "粋なはかRYE",
-            "style": "Imperial Rye Stout",
-            "beerId": "freedoms/ikinahakarye",
-            "url": "https://hopkotan.com/freedoms/ikinahakarye/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/3d94a7582ead8dcdffd3999ff28be021-240x240.jpg"
+            "name": "AKIRA ACT",
+            "style": "Belgian Tripel",
+            "beerId": "freedoms/akira-act",
+            "url": "https://hopkotan.com/freedoms/akira-act/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/02/AKIRA-ACT-240x240.jpg"
         },
         {
             "name": "Saison 2026",
@@ -84,11 +84,11 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/mashi-mashi-240x240.jpg"
         },
         {
-            "name": "MISTY WAY",
-            "style": "Hazy IPA",
-            "beerId": "freedoms/misty-way",
-            "url": "https://hopkotan.com/freedoms/misty-way/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/MISTY-WAY-240x240.jpg"
+            "name": "CoCo麦",
+            "style": "Coconut Wheat Ale",
+            "beerId": "freedoms/coco麦",
+            "url": "https://hopkotan.com/freedoms/coco%e9%ba%a6/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/92ed0193de8387cecb4a56e37026cb6d-240x240.jpg"
         },
         {
             "name": "BEER KOTAN IPA",
