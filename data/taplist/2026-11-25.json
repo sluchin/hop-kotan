@@ -1,0 +1,101 @@
+{
+    "date": "2026-11-25",
+    "sizes": [
+        {
+            "label": "M",
+            "ml": 310,
+            "yen": 750
+        },
+        {
+            "label": "L",
+            "ml": 420,
+            "yen": 900
+        }
+    ],
+    "taps": [
+        {
+            "name": "upopo",
+            "style": "PILSNER",
+            "beerId": "originals/upopo",
+            "url": "https://hopkotan.com/originals/#upopo",
+            "imageUrl": "https://hopkotan.com/img/tap-upopo.jpg"
+        },
+        {
+            "name": "nonno",
+            "style": "PALE ALE",
+            "beerId": "originals/nonno",
+            "url": "https://hopkotan.com/originals/#nonno",
+            "imageUrl": "https://hopkotan.com/img/tap-nonno.jpg"
+        },
+        {
+            "name": "haskap",
+            "style": "FRUITS ALE",
+            "beerId": "originals/haskap",
+            "url": "https://hopkotan.com/originals/#haskap",
+            "imageUrl": "https://hopkotan.com/img/tap-haskap.jpg"
+        },
+        {
+            "name": "kunne (HOP KOTAN ORIGINALS)",
+            "style": "Schwarz",
+            "beerId": "freedoms/kunne-hop-kotan-originals",
+            "url": "https://hopkotan.com/freedoms/kunne-hop-kotan-originals/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2025/07/originals-kunne-240x240.png"
+        },
+        {
+            "name": "AKIRA ACT",
+            "style": "Belgian Tripel",
+            "beerId": "freedoms/akira-act",
+            "url": "https://hopkotan.com/freedoms/akira-act/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/02/AKIRA-ACT-240x240.jpg"
+        },
+        {
+            "name": "Saison 2026",
+            "style": "Harvest Saison",
+            "beerId": "harvest_brew/saison-2026",
+            "url": "https://hopkotan.com/harvest_brew/saison-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Saison-2026-240x240.jpg"
+        },
+        {
+            "name": "Rauch 2026",
+            "style": "Harvest Rauch",
+            "beerId": "harvest_brew/rauch-2026",
+            "url": "https://hopkotan.com/harvest_brew/rauch-2026/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
+        },
+        {
+            "name": "epana #6",
+            "style": "Coffee Ale (Ordinary Bitter)",
+            "beerId": "originalsplus/epana-6",
+            "url": "https://hopkotan.com/originalsplus/epana-6/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
+        },
+        {
+            "name": "広目天麦酒",
+            "style": "Dortmunder",
+            "beerId": "freedoms/koumokuten-beer",
+            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
+        },
+        {
+            "name": "mashi mashi",
+            "style": "German style Lager",
+            "beerId": "freedoms/mashi-mashi",
+            "url": "https://hopkotan.com/freedoms/mashi-mashi/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/mashi-mashi-240x240.jpg"
+        },
+        {
+            "name": "CoCo麦",
+            "style": "Coconut Wheat Ale",
+            "beerId": "freedoms/coco麦",
+            "url": "https://hopkotan.com/freedoms/coco%e9%ba%a6/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/01/92ed0193de8387cecb4a56e37026cb6d-240x240.jpg"
+        },
+        {
+            "name": "BEER KOTAN IPA",
+            "style": "American IPA",
+            "beerId": "freedoms/beer-kotan-ipa",
+            "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
+        }
+    ]
+}
