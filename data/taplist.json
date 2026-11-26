@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-25",
+    "date": "2026-11-26",
     "sizes": [
         {
             "label": "M",
@@ -61,13 +61,6 @@
             "beerId": "harvest_brew/rauch-2026",
             "url": "https://hopkotan.com/harvest_brew/rauch-2026/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
-        },
-        {
-            "name": "epana #6",
-            "style": "Coffee Ale (Ordinary Bitter)",
-            "beerId": "originalsplus/epana-6",
-            "url": "https://hopkotan.com/originalsplus/epana-6/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/05/epana-6-240x240.jpg"
         },
         {
             "name": "広目天麦酒",
