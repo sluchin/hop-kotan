@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-26",
+    "date": "2026-11-27",
     "sizes": [
         {
             "label": "M",
@@ -89,6 +89,13 @@
             "beerId": "freedoms/beer-kotan-ipa",
             "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
+        },
+        {
+            "name": "金剛力士",
+            "style": "Double IPA",
+            "beerId": null,
+            "url": null,
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/S__69173251-240x240.jpg"
         }
     ]
 }
