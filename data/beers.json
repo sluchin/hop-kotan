@@ -66,6 +66,17 @@
         "ibu": 23
     },
     {
+        "id": "freedoms/kongorikishi",
+        "series": "FREEDOMS",
+        "name": "金剛力士",
+        "style": "Double IPA",
+        "url": "https://hopkotan.com/freedoms/kongorikishi/",
+        "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/4c14e731830dda5e20e775ec9dffded7-240x240.jpg",
+        "released": "2026-11",
+        "abv": 8.0,
+        "ibu": 100
+    },
+    {
         "id": "freedoms/akira-in-wonderland",
         "series": "FREEDOMS",
         "name": "AKIRA in Wonderland",
