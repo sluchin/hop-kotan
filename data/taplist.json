@@ -1,5 +1,5 @@
 {
-    "date": "2026-11-27",
+    "date": "2026-11-28",
     "sizes": [
         {
             "label": "M",
@@ -63,11 +63,18 @@
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/10/Harvest-Rauch-2026-240x240.jpg"
         },
         {
-            "name": "広目天麦酒",
-            "style": "Dortmunder",
-            "beerId": "freedoms/koumokuten-beer",
-            "url": "https://hopkotan.com/freedoms/koumokuten-beer/",
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/06/bf37fcb4dcda3fc8ef816d9ad42dcd36-240x240.jpg"
+            "name": "金剛力士",
+            "style": "Double IPA",
+            "beerId": "freedoms/kongorikishi",
+            "url": "https://hopkotan.com/freedoms/kongorikishi/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/4c14e731830dda5e20e775ec9dffded7-240x240.jpg"
+        },
+        {
+            "name": "Rosy Fizz",
+            "style": "Berllner Weisse",
+            "beerId": "freedoms/rosy-fizz",
+            "url": "https://hopkotan.com/freedoms/rosy-fizz/",
+            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/09/Rosy-Fizz-1-240x240.jpg"
         },
         {
             "name": "mashi mashi",
@@ -89,13 +96,6 @@
             "beerId": "freedoms/beer-kotan-ipa",
             "url": "https://hopkotan.com/freedoms/beer-kotan-ipa/",
             "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2020/12/BEER-KOTAN-IPA-240x240.jpg"
-        },
-        {
-            "name": "金剛力士",
-            "style": "Double IPA",
-            "beerId": null,
-            "url": null,
-            "imageUrl": "https://hopkotan.com/wpcms/wp-content/uploads/2026/11/S__69173251-240x240.jpg"
         }
     ]
 }
